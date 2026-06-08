@@ -154,7 +154,7 @@ export default function SubscriptionForm({
               <Label>{t("subscriptionForm.currency")}</Label>
               <Select value={currency} onValueChange={(v) => setCurrency(v ?? "CNY")}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue label={t(`subscriptionForm.currencies.${currency}`)} />
                 </SelectTrigger>
                 <SelectContent>
                   {CURRENCIES.map((c) => (
@@ -175,7 +175,7 @@ export default function SubscriptionForm({
                 onValueChange={(v) => setBillingCycle(v as BillingCycle)}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue label={t(`subscriptions.cycles.${billingCycle}`)} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="weekly">{t("subscriptions.cycles.weekly")}</SelectItem>
@@ -192,7 +192,7 @@ export default function SubscriptionForm({
                 onValueChange={(v) => setSubStatus(v as SubscriptionStatus)}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue label={t(`subscriptions.statuses.${subStatus}`)} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="active">{t("subscriptions.statuses.active")}</SelectItem>
@@ -207,7 +207,7 @@ export default function SubscriptionForm({
             <Label>{t("subscriptionForm.category")}</Label>
             <Select value={category || undefined} onValueChange={(v) => setCategory(v === "__none__" ? "" : (v ?? ""))}>
               <SelectTrigger>
-                <SelectValue placeholder={t("subscriptionForm.none")} />
+                <SelectValue label={category ? t(`subscriptions.categories.${category}`) : undefined} placeholder={t("subscriptionForm.none")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="__none__">{t("subscriptionForm.none")}</SelectItem>

@@ -70,33 +70,53 @@ if (theme === 'dark' || ((theme === 'system' || !theme) && window.matchMedia('(p
 
 > **Warning**: `SelectContent` renders inside a Portal — `SelectItem` nodes are **not in the DOM** on initial render.
 >
-> When `value` is set to a sentinel string (e.g. `"__all__"`, `"__none__"`), `SelectValue` cannot find a matching item's label text and falls back to displaying the raw value string.
+> This affects ALL Select triggers, not just sentinel values. When the component mounts with a `value` already set (e.g. default state, edit form), `SelectPrimitive.Value` cannot find the matching `ItemText` in the Portal and falls back to displaying the **raw value string** (e.g., `"USD"` instead of `"美元 ($)"`, `"monthly"` instead of `"每月"`).
 
-**Symptom**: `__all__` or `__none__` appears as visible text in the Select trigger instead of the intended label.
+**Fix**: Always pass the `label` prop to `SelectValue` so the trigger text is explicitly provided and never depends on Portal-mounted DOM lookup.
 
-**Wrong**:
+```tsx
+// Always provide label — derive from the same i18n key used in SelectItem
+<Select value={currency} onValueChange={...}>
+  <SelectTrigger>
+    <SelectValue label={t(`subscriptionForm.currencies.${currency}`)} />
+  </SelectTrigger>
+  <SelectContent>
+    {CURRENCIES.map((c) => (
+      <SelectItem key={c} value={c}>
+        {t(`subscriptionForm.currencies.${c}`)}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
+```
+
+For selects with a placeholder (e.g. filter selects with "All X" default):
+
+```tsx
+<Select value={filterCategory || undefined} onValueChange={...}>
+  <SelectTrigger>
+    <SelectValue
+      label={filterCategory ? t(`subscriptions.categories.${filterCategory}`) : undefined}
+      placeholder={t("subscriptions.allCategories")}
+    />
+  </SelectTrigger>
+  ...
+</Select>
+```
+
+When `label` is `undefined`, `SelectValue` falls back to `SelectPrimitive.Value` (which handles `placeholder`). When `label` is a string, it renders that text directly — no Portal dependency.
+
+**Old sentinel-value pattern** (still applies for `value`/`onValueChange` logic):
+
+**Wrong** — using sentinel as the `value` prop:
 ```tsx
 <Select value={filterX || "__all__"} onValueChange={(v) => setFilterX(v === "__all__" ? "" : (v ?? ""))}>
-  <SelectTrigger><SelectValue placeholder="All X" /></SelectTrigger>
-  <SelectContent>
-    <SelectItem value="__all__">All X</SelectItem>
-    ...
-  </SelectContent>
-</Select>
 ```
 
-**Correct** — use `undefined` for the unselected state so placeholder is triggered:
+**Correct** — use `undefined` for unselected state so placeholder renders:
 ```tsx
 <Select value={filterX || undefined} onValueChange={(v) => setFilterX(v === "__all__" ? "" : v)}>
-  <SelectTrigger><SelectValue placeholder="All X" /></SelectTrigger>
-  <SelectContent>
-    <SelectItem value="__all__">All X</SelectItem>
-    ...
-  </SelectContent>
-</Select>
 ```
-
-Key: `placeholder` only renders when `value` is `undefined`/empty. The sentinel `SelectItem` is still needed in the dropdown so users can explicitly select "All X" to clear the filter — but the trigger display must not depend on portal-mounted items for its initial text.
 
 ### oklch CSS variables in SVG / Recharts
 

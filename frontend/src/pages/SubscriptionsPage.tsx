@@ -118,7 +118,7 @@ export default function SubscriptionsPage() {
       <div className="flex gap-4">
         <Select value={filterCategory || undefined} onValueChange={(v) => setFilterCategory(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder={t("subscriptions.allCategories")} />
+            <SelectValue label={filterCategory ? t(`subscriptions.categories.${filterCategory}`) : undefined} placeholder={t("subscriptions.allCategories")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">{t("subscriptions.allCategories")}</SelectItem>
@@ -132,7 +132,7 @@ export default function SubscriptionsPage() {
 
         <Select value={filterStatus || undefined} onValueChange={(v) => setFilterStatus(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder={t("subscriptions.allStatuses")} />
+            <SelectValue label={filterStatus ? t(`subscriptions.statuses.${filterStatus}`) : undefined} placeholder={t("subscriptions.allStatuses")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">{t("subscriptions.allStatuses")}</SelectItem>
@@ -146,7 +146,7 @@ export default function SubscriptionsPage() {
 
         <Select value={filterCycle || undefined} onValueChange={(v) => setFilterCycle(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder={t("subscriptions.allCycles")} />
+            <SelectValue label={filterCycle ? t(`subscriptions.cycles.${filterCycle}`) : undefined} placeholder={t("subscriptions.allCycles")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">{t("subscriptions.allCycles")}</SelectItem>
