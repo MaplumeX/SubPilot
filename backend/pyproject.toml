@@ -14,3 +14,6 @@ dependencies = [
     "pydantic[email]",
     "python-multipart",
 ]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
