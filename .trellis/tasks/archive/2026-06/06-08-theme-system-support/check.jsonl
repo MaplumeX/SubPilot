@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Verify theme components follow component conventions"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Verify code quality standards are met"}
+{"file": ".trellis/spec/frontend/hook-guidelines.md", "reason": "Verify useTheme hook follows hook conventions"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Verify theme type definitions are type-safe"}
+{"file": ".trellis/tasks/06-08-theme-system-support/prd.md", "reason": "Acceptance criteria and requirements to check against"}
