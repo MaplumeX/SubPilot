@@ -38,6 +38,8 @@ const CATEGORIES = [
   "other",
 ] as const;
 
+const CURRENCIES = ["CNY", "USD", "EUR", "GBP", "JPY"] as const;
+
 const ERROR_KEY_MAP: Record<string, string> = {
   "Invalid credentials": "errors.invalidCredentials",
   "Email already registered": "errors.emailRegistered",
@@ -149,12 +151,19 @@ export default function SubscriptionForm({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="currency">{t("subscriptionForm.currency")}</Label>
-              <Input
-                id="currency"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-              />
+              <Label>{t("subscriptionForm.currency")}</Label>
+              <Select value={currency} onValueChange={(v) => setCurrency(v ?? "CNY")}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CURRENCIES.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {t(`subscriptionForm.currencies.${c}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -196,7 +205,7 @@ export default function SubscriptionForm({
 
           <div className="flex flex-col gap-2">
             <Label>{t("subscriptionForm.category")}</Label>
-            <Select value={category || undefined} onValueChange={(v) => setCategory(v === "__none__" ? "" : v)}>
+            <Select value={category || undefined} onValueChange={(v) => setCategory(v === "__none__" ? "" : (v ?? ""))}>
               <SelectTrigger>
                 <SelectValue placeholder={t("subscriptionForm.none")} />
               </SelectTrigger>

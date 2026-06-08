@@ -87,6 +87,13 @@
     "pricePositive": "价格必须大于 0",
     "startDateRequired": "开始日期为必填项",
     "saving": "保存中...",
+    "currencies": {
+      "CNY": "人民币 (¥)",
+      "USD": "美元 ($)",
+      "EUR": "欧元 (€)",
+      "GBP": "英镑 (£)",
+      "JPY": "日元 (¥)"
+    },
     "update": "更新",
     "create": "创建",
     "saveFailed": "保存订阅失败"
