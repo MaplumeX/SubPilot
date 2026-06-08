@@ -9,6 +9,7 @@ import {
 import type { Subscription, SubscriptionCreate, SubscriptionUpdate } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Table,
   TableBody,
@@ -181,12 +182,18 @@ export default function SubscriptionsPage() {
               {subscriptions.map((sub) => (
                 <TableRow key={sub.id}>
                   <TableCell className="font-medium">
-                    {sub.name}
-                    {isDueSoon(sub) && (
-                      <Badge variant="destructive" className="ml-2">
-                        {t("dashboard.dueSoon")}
-                      </Badge>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <Avatar className="size-7">
+                        <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} />
+                        <AvatarFallback>{sub.name.charAt(0).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <span>{sub.name}</span>
+                      {isDueSoon(sub) && (
+                        <Badge variant="destructive" className="ml-2">
+                          {t("dashboard.dueSoon")}
+                        </Badge>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     {sub.currency} {sub.price.toFixed(2)}

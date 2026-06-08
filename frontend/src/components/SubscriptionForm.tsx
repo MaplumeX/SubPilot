@@ -1,6 +1,7 @@
-import { useState, type FormEvent as ReactFormEvent } from "react";
+import { useState, type FormEvent as ReactSubmitEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { Subscription, SubscriptionCreate, BillingCycle, SubscriptionStatus } from "@/api/types";
+import { uploadLogo } from "@/api/subscriptions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/ui/avatar";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface SubscriptionFormProps {
   open: boolean;
@@ -44,6 +51,8 @@ const ERROR_KEY_MAP: Record<string, string> = {
   "Invalid credentials": "errors.invalidCredentials",
   "Email already registered": "errors.emailRegistered",
   "Subscription not found": "errors.subscriptionNotFound",
+  "Invalid file type. Allowed: JPG, PNG, SVG, GIF": "subscriptionForm.invalidFileType",
+  "File size exceeds 2MB limit": "subscriptionForm.fileTooLarge",
 };
 
 export default function SubscriptionForm({
@@ -70,10 +79,64 @@ export default function SubscriptionForm({
     subscription?.next_billing_date ?? ""
   );
   const [notes, setNotes] = useState(subscription?.notes ?? "");
+  const [logoUrl, setLogoUrl] = useState(subscription?.logo_url ?? "");
+  const [logoTab, setLogoTab] = useState("search");
+  const [searchDomain, setSearchDomain] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (e: ReactFormEvent<HTMLFormElement>) => {
+  const previewUrl = logoUrl || null;
+
+  const handleSearchLogo = () => {
+    if (!searchDomain.trim()) return;
+    const url = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(searchDomain.trim())}&sz=64`;
+    setLogoUrl(url);
+  };
+
+  const handleUploadLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/svg+xml", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      setError(t("subscriptionForm.invalidFileType"));
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setError(t("subscriptionForm.fileTooLarge"));
+      return;
+    }
+
+    setUploading(true);
+    setError("");
+    try {
+      const result = await uploadLogo(file);
+      setLogoUrl(result.logo_url);
+    } catch (err: unknown) {
+      const detail =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail ?? "Upload failed";
+      const key = ERROR_KEY_MAP[detail];
+      setError(key ? t(key) : t("subscriptionForm.uploadFailed"));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleLinkLogo = () => {
+    if (!linkUrl.trim()) return;
+    setLogoUrl(linkUrl.trim());
+  };
+
+  const handleRemoveLogo = () => {
+    setLogoUrl("");
+    setSearchDomain("");
+    setLinkUrl("");
+  };
+
+  const handleSubmit = async (e: ReactSubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -103,6 +166,7 @@ export default function SubscriptionForm({
         start_date: startDate,
         next_billing_date: nextBillingDate || null,
         notes: notes || null,
+        logo_url: logoUrl || null,
       };
       await onSubmit(payload);
       onOpenChange(false);
@@ -127,6 +191,64 @@ export default function SubscriptionForm({
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {error && <p className="text-sm text-destructive">{error}</p>}
+
+          <div className="flex flex-col gap-2">
+            <Label>{t("subscriptionForm.logo")}</Label>
+            {previewUrl ? (
+              <div className="flex items-center gap-3">
+                <Avatar className="size-7">
+                  <AvatarImage src={previewUrl} alt={name} />
+                  <AvatarFallback>{name.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span className="text-sm text-muted-foreground truncate max-w-[200px]">{previewUrl}</span>
+                <Button type="button" variant="ghost" size="sm" onClick={handleRemoveLogo}>
+                  {t("subscriptionForm.removeLogo")}
+                </Button>
+              </div>
+            ) : (
+              <Tabs value={logoTab} onValueChange={setLogoTab}>
+                <TabsList>
+                  <TabsTrigger value="search">{t("subscriptionForm.logoSearch")}</TabsTrigger>
+                  <TabsTrigger value="upload">{t("subscriptionForm.logoUpload")}</TabsTrigger>
+                  <TabsTrigger value="link">{t("subscriptionForm.logoLink")}</TabsTrigger>
+                </TabsList>
+                <TabsContent value="search" className="mt-2">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder={t("subscriptionForm.domainPlaceholder")}
+                      value={searchDomain}
+                      onChange={(e) => setSearchDomain(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSearchLogo(); } }}
+                    />
+                    <Button type="button" variant="outline" onClick={handleSearchLogo}>
+                      {t("subscriptionForm.search")}
+                    </Button>
+                  </div>
+                </TabsContent>
+                <TabsContent value="upload" className="mt-2">
+                  <Input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.svg,.gif"
+                    onChange={handleUploadLogo}
+                    disabled={uploading}
+                  />
+                </TabsContent>
+                <TabsContent value="link" className="mt-2">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="https://..."
+                      value={linkUrl}
+                      onChange={(e) => setLinkUrl(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleLinkLogo(); } }}
+                    />
+                    <Button type="button" variant="outline" onClick={handleLinkLogo}>
+                      {t("subscriptionForm.confirm")}
+                    </Button>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            )}
+          </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">{t("subscriptionForm.name")}</Label>

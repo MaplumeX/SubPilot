@@ -1,6 +1,8 @@
+import os
+import uuid
 from datetime import date, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
 from sqlalchemy.orm import Session
 
 from app.deps import get_current_user, get_db
@@ -12,6 +14,11 @@ from app.schemas.subscription import (
     SubscriptionStats,
     SubscriptionUpdate,
 )
+
+ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/svg+xml", "image/gif"}
+MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
+LOGOS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "logos")
+
 
 router = APIRouter(prefix="/api/v1/subscriptions", tags=["subscriptions"])
 
@@ -115,6 +122,41 @@ def get_stats(
     )
 
 
+@router.post("/upload-logo")
+def upload_logo(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+):
+    if not file.content_type or file.content_type not in ALLOWED_CONTENT_TYPES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid file type. Allowed: JPG, PNG, SVG, GIF",
+        )
+    contents = file.file.read()
+    if len(contents) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File size exceeds 2MB limit",
+        )
+
+    os.makedirs(LOGOS_DIR, exist_ok=True)
+
+    ext_map = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/svg+xml": "svg",
+        "image/gif": "gif",
+    }
+    ext = ext_map.get(file.content_type, "png") if file.content_type else "png"
+    filename = f"{uuid.uuid4()}.{ext}"
+    filepath = os.path.join(LOGOS_DIR, filename)
+
+    with open(filepath, "wb") as f:
+        f.write(contents)
+
+    return {"logo_url": f"/static/logos/{filename}"}
+
+
 @router.get("/{subscription_id}", response_model=SubscriptionResponse)
 def get_subscription(
     subscription_id: int,
@@ -153,5 +195,15 @@ def delete_subscription(
 ):
     subscription = db.query(Subscription).filter(Subscription.id == subscription_id).first()
     _check_ownership(subscription, current_user.id)
+
+    # Clean up uploaded logo file if it's a local file
+    if subscription.logo_url and subscription.logo_url.startswith("/static/logos/"):
+        logo_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            subscription.logo_url.lstrip("/"),
+        )
+        if os.path.exists(logo_path):
+            os.remove(logo_path)
+
     db.delete(subscription)
     db.commit()

@@ -31,6 +31,7 @@ export interface Subscription {
   start_date: string;
   next_billing_date: string | null;
   notes: string | null;
+  logo_url: string | null;
   created_at: string;
   updated_at: string | null;
 }
@@ -45,6 +46,7 @@ export interface SubscriptionCreate {
   start_date: string;
   next_billing_date?: string | null;
   notes?: string | null;
+  logo_url?: string | null;
 }
 
 export interface SubscriptionUpdate {
@@ -57,6 +59,7 @@ export interface SubscriptionUpdate {
   start_date?: string;
   next_billing_date?: string | null;
   notes?: string | null;
+  logo_url?: string | null;
 }
 
 export interface SubscriptionStats {

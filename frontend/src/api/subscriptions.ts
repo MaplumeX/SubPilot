@@ -42,6 +42,16 @@ export async function deleteSubscription(id: number): Promise<void> {
   await api.delete(`/subscriptions/${id}`);
 }
 
+export async function uploadLogo(file: File): Promise<{ logo_url: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const { data } = await api.post<{ logo_url: string }>(
+    "/subscriptions/upload-logo",
+    formData
+  );
+  return data;
+}
+
 export async function getStats(): Promise<SubscriptionStats> {
   const { data } = await api.get<SubscriptionStats>("/subscriptions/stats");
   return data;

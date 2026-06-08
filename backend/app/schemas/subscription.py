@@ -15,6 +15,7 @@ class SubscriptionCreate(BaseModel):
     start_date: date
     next_billing_date: date | None = None
     notes: str | None = None
+    logo_url: str | None = None
 
 
 class SubscriptionUpdate(BaseModel):
@@ -27,6 +28,7 @@ class SubscriptionUpdate(BaseModel):
     start_date: date | None = None
     next_billing_date: date | None = None
     notes: str | None = None
+    logo_url: str | None = None
 
 
 class SubscriptionResponse(BaseModel):
@@ -41,6 +43,7 @@ class SubscriptionResponse(BaseModel):
     start_date: date
     next_billing_date: date | None
     notes: str | None
+    logo_url: str | None
     created_at: datetime
     updated_at: datetime | None
 
