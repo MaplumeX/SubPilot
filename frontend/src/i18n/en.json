@@ -33,7 +33,6 @@
     "addSubscription": "Add Subscription",
     "allCategories": "All categories",
     "allStatuses": "All statuses",
-    "allCycles": "All cycles",
     "loading": "Loading...",
     "noSubscriptions": "No subscriptions found",
     "name": "Name",
@@ -68,6 +67,13 @@
       "quarterly": "Quarterly",
       "yearly": "Yearly"
     },
+    "cycle_single": {
+      "day": "Daily",
+      "week": "Weekly",
+      "month": "Monthly",
+      "year": "Yearly"
+    },
+    "cycle_multi": "Every {{count}} {{unit}}",
     "auto_renew": "Auto Renew",
     "auto_renew_enabled": "Auto renewal enabled",
     "auto_renew_disabled": "Auto renewal disabled"
@@ -79,10 +85,12 @@
     "price": "Price",
     "currency": "Currency",
     "billingCycle": "Billing Cycle",
+    "customCycle": "Custom",
+    "cycleCount": "Count",
+    "cycleCountMin": "Cycle count must be at least 1",
     "status": "Status",
     "category": "Category",
     "startDate": "Start Date",
-    "nextBillingDate": "Next Billing Date",
     "notes": "Notes",
     "selectCategory": "Select category",
     "none": "None",

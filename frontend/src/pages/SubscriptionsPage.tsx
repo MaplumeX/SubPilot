@@ -7,7 +7,7 @@ import {
   createSubscription,
   updateSubscription,
 } from "@/api/subscriptions";
-import type { Subscription, SubscriptionCreate, SubscriptionUpdate } from "@/api/types";
+import type { Subscription, SubscriptionCreate, SubscriptionUpdate, CycleUnit } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -40,7 +40,6 @@ const CATEGORIES = [
 ] as const;
 
 const STATUSES = ["active", "cancelled", "trial"] as const;
-const CYCLES = ["weekly", "monthly", "quarterly", "yearly"] as const;
 
 export default function SubscriptionsPage() {
   const { t } = useTranslation();
@@ -48,7 +47,6 @@ export default function SubscriptionsPage() {
   const [loading, setLoading] = useState(true);
   const [filterCategory, setFilterCategory] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("");
-  const [filterCycle, setFilterCycle] = useState<string>("");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | null>(null);
 
@@ -57,7 +55,6 @@ export default function SubscriptionsPage() {
       const params: Record<string, string> = {};
       if (filterCategory) params.category = filterCategory;
       if (filterStatus) params.status = filterStatus;
-      if (filterCycle) params.billing_cycle = filterCycle;
       const data = await listSubscriptions(params);
       setSubscriptions(data);
     } catch {
@@ -65,7 +62,7 @@ export default function SubscriptionsPage() {
     } finally {
       setLoading(false);
     }
-  }, [filterCategory, filterStatus, filterCycle]);
+  }, [filterCategory, filterStatus]);
 
   useEffect(() => {
     fetchSubscriptions();
@@ -100,6 +97,13 @@ export default function SubscriptionsPage() {
     const threeDays = new Date();
     threeDays.setDate(now.getDate() + 3);
     return next >= now && next <= threeDays;
+  };
+
+  const formatCycle = (cycle_count: number, cycle_unit: CycleUnit) => {
+    if (cycle_count === 1) {
+      return t(`subscriptions.cycle_single.${cycle_unit}`);
+    }
+    return t(`subscriptions.cycle_multi`, { count: cycle_count, unit: t(`subscriptions.cycle_units.${cycle_unit}`) });
   };
 
   return (
@@ -144,20 +148,6 @@ export default function SubscriptionsPage() {
             ))}
           </SelectContent>
         </Select>
-
-        <Select value={filterCycle || undefined} onValueChange={(v) => setFilterCycle(v === "__all__" ? "" : (v ?? ""))}>
-          <SelectTrigger className="w-[160px]">
-            <SelectValue label={filterCycle ? t(`subscriptions.cycles.${filterCycle}`) : undefined} placeholder={t("subscriptions.allCycles")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__all__">{t("subscriptions.allCycles")}</SelectItem>
-            {CYCLES.map((c) => (
-              <SelectItem key={c} value={c}>
-                {t(`subscriptions.cycles.${c}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       {loading ? (
@@ -193,7 +183,7 @@ export default function SubscriptionsPage() {
                   <TableCell>
                     {sub.currency} {sub.price.toFixed(2)}
                   </TableCell>
-                  <TableCell>{t(`subscriptions.cycles.${sub.billing_cycle}`)}</TableCell>
+                  <TableCell>{formatCycle(sub.cycle_count, sub.cycle_unit)}</TableCell>
                   <TableCell>
                     {sub.category ? t(`subscriptions.categories.${sub.category}`) : "-"}
                   </TableCell>

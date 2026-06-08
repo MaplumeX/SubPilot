@@ -33,7 +33,6 @@
     "addSubscription": "添加订阅",
     "allCategories": "全部分类",
     "allStatuses": "全部状态",
-    "allCycles": "全部周期",
     "loading": "加载中...",
     "noSubscriptions": "暂无订阅",
     "name": "名称",
@@ -68,6 +67,13 @@
       "quarterly": "每季度",
       "yearly": "每年"
     },
+    "cycle_single": {
+      "day": "每天",
+      "week": "每周",
+      "month": "每月",
+      "year": "每年"
+    },
+    "cycle_multi": "每{{count}}{{unit}}",
     "auto_renew": "自动续订",
     "auto_renew_enabled": "已开启自动续订",
     "auto_renew_disabled": "未开启自动续订"
@@ -79,10 +85,12 @@
     "price": "价格",
     "currency": "货币",
     "billingCycle": "计费周期",
+    "customCycle": "自定义",
+    "cycleCount": "数量",
+    "cycleCountMin": "周期数量至少为 1",
     "status": "状态",
     "category": "分类",
     "startDate": "开始日期",
-    "nextBillingDate": "下次计费日期",
     "notes": "备注",
     "selectCategory": "选择分类",
     "none": "无",

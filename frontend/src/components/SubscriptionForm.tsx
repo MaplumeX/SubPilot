@@ -1,6 +1,6 @@
 import { useState, type FormEvent as ReactFormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import type { Subscription, SubscriptionCreate, BillingCycle, SubscriptionStatus } from "@/api/types";
+import type { Subscription, SubscriptionCreate, CycleUnit, SubscriptionStatus } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 
 interface SubscriptionFormProps {
+  key?: React.Key;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   subscription?: Subscription | null;
@@ -41,11 +42,29 @@ const CATEGORIES = [
 
 const CURRENCIES = ["CNY", "USD", "EUR", "GBP", "JPY"] as const;
 
+const CYCLE_UNITS: CycleUnit[] = ["day", "week", "month", "year"];
+
+type PresetKey = "weekly" | "monthly" | "quarterly" | "yearly" | "custom";
+
 const ERROR_KEY_MAP: Record<string, string> = {
   "Invalid credentials": "errors.invalidCredentials",
   "Email already registered": "errors.emailRegistered",
   "Subscription not found": "errors.subscriptionNotFound",
 };
+
+const PRESET_MAP: Record<string, { cycle_count: number; cycle_unit: CycleUnit }> = {
+  weekly: { cycle_count: 1, cycle_unit: "week" },
+  monthly: { cycle_count: 1, cycle_unit: "month" },
+  quarterly: { cycle_count: 3, cycle_unit: "month" },
+  yearly: { cycle_count: 1, cycle_unit: "year" },
+};
+
+function inferPreset(cycle_count: number, cycle_unit: CycleUnit): PresetKey {
+  for (const [key, val] of Object.entries(PRESET_MAP)) {
+    if (val.cycle_count === cycle_count && val.cycle_unit === cycle_unit) return key as PresetKey;
+  }
+  return "custom";
+}
 
 export default function SubscriptionForm({
   open,
@@ -59,21 +78,32 @@ export default function SubscriptionForm({
   const [name, setName] = useState(subscription?.name ?? "");
   const [price, setPrice] = useState(subscription?.price?.toString() ?? "");
   const [currency, setCurrency] = useState(subscription?.currency ?? "CNY");
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>(
-    subscription?.billing_cycle ?? "monthly"
+  const [preset, setPreset] = useState<PresetKey>(
+    subscription ? inferPreset(subscription.cycle_count, subscription.cycle_unit) : "monthly"
+  );
+  const [cycleCount, setCycleCount] = useState(
+    subscription?.cycle_count?.toString() ?? "1"
+  );
+  const [cycleUnit, setCycleUnit] = useState<CycleUnit>(
+    subscription?.cycle_unit ?? "month"
   );
   const [category, setCategory] = useState(subscription?.category ?? "");
   const [subStatus, setSubStatus] = useState<SubscriptionStatus>(
     subscription?.status ?? "active"
   );
   const [startDate, setStartDate] = useState(subscription?.start_date ?? "");
-  const [nextBillingDate, setNextBillingDate] = useState(
-    subscription?.next_billing_date ?? ""
-  );
   const [notes, setNotes] = useState(subscription?.notes ?? "");
   const [autoRenew, setAutoRenew] = useState(subscription?.auto_renew ?? true);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const handlePresetChange = (p: PresetKey) => {
+    setPreset(p);
+    if (p !== "custom" && PRESET_MAP[p]) {
+      setCycleCount(PRESET_MAP[p].cycle_count.toString());
+      setCycleUnit(PRESET_MAP[p].cycle_unit);
+    }
+  };
 
   const handleSubmit = async (e: ReactFormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -88,6 +118,11 @@ export default function SubscriptionForm({
       setError(t("subscriptionForm.pricePositive"));
       return;
     }
+    const countNum = parseInt(cycleCount, 10);
+    if (isNaN(countNum) || countNum < 1) {
+      setError(t("subscriptionForm.cycleCountMin"));
+      return;
+    }
     if (!startDate) {
       setError(t("subscriptionForm.startDateRequired"));
       return;
@@ -99,11 +134,11 @@ export default function SubscriptionForm({
         name: name.trim(),
         price: priceNum,
         currency,
-        billing_cycle: billingCycle,
+        cycle_count: countNum,
+        cycle_unit: cycleUnit,
         category: category || null,
         status: subStatus,
         start_date: startDate,
-        next_billing_date: nextBillingDate || null,
         auto_renew: autoRenew,
         notes: notes || null,
       };
@@ -119,6 +154,14 @@ export default function SubscriptionForm({
       setSubmitting(false);
     }
   };
+
+  const presetButtons: { key: PresetKey; label: string }[] = [
+    { key: "weekly", label: t("subscriptions.cycles.weekly") },
+    { key: "monthly", label: t("subscriptions.cycles.monthly") },
+    { key: "quarterly", label: t("subscriptions.cycles.quarterly") },
+    { key: "yearly", label: t("subscriptions.cycles.yearly") },
+    { key: "custom", label: t("subscriptionForm.customCycle") },
+  ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -170,24 +213,47 @@ export default function SubscriptionForm({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label>{t("subscriptionForm.billingCycle")}</Label>
-              <Select
-                value={billingCycle}
-                onValueChange={(v) => setBillingCycle(v as BillingCycle)}
-              >
-                <SelectTrigger>
-                  <SelectValue label={t(`subscriptions.cycles.${billingCycle}`)} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="weekly">{t("subscriptions.cycles.weekly")}</SelectItem>
-                  <SelectItem value="monthly">{t("subscriptions.cycles.monthly")}</SelectItem>
-                  <SelectItem value="quarterly">{t("subscriptions.cycles.quarterly")}</SelectItem>
-                  <SelectItem value="yearly">{t("subscriptions.cycles.yearly")}</SelectItem>
-                </SelectContent>
-              </Select>
+          <div className="flex flex-col gap-2">
+            <Label>{t("subscriptionForm.billingCycle")}</Label>
+            <div className="flex flex-wrap gap-2">
+              {presetButtons.map(({ key, label }) => (
+                <Button
+                  key={key}
+                  type="button"
+                  variant={preset === key ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePresetChange(key)}
+                >
+                  {label}
+                </Button>
+              ))}
             </div>
+            {preset === "custom" && (
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                <Input
+                  type="number"
+                  min="1"
+                  value={cycleCount}
+                  onChange={(e) => setCycleCount(e.target.value)}
+                  placeholder={t("subscriptionForm.cycleCount")}
+                />
+                <Select value={cycleUnit} onValueChange={(v) => setCycleUnit(v as CycleUnit)}>
+                  <SelectTrigger>
+                    <SelectValue label={t(`subscriptions.cycle_units.${cycleUnit}`)} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CYCLE_UNITS.map((u) => (
+                      <SelectItem key={u} value={u}>
+                        {t(`subscriptions.cycle_units.${u}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <Label>{t("subscriptionForm.status")}</Label>
               <Select
@@ -204,45 +270,33 @@ export default function SubscriptionForm({
                 </SelectContent>
               </Select>
             </div>
+            <div className="flex flex-col gap-2">
+              <Label>{t("subscriptionForm.category")}</Label>
+              <Select value={category || undefined} onValueChange={(v) => setCategory(v === "__none__" ? "" : (v ?? ""))}>
+                <SelectTrigger>
+                  <SelectValue label={category ? t(`subscriptions.categories.${category}`) : undefined} placeholder={t("subscriptionForm.none")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">{t("subscriptionForm.none")}</SelectItem>
+                  {CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {t(`subscriptions.categories.${cat}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>{t("subscriptionForm.category")}</Label>
-            <Select value={category || undefined} onValueChange={(v) => setCategory(v === "__none__" ? "" : (v ?? ""))}>
-              <SelectTrigger>
-                <SelectValue label={category ? t(`subscriptions.categories.${category}`) : undefined} placeholder={t("subscriptionForm.none")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">{t("subscriptionForm.none")}</SelectItem>
-                {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {t(`subscriptions.categories.${cat}`)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="start_date">{t("subscriptionForm.startDate")}</Label>
-              <Input
-                id="start_date"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="next_billing_date">{t("subscriptionForm.nextBillingDate")}</Label>
-              <Input
-                id="next_billing_date"
-                type="date"
-                value={nextBillingDate}
-                onChange={(e) => setNextBillingDate(e.target.value)}
-              />
-            </div>
+            <Label htmlFor="start_date">{t("subscriptionForm.startDate")}</Label>
+            <Input
+              id="start_date"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              required
+            />
           </div>
 
           <div className="flex flex-col gap-2">

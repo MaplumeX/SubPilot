@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Verify migration is reversible and follows DB conventions"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Check test coverage for normalization and auto-compute logic"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Verify type alignment between frontend and backend for new fields"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Verify data flow consistency across API boundary"}

@@ -220,6 +220,16 @@ Added label prop to SelectValue so trigger displays translated text instead of r
 - None - task complete
 
 
+## Session 7: Customizable Billing Cycle
+
+**Date**: 2026-06-08
+**Task**: Customizable Billing Cycle
+**Branch**: `MaplumeX/custom-billing-cycle`
+
+### Summary
+
+Replace BillingCycle enum with cycle_count (int) + cycle_unit (CycleUnit: day/week/month/year). Auto-compute next_billing_date. Preset buttons + custom entry in form. Removed cycle filter from list page.
+
 ## Session 7: Add auto-renewal feature for subscriptions
 
 **Date**: 2026-06-08
@@ -238,6 +248,7 @@ Added auto_renew boolean field (default True) to Subscription model, renewal ser
 
 | Hash | Message |
 |------|---------|
+| `a8f665f` | (see git log) |
 | `0cf7aa7` | (see git log) |
 
 ### Testing

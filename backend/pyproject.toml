@@ -13,6 +13,7 @@ dependencies = [
     "pydantic-settings",
     "pydantic[email]",
     "python-multipart",
+    "python-dateutil",
     "apscheduler",
 ]
 

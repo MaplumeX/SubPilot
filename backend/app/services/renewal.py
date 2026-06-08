@@ -1,34 +1,26 @@
-import calendar
 from datetime import date, timedelta
 
+from dateutil.relativedelta import relativedelta
 from sqlalchemy.orm import Session
 
-from app.models.subscription import BillingCycle, Subscription, SubscriptionStatus
+from app.models.subscription import CycleUnit, Subscription, SubscriptionStatus
 
 
-def advance_next_billing_date(next_date: date, cycle: BillingCycle) -> date:
+def advance_next_billing_date(next_date: date, cycle_count: int, cycle_unit: CycleUnit) -> date:
     """Advance a billing date by one cycle."""
-    if cycle == BillingCycle.weekly:
-        return next_date + timedelta(days=7)
+    if cycle_unit == CycleUnit.day:
+        return next_date + timedelta(days=cycle_count)
 
-    if cycle == BillingCycle.yearly:
-        try:
-            return next_date.replace(year=next_date.year + 1)
-        except ValueError:
-            # Feb 29 in a leap year -> Feb 28 in a non-leap year
-            return next_date.replace(month=2, day=28, year=next_date.year + 1)
+    if cycle_unit == CycleUnit.week:
+        return next_date + timedelta(weeks=cycle_count)
 
-    # Monthly or quarterly
-    months = 1 if cycle == BillingCycle.monthly else 3
+    if cycle_unit == CycleUnit.month:
+        return next_date + relativedelta(months=cycle_count)
 
-    new_month = next_date.month + months
-    new_year = next_date.year + (new_month - 1) // 12
-    new_month = (new_month - 1) % 12 + 1
+    if cycle_unit == CycleUnit.year:
+        return next_date + relativedelta(years=cycle_count)
 
-    max_day = calendar.monthrange(new_year, new_month)[1]
-    new_day = min(next_date.day, max_day)
-
-    return date(new_year, new_month, new_day)
+    return next_date
 
 
 def process_renewals(db: Session) -> int:
@@ -55,7 +47,7 @@ def process_renewals(db: Session) -> int:
     count = 0
     for sub in subscriptions:
         sub.next_billing_date = advance_next_billing_date(
-            sub.next_billing_date, sub.billing_cycle
+            sub.next_billing_date, sub.cycle_count, sub.cycle_unit
         )
         count += 1
 
