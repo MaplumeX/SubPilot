@@ -1,0 +1,11 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "verify frontend i18n follows spec conventions"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "check Settings page and modified components comply"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "verify i18n file placement and page location"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "quality bar check"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "verify i18n types are correct"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "verify locale state management pattern"}
+{"file": ".trellis/spec/backend/index.md", "reason": "verify backend locale endpoint follows spec"}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "verify migration follows conventions"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "check error handling in new endpoint"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "quality bar check"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "verify locale flows correctly across layers"}

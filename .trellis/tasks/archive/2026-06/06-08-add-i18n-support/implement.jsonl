@@ -1,0 +1,13 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "frontend spec index — i18n mainly affects frontend"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "need to follow component patterns when adding Settings page and modifying existing components"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "where to place i18n config, translation files, and Settings page"}
+{"file": ".trellis/spec/frontend/hook-guidelines.md", "reason": "useTranslation hook patterns and custom locale hook"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "how locale state integrates with existing AuthContext pattern"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "quality bar for frontend changes"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "typescript patterns for i18n types"}
+{"file": ".trellis/spec/backend/index.md", "reason": "backend spec index — need to add user locale field and API endpoint"}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Alembic migration for user locale column"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "where to place new router/schema for user settings endpoint"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "follow error handling patterns in new settings endpoint"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "quality bar for backend changes"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "locale flows across frontend-backend boundary"}

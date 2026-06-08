@@ -36,3 +36,10 @@ export async function getMe(): Promise<UserResponse> {
   const { data } = await api.get<UserResponse>("/auth/me");
   return data;
 }
+
+export async function updateLocale(locale: string): Promise<UserResponse> {
+  const { data } = await api.patch<UserResponse>("/auth/me/locale", null, {
+    params: { locale },
+  });
+  return data;
+}
