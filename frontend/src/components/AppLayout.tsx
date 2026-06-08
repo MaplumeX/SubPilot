@@ -6,6 +6,7 @@ import DashboardPage from "@/pages/DashboardPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
 import SettingsPage from "@/pages/SettingsPage";
 import SubscriptionForm from "@/components/SubscriptionForm";
+import ThemeToggle from "@/components/theme-toggle";
 import { createSubscription } from "@/api/subscriptions";
 import type { SubscriptionCreate } from "@/api/types";
 
@@ -52,6 +53,7 @@ export default function AppLayout() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <span className="text-sm text-muted-foreground">{user?.email}</span>
           <button
             onClick={handleLogout}

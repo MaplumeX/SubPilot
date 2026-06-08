@@ -20,6 +20,7 @@
 | Auth tokens | localStorage + Context | access_token, refresh_token |
 | Current user | AuthContext | user object |
 | User locale | Backend (user.locale) + i18next | "en", "zh-CN" |
+| Theme preference | localStorage + next-themes | light/dark/system mode |
 | Page data | Component state | subscription list, stats |
 | Form inputs | Component state | email, password, form fields |
 | UI toggles | Component state | dialog open/close, loading flags |

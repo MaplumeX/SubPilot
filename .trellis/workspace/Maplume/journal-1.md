@@ -52,6 +52,16 @@ Implemented SubPilot subscription management app from scratch: FastAPI + SQLAlch
 
 Implemented full i18n support: react-i18next + i18next setup, 92 translation keys across en/zh-CN, Settings page with language switching, backend user.locale field + Alembic migration + PATCH /me/locale endpoint, AuthProvider locale sync on login, dynamic date/currency formatting, ERROR_KEY_MAP for backend error message mapping. Updated frontend/backend specs with i18n patterns.
 
+## Session 2: Add theme system with light/dark/system modes
+
+**Date**: 2026-06-08
+**Task**: Add theme system with light/dark/system modes
+**Branch**: `MaplumeX/support-theme-system`
+
+### Summary
+
+Implemented theme system using next-themes: ThemeProvider with class attribute, ThemeToggle dropdown (Light/Dark/System), useTheme hook re-export, FOUC prevention inline script. Updated frontend component/hook/state-management specs with theme patterns and common mistakes.
+
 ### Main Changes
 
 (Add details)
@@ -62,6 +72,8 @@ Implemented full i18n support: react-i18next + i18next setup, 92 translation key
 |------|---------|
 | `ac96abc` | (see git log) |
 | `fdfc454` | (see git log) |
+| `46161ad` | (see git log) |
+| `1338d8a` | (see git log) |
 
 ### Testing
 

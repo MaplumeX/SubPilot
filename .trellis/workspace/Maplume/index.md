@@ -30,6 +30,7 @@
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
 | 2 | 2026-06-08 | Add i18n support with en and zh-CN | `ac96abc`, `fdfc454` | `MaplumeX/i18n-support` |
+| 2 | 2026-06-08 | Add theme system with light/dark/system modes | `46161ad`, `1338d8a` | `MaplumeX/support-theme-system` |
 | 1 | 2026-06-08 | SubPilot v1 MVP: full-stack subscription manager | `90dd4f7`, `6631394`, `6d7a8f0` | `main` |
 <!-- @@@/auto:session-history -->
 
