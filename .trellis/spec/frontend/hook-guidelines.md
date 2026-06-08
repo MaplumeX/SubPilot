@@ -6,46 +6,73 @@
 
 ## Overview
 
-<!--
-Document your project's hook conventions here.
-
-Questions to answer:
-- What custom hooks do you have?
-- How do you handle data fetching?
-- What are the naming conventions?
-- How do you share stateful logic?
--->
-
-(To be filled by the team)
+Custom hooks are minimal in this project. The primary pattern is `useAuth()` — a thin context wrapper. Data fetching is done via direct Axios calls inside `useEffect` or event handlers; there is no React Query / SWR integration.
 
 ---
 
 ## Custom Hook Patterns
 
-<!-- How to create and structure custom hooks -->
+When extracting stateful logic into a custom hook:
 
-(To be filled by the team)
+1. Name the file `src/<hook-name>.ts` or `src/<hook-name>.tsx` (flat under `src/`, matching the existing `auth-hook.ts` convention).
+2. Export a single `use<Name>()` function.
+3. If the hook reads from React Context, follow the `useAuth` pattern: `useContext(MyContext)` with a null guard that throws if used outside the provider.
+4. Keep hooks focused on one concern — don't bundle unrelated state in a single hook.
+
+Example (`src/auth-hook.ts`):
+
+```typescript
+import { useContext } from "react";
+import { AuthContext } from "./auth-context";
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  return context;
+}
+```
 
 ---
 
 ## Data Fetching
 
-<!-- How data fetching is handled (React Query, SWR, etc.) -->
+Current pattern: direct Axios calls, no caching layer.
 
-(To be filled by the team)
+- **On mount**: call API in `useEffect(() => { fetch() }, [])`, store result in `useState`.
+- **On mutation**: call API in event handler, then manually re-fetch or update local state.
+- **Error handling**: narrow Axios errors with `((err as { response?: { data?: { detail?: string } } })?.response?.data?.detail) ?? "Default message"`.
+
+When a hook wraps data fetching, follow this shape:
+
+```typescript
+export function useSubscriptions() {
+  const [subs, setSubs] = useState<Subscription[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.getSubscriptions().then(setSubs).finally(() => setLoading(false));
+  }, []);
+
+  return { subs, loading };
+}
+```
+
+If React Query is added later, migrate data-fetching hooks to use `useQuery` / `useMutation` internally while keeping the same public API.
 
 ---
 
 ## Naming Conventions
 
-<!-- Hook naming rules (use*, etc.) -->
-
-(To be filled by the team)
+- Hook functions: `use<PascalCase noun>` — `useAuth`, `useSubscriptions`, `useTheme`
+- Hook files: `src/<kebab-case-hook-name>.ts` — `auth-hook.ts`, `subscriptions-hook.ts`
+- Context files: `src/<domain>-context.tsx` — `auth-context.tsx`
+- Context provider: `<Domain>Provider` — `AuthProvider`
 
 ---
 
 ## Common Mistakes
 
-<!-- Hook-related mistakes your team has made -->
-
-(To be filled by the team)
+- **Calling hooks conditionally** — hooks must be called at the top level of the component, never inside `if` / `try` / loops.
+- **Forgetting the dependency array** in `useEffect` — omitting it causes infinite re-renders when the effect sets state.
+- **Stale closures** — when `useEffect` callbacks read state that has changed, use `useCallback` or restructure to pass values through the dependency array.
+- **Not handling the loading state** — always show a loading indicator while async data is being fetched.
