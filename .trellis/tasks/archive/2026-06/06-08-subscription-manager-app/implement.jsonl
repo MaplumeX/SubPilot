@@ -1,0 +1,13 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend guidelines index — discover available spec files"}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "SQLAlchemy/Alembic patterns and DB conventions for the project"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Backend module organization and file layout conventions"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Error types and handling strategies for FastAPI"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Code standards and forbidden patterns for backend"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend guidelines index — discover available spec files"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Frontend module organization and file layout conventions"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "shadcn/ui component patterns, props, composition conventions"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Code standards and forbidden patterns for frontend"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "TypeScript type patterns and validation conventions"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "State management patterns for auth/API state"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "API contract consistency between backend and frontend"}
+{"file": ".trellis/tasks/06-08-subscription-manager-app/prd.md", "reason": "Full requirements, tech decisions, and acceptance criteria for this task"}

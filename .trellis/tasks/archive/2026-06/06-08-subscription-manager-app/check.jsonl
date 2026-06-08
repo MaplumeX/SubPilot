@@ -1,0 +1,11 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend guidelines index — verify backend spec compliance"}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Check DB patterns, migration conventions, query safety"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Verify error handling and HTTP status code conventions"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Check backend code quality, forbidden patterns, lint rules"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend guidelines index — verify frontend spec compliance"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Verify shadcn/ui component usage patterns and composition"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Check frontend code quality and forbidden patterns"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Verify TypeScript type patterns and API response typing"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Verify API contract consistency between backend and frontend"}
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "Check for code reuse opportunities and deduplication"}
+{"file": ".trellis/tasks/06-08-subscription-manager-app/prd.md", "reason": "Verify implementation matches requirements and acceptance criteria"}
