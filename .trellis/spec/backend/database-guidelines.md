@@ -51,3 +51,4 @@ alembic upgrade head
 - **Using `datetime.utcnow()`** → deprecated; use `datetime.now(timezone.utc)` via a `_utcnow` helper
 - **Using `!= None`** → SQLAlchemy doesn't translate this correctly; use `.isnot(None)`
 - **Missing `ondelete="CASCADE"`** on ForeignKey → orphaned records in SQLite when parent is deleted
+- **Missing `server_default` on Boolean columns** — SQLite can't handle Python-side defaults in ALTER TABLE; always use `server_default=text("1")` / `text("0")` for non-nullable Boolean columns

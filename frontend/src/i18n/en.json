@@ -67,7 +67,10 @@
       "monthly": "Monthly",
       "quarterly": "Quarterly",
       "yearly": "Yearly"
-    }
+    },
+    "auto_renew": "Auto Renew",
+    "auto_renew_enabled": "Auto renewal enabled",
+    "auto_renew_disabled": "Auto renewal disabled"
   },
   "subscriptionForm": {
     "editTitle": "Edit Subscription",
@@ -96,7 +99,8 @@
     },
     "update": "Update",
     "create": "Create",
-    "saveFailed": "Failed to save subscription"
+    "saveFailed": "Failed to save subscription",
+    "auto_renew": "Auto Renew"
   },
   "layout": {
     "appName": "SubPilot",
