@@ -55,3 +55,21 @@ For 422 validation errors, FastAPI returns the standard schema with field-level 
 - **Returning 404 vs 403** — when a user accesses another user's resource, return 404 (not 403) to avoid leaking existence
 - **Forgetting to verify token type** — access tokens and refresh tokens must be validated by `type` claim to prevent a refresh token from accessing protected endpoints
 - **Missing ownership check** — always include `user_id` filter in queries
+
+---
+
+## i18n Error Messages
+
+Backend error messages remain in English. Frontend maps them to localized strings via an `ERROR_KEY_MAP`:
+
+```typescript
+const ERROR_KEY_MAP: Record<string, string> = {
+  "Email already registered": "errors.emailRegistered",
+  "Invalid credentials": "errors.invalidCredentials",
+  "Invalid refresh token": "errors.invalidRefreshToken",
+  "User not found": "errors.userNotFound",
+  "Subscription not found": "errors.subscriptionNotFound",
+};
+```
+
+When adding new backend error messages, add the `detail` string to this map and both translation files.
