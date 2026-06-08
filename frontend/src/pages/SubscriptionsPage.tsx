@@ -113,7 +113,7 @@ export default function SubscriptionsPage() {
       </div>
 
       <div className="flex gap-4">
-        <Select value={filterCategory || "__all__"} onValueChange={(v) => setFilterCategory(v === "__all__" ? "" : (v ?? ""))}>
+        <Select value={filterCategory || undefined} onValueChange={(v) => setFilterCategory(v === "__all__" ? "" : v)}>
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder={t("subscriptions.allCategories")} />
           </SelectTrigger>
@@ -127,7 +127,7 @@ export default function SubscriptionsPage() {
           </SelectContent>
         </Select>
 
-        <Select value={filterStatus || "__all__"} onValueChange={(v) => setFilterStatus(v === "__all__" ? "" : (v ?? ""))}>
+        <Select value={filterStatus || undefined} onValueChange={(v) => setFilterStatus(v === "__all__" ? "" : v)}>
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder={t("subscriptions.allStatuses")} />
           </SelectTrigger>
@@ -141,7 +141,7 @@ export default function SubscriptionsPage() {
           </SelectContent>
         </Select>
 
-        <Select value={filterCycle || "__all__"} onValueChange={(v) => setFilterCycle(v === "__all__" ? "" : (v ?? ""))}>
+        <Select value={filterCycle || undefined} onValueChange={(v) => setFilterCycle(v === "__all__" ? "" : v)}>
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder={t("subscriptions.allCycles")} />
           </SelectTrigger>
