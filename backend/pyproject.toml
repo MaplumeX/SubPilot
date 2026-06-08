@@ -1,0 +1,16 @@
+[project]
+name = "subpilot-backend"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "sqlalchemy",
+    "alembic",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+    "bcrypt<4.1",
+    "pydantic-settings",
+    "pydantic[email]",
+    "python-multipart",
+]
