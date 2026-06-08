@@ -96,3 +96,14 @@ if (theme === 'dark' || ((theme === 'system' || !theme) && window.matchMedia('(p
 ```
 
 Key: `placeholder` only renders when `value` is `undefined`/empty. The sentinel `SelectItem` is still needed in the dropdown so users can explicitly select "All X" to clear the filter — but the trigger display must not depend on portal-mounted items for its initial text.
+
+---
+
+## i18n in Components
+
+- Use `const { t } = useTranslation()` in every component with user-facing strings
+- Replace all hardcoded strings with `t('namespace.key')`
+- Translation keys are organized by page/component namespace (auth, dashboard, subscriptions, subscriptionForm, layout, settings, errors)
+- For dynamic keys (e.g., category/status/cycle names), use `t(\`subscriptions.categories.\${category}\`)` pattern — ensure all dynamic values exist as keys in both language files
+- Date/currency formatting: use `i18n.language` as locale for `toLocaleDateString()` and `Intl.NumberFormat`
+- Backend error messages: map `err?.response?.data?.detail` through a local `ERROR_KEY_MAP` object to translate via `t('errors.xxx')`

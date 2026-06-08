@@ -29,11 +29,15 @@ frontend/
 │   │   ├── RegisterPage.tsx
 │   │   ├── DashboardPage.tsx
 │   │   └── SubscriptionsPage.tsx
+│   ├── i18n/
+│   │   ├── index.ts            # i18next config (init + LanguageDetector)
+│   │   ├── en.json             # English translations
+│   │   └── zh-CN.json          # Simplified Chinese translations
 │   ├── auth-context.tsx       # Auth context provider
 │   ├── auth-hook.ts           # useAuth hook
 │   ├── routes.tsx             # ProtectedRoute, GuestRoute wrappers
 │   ├── App.tsx                # Router config
-│   ├── main.tsx               # Entry point
+│   ├── main.tsx               # Entry point (imports i18n before App)
 │   ├── index.css              # Tailwind CSS v4 + shadcn theme
 │   └── lib/
 │       └── utils.ts           # cn() utility
@@ -47,6 +51,7 @@ frontend/
 ## Module Organization
 
 - **api/** — one file per domain (auth, subscriptions), shared types in `types.ts`
+- **i18n/** — i18next config + JSON translation files (one per locale)
 - **components/ui/** — shadcn/ui primitives only, no business logic
 - **components/** — feature-level reusable components
 - **pages/** — route-level page components
@@ -67,3 +72,12 @@ frontend/
 1. Create `src/pages/<Name>Page.tsx`
 2. Add route in `App.tsx` (within AppLayout for authenticated pages)
 3. Add nav link in `AppLayout.tsx` if needed
+
+---
+
+## Adding a New Locale
+
+1. Create `src/i18n/<locale>.json` with all translation keys
+2. Import and register in `src/i18n/index.ts` under `resources`
+3. Add locale to the `PATCH /me/locale` allowlist in `backend/app/routers/auth.py`
+4. Add `SelectItem` in `src/pages/SettingsPage.tsx`

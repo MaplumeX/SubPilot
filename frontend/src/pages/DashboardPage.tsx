@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { getStats } from "@/api/subscriptions";
 import type { SubscriptionStats } from "@/api/types";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ interface DashboardPageProps {
 }
 
 export default function DashboardPage({ onAddSubscription }: DashboardPageProps) {
+  const { t, i18n } = useTranslation();
   const [stats, setStats] = useState<SubscriptionStats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,48 +39,49 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
     fetchStats();
   }, [fetchStats]);
 
-  const chartData = generateChartData(stats);
+  const chartData = generateChartData(stats, i18n.language);
+  const locale = i18n.language;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Dashboard</h2>
-        <Button onClick={onAddSubscription}>Add Subscription</Button>
+        <h2 className="text-2xl font-bold">{t("dashboard.title")}</h2>
+        <Button onClick={onAddSubscription}>{t("dashboard.addSubscription")}</Button>
       </div>
 
       {loading ? (
-        <p className="text-muted-foreground">Loading...</p>
+        <p className="text-muted-foreground">{t("dashboard.loading")}</p>
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Monthly Spend
+                  {t("dashboard.monthlySpend")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-2xl font-bold">
-                  CNY {stats?.total_monthly.toFixed(2)}
+                  {new Intl.NumberFormat(locale, { style: "currency", currency: "CNY" }).format(stats?.total_monthly ?? 0)}
                 </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Yearly Spend
+                  {t("dashboard.yearlySpend")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-2xl font-bold">
-                  CNY {stats?.total_yearly.toFixed(2)}
+                  {new Intl.NumberFormat(locale, { style: "currency", currency: "CNY" }).format(stats?.total_yearly ?? 0)}
                 </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Active Subscriptions
+                  {t("dashboard.activeSubscriptions")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -90,7 +93,7 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
           {stats && stats.due_soon.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Due Soon</CardTitle>
+                <CardTitle>{t("dashboard.dueSoon")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col gap-2">
@@ -105,7 +108,7 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
                           {sub.next_billing_date}
                         </p>
                       </div>
-                      <Badge variant="destructive">Due Soon</Badge>
+                      <Badge variant="destructive">{t("dashboard.dueSoon")}</Badge>
                     </div>
                   ))}
                 </div>
@@ -115,7 +118,7 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
 
           <Card>
             <CardHeader>
-              <CardTitle>Monthly Spending Trend</CardTitle>
+              <CardTitle>{t("dashboard.monthlyTrend")}</CardTitle>
             </CardHeader>
             <CardContent>
               {chartData.length > 0 ? (
@@ -135,7 +138,7 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
                 </ResponsiveContainer>
               ) : (
                 <p className="text-muted-foreground">
-                  Add subscriptions to see spending trends
+                  {t("dashboard.emptyTrend")}
                 </p>
               )}
             </CardContent>
@@ -146,14 +149,14 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
   );
 }
 
-function generateChartData(stats: SubscriptionStats | null) {
+function generateChartData(stats: SubscriptionStats | null, locale: string) {
   if (!stats || stats.count === 0) return [];
 
   const months: { month: string; amount: number }[] = [];
   const today = new Date();
   for (let i = 11; i >= 0; i--) {
     const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-    const label = d.toLocaleDateString("en-US", {
+    const label = d.toLocaleDateString(locale, {
       month: "short",
       year: "2-digit",
     });

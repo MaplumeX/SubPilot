@@ -42,6 +42,16 @@ Implemented SubPilot subscription management app from scratch: FastAPI + SQLAlch
 - None - task complete
 
 
+## Session 2: Add i18n support with en and zh-CN
+
+**Date**: 2026-06-08
+**Task**: Add i18n support with en and zh-CN
+**Branch**: `MaplumeX/i18n-support`
+
+### Summary
+
+Implemented full i18n support: react-i18next + i18next setup, 92 translation keys across en/zh-CN, Settings page with language switching, backend user.locale field + Alembic migration + PATCH /me/locale endpoint, AuthProvider locale sync on login, dynamic date/currency formatting, ERROR_KEY_MAP for backend error message mapping. Updated frontend/backend specs with i18n patterns.
+
 ## Session 2: Add theme system with light/dark/system modes
 
 **Date**: 2026-06-08
@@ -60,6 +70,8 @@ Implemented theme system using next-themes: ThemeProvider with class attribute, 
 
 | Hash | Message |
 |------|---------|
+| `ac96abc` | (see git log) |
+| `fdfc454` | (see git log) |
 | `46161ad` | (see git log) |
 | `1338d8a` | (see git log) |
 
