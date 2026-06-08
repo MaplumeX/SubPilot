@@ -87,6 +87,13 @@
     "pricePositive": "Price must be greater than 0",
     "startDateRequired": "Start date is required",
     "saving": "Saving...",
+    "currencies": {
+      "CNY": "CNY (¥)",
+      "USD": "USD ($)",
+      "EUR": "EUR (€)",
+      "GBP": "GBP (£)",
+      "JPY": "JPY (¥)"
+    },
     "update": "Update",
     "create": "Create",
     "saveFailed": "Failed to save subscription"
