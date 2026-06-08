@@ -6,46 +6,39 @@
 
 ## Overview
 
-<!--
-Document your project's type safety conventions here.
-
-Questions to answer:
-- What type system do you use?
-- How are types organized?
-- What validation library do you use?
-- How do you handle type inference?
--->
-
-(To be filled by the team)
+- TypeScript strict mode
+- Path alias: `@/*` → `./src/*`
+- API boundary types in `src/api/types.ts`
+- Pydantic schemas on backend must match TypeScript types on frontend
 
 ---
 
 ## Type Organization
 
-<!-- Where types are defined, shared types vs local types -->
-
-(To be filled by the team)
+- `src/api/types.ts` — all API request/response types and enums/shared types
+- Inline interfaces — component props defined in the same file
+- No separate `types/` directory — keep types close to usage
 
 ---
 
 ## Validation
 
-<!-- Runtime validation patterns (Zod, Yup, io-ts, etc.) -->
-
-(To be filled by the team)
+- Backend: Pydantic schemas with validators (e.g., `min_length=8` for password)
+- Frontend: manual validation in form handlers (e.g., password match, price > 0)
+- No Zod/Yup — validate at the API boundary (backend) and in form handlers (frontend)
 
 ---
 
 ## Common Patterns
 
-<!-- Type utilities, generics, type guards -->
-
-(To be filled by the team)
+- Enum types shared as string union types: `BillingCycle = "weekly" | "monthly" | "quarterly" | "yearly"`
+- API response types: `UserResponse`, `SubscriptionResponse`, `TokenResponse`
+- Error type narrowing: `(err as { response?: { data?: { detail?: string } } })?.response?.data?.detail`
 
 ---
 
 ## Forbidden Patterns
 
-<!-- any, type assertions, etc. -->
-
-(To be filled by the team)
+- `any` — use `unknown` and narrow
+- Type assertions without runtime checks on untrusted data
+- Importing backend Python types — maintain separate TypeScript definitions

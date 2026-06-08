@@ -6,49 +6,64 @@
 
 ## Overview
 
-<!--
-Document your project's backend directory structure here.
-
-Questions to answer:
-- How are modules/packages organized?
-- Where does business logic live?
-- Where are API endpoints defined?
-- How are utilities and helpers organized?
--->
-
-(To be filled by the team)
+The backend follows a layered architecture with FastAPI, organized by domain (models, schemas, routers) rather than by feature.
 
 ---
 
 ## Directory Layout
 
 ```
-<!-- Replace with your actual structure -->
-src/
-├── ...
-└── ...
+backend/
+├── app/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI app entry, CORS, lifespan, router registration
+│   ├── config.py             # pydantic-settings BaseSettings
+│   ├── database.py           # SQLAlchemy engine, SessionLocal, Base, get_db
+│   ├── deps.py               # Shared dependencies (get_db, get_current_user)
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py           # User SQLAlchemy model
+│   │   └── subscription.py   # Subscription SQLAlchemy model
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   ├── auth.py           # Auth Pydantic schemas
+│   │   └── subscription.py   # Subscription Pydantic schemas
+│   └── routers/
+│       ├── __init__.py
+│       ├── auth.py           # /api/v1/auth/* endpoints
+│       └── subscriptions.py  # /api/v1/subscriptions/* endpoints
+├── alembic/
+│   ├── env.py
+│   └── versions/             # Auto-generated migrations
+├── alembic.ini
+└── requirements.txt
 ```
 
 ---
 
 ## Module Organization
 
-<!-- How should new features/modules be organized? -->
-
-(To be filled by the team)
+- **models/** — SQLAlchemy ORM models, one file per entity
+- **schemas/** — Pydantic request/response schemas, one file per domain
+- **routers/** — FastAPI routers, one file per API domain. All routes under `/api/v1/<domain>`
+- **deps.py** — Shared FastAPI dependencies (DB session, current user extraction)
 
 ---
 
 ## Naming Conventions
 
-<!-- File and folder naming rules -->
-
-(To be filled by the team)
+- Model files: `user.py`, `subscription.py` (singular, lowercase)
+- Schema files: `auth.py`, `subscription.py` (match the router domain)
+- Router files: `auth.py`, `subscriptions.py` (match the URL prefix)
+- Alembic migrations: auto-generated with descriptive messages
 
 ---
 
-## Examples
+## Adding a New Domain
 
-<!-- Link to well-organized modules as examples -->
-
-(To be filled by the team)
+1. Create model in `models/<name>.py`, import in `models/__init__.py`
+2. Create schemas in `schemas/<name>.py`
+3. Create router in `routers/<name>.py`
+4. Register router in `main.py`
+5. Import model in `alembic/env.py` for autogenerate
+6. Run `alembic revision --autogenerate -m "add <name> table"`

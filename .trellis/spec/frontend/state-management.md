@@ -6,46 +6,46 @@
 
 ## Overview
 
-<!--
-Document your project's state management conventions here.
-
-Questions to answer:
-- What state management solution do you use?
-- How is local vs global state decided?
-- How do you handle server state?
-- What are the patterns for derived state?
--->
-
-(To be filled by the team)
+- **Auth state**: React Context (`AuthContext`) + `useAuth` hook
+- **Server state**: direct fetch via Axios, no SWR/React Query
+- **Local UI state**: `useState` per component
+- **Form state**: `useState` per field (no form library)
 
 ---
 
 ## State Categories
 
-<!-- Local state, global state, server state, URL state -->
-
-(To be filled by the team)
+| Category | Storage | Example |
+|----------|---------|---------|
+| Auth tokens | localStorage + Context | access_token, refresh_token |
+| Current user | AuthContext | user object |
+| Page data | Component state | subscription list, stats |
+| Form inputs | Component state | email, password, form fields |
+| UI toggles | Component state | dialog open/close, loading flags |
 
 ---
 
 ## When to Use Global State
 
-<!-- Criteria for promoting state to global -->
+Only for truly cross-cutting concerns:
+- Auth (user identity, tokens)
+- Theme preferences
 
-(To be filled by the team)
+Everything else stays in component state. No premature abstraction.
 
 ---
 
 ## Server State
 
-<!-- How server data is cached and synchronized -->
-
-(To be filled by the team)
+- Fetch on mount or user action
+- No caching layer — refetch when needed
+- Auth token injected via Axios interceptor in `api/client.ts`
+- 401 responses trigger redirect to `/login`
 
 ---
 
 ## Common Mistakes
 
-<!-- State management mistakes your team has made -->
-
-(To be filled by the team)
+- **Missing `useCallback` on context value functions** — causes all consumers to re-render unnecessarily
+- **Storing derived state** — calculate on the fly (e.g., monthly total from subscriptions) instead of storing separately
+- **Not invalidating after mutation** — after create/update/delete, refetch the list or stats

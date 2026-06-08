@@ -6,54 +6,39 @@
 
 ## Overview
 
-<!--
-Document your project's component conventions here.
-
-Questions to answer:
-- What component patterns do you use?
-- How are props defined?
-- How do you handle composition?
-- What accessibility standards apply?
--->
-
-(To be filled by the team)
+- UI primitives: shadcn/ui (Radix-based, Tailwind-styled)
+- Feature components: custom components in `src/components/`
+- Page components: route-level in `src/pages/`
 
 ---
 
 ## Component Structure
 
-<!-- Standard structure of a component file -->
-
-(To be filled by the team)
+- One component per file with `export default`
+- No named exports of style variants (e.g., `buttonVariants`) — breaks react-refresh
+- Keep component, its types, and logic in one file
 
 ---
 
 ## Props Conventions
 
-<!-- How props should be defined and typed -->
-
-(To be filled by the team)
+- Use inline TypeScript interfaces for props
+- Callback props: `onSubmit`, `onSuccess`, `onClick`
+- Boolean props: use `disabled`, `loading`, not `isDisabled`, `isLoading`
 
 ---
 
 ## Styling Patterns
 
-<!-- How styles are applied (CSS modules, styled-components, Tailwind, etc.) -->
-
-(To be filled by the team)
-
----
-
-## Accessibility
-
-<!-- A11y requirements and patterns -->
-
-(To be filled by the team)
+- Tailwind CSS v4 with `@tailwindcss/vite` plugin
+- Theme customization in `src/index.css` via CSS variables
+- shadcn/ui `cn()` utility from `src/lib/utils.ts` for conditional classes
+- No separate CSS files, no CSS modules
 
 ---
 
 ## Common Mistakes
 
-<!-- Component-related mistakes your team has made -->
-
-(To be filled by the team)
+- **Exporting style variants alongside default** — causes react-refresh warning; extract variant logic inside the component only
+- **Missing `key` on form components** — when reusing a form for create/edit, add `key={editing?.id ?? "create"}` to force remount
+- **Forgetting `useCallback` for context values** — causes consumers to re-render on every provider update

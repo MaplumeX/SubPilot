@@ -4,48 +4,38 @@
 
 ---
 
-## Overview
-
-<!--
-Document your project's quality standards here.
-
-Questions to answer:
-- What patterns are forbidden?
-- What linting rules do you enforce?
-- What are your testing requirements?
-- What code review standards apply?
--->
-
-(To be filled by the team)
-
----
-
 ## Forbidden Patterns
 
-<!-- Patterns that should never be used and why -->
-
-(To be filled by the team)
+- `buttonVariants` / `badgeVariants` exports alongside default — breaks react-refresh
+- `FormEvent` direct import (deprecated) — use `import { useState, type FormEvent as ReactFormEvent } from "react"`
+- Inline style objects — use Tailwind classes
+- Unkeyed form components in create/edit mode — always add `key` prop
 
 ---
 
 ## Required Patterns
 
-<!-- Patterns that must always be used -->
-
-(To be filled by the team)
+- `export default` single component per file
+- All shadcn/ui components in `src/components/ui/`
+- Tailwind CSS v4 with `@tailwindcss/vite` plugin
+- API types centralized in `src/api/types.ts`
+- Path alias `@/` for all imports
 
 ---
 
 ## Testing Requirements
 
-<!-- What level of testing is expected -->
-
-(To be filled by the team)
+- `tsc --noEmit` must pass with zero errors
+- `eslint` must pass with zero errors
+- `npm run build` must produce no errors
 
 ---
 
 ## Code Review Checklist
 
-<!-- What reviewers should check -->
-
-(To be filled by the team)
+- [ ] No deprecated API usage (`FormEvent` without rename)
+- [ ] All form components have `key` prop for entity switching
+- [ ] Context value functions wrapped in `useCallback`
+- [ ] shadcn/ui components don't export style variants (react-refresh)
+- [ ] TypeScript types match backend Pydantic schemas
+- [ ] No `any` types
