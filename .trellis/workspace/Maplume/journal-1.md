@@ -40,3 +40,37 @@ Implemented SubPilot subscription management app from scratch: FastAPI + SQLAlch
 ### Next Steps
 
 - None - task complete
+
+
+## Session 2: Add theme system with light/dark/system modes
+
+**Date**: 2026-06-08
+**Task**: Add theme system with light/dark/system modes
+**Branch**: `MaplumeX/support-theme-system`
+
+### Summary
+
+Implemented theme system using next-themes: ThemeProvider with class attribute, ThemeToggle dropdown (Light/Dark/System), useTheme hook re-export, FOUC prevention inline script. Updated frontend component/hook/state-management specs with theme patterns and common mistakes.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `46161ad` | (see git log) |
+| `1338d8a` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
