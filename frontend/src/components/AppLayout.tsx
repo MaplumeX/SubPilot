@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
+import { cn } from "@/lib/utils";
 import DashboardPage from "@/pages/DashboardPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
 import SettingsPage from "@/pages/SettingsPage";
@@ -14,6 +15,7 @@ export default function AppLayout() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [formOpen, setFormOpen] = useState(false);
 
   const handleLogout = () => {
@@ -34,19 +36,34 @@ export default function AppLayout() {
           <nav className="flex items-center gap-4">
             <button
               onClick={() => navigate("/")}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className={cn(
+                "text-sm transition-colors",
+                location.pathname === "/"
+                  ? "text-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
               {t("layout.dashboard")}
             </button>
             <button
               onClick={() => navigate("/subscriptions")}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className={cn(
+                "text-sm transition-colors",
+                location.pathname.startsWith("/subscriptions")
+                  ? "text-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
               {t("layout.subscriptions")}
             </button>
             <button
               onClick={() => navigate("/settings")}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className={cn(
+                "text-sm transition-colors",
+                location.pathname.startsWith("/settings")
+                  ? "text-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
               {t("layout.settings")}
             </button>

@@ -119,3 +119,36 @@ Fixed __all__/__none__ appearing as raw text in @base-ui/react Select components
 ### Next Steps
 
 - None - task complete
+
+
+## Session 4: Fix frontend component and style issues
+
+**Date**: 2026-06-08
+**Task**: Fix frontend component and style issues
+**Branch**: `MaplumeX/frontend-component-issues`
+
+### Summary
+
+Fixed 5 frontend UI bugs: Dialog width conflict (sm:max-w-sm→sm:max-w-lg), Recharts oklch color incompatibility, table horizontal overflow, delete confirmation dialog, and navigation active state highlight. Updated component-guidelines spec with oklch/SVG gotcha and dialog width convention.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `275ef8e` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
