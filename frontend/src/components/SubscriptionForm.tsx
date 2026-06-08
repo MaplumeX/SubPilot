@@ -187,9 +187,9 @@ export default function SubscriptionForm({
 
           <div className="flex flex-col gap-2">
             <Label>Category</Label>
-            <Select value={category || "__none__"} onValueChange={(v) => setCategory(v === "__none__" ? "" : (v ?? ""))}>
+            <Select value={category || undefined} onValueChange={(v) => setCategory(v === "__none__" ? "" : v)}>
               <SelectTrigger>
-                <SelectValue placeholder="Select category" />
+                <SelectValue placeholder="None" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="__none__">None</SelectItem>
