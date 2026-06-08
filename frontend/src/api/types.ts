@@ -8,6 +8,7 @@ export interface UserResponse {
   id: number;
   email: string;
   is_active: boolean;
+  locale: string;
   created_at: string;
 }
 

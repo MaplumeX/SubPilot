@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from jose import jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
@@ -107,4 +107,14 @@ def refresh(data: RefreshRequest, db: Session = Depends(get_db)):
 
 @router.get("/me", response_model=UserResponse)
 def me(current_user: User = Depends(get_current_user)):
+    return current_user
+
+
+@router.patch("/me/locale", response_model=UserResponse)
+def update_locale(locale: str = Query(...), current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if locale not in ("en", "zh-CN"):
+        raise HTTPException(status_code=400, detail="Unsupported locale")
+    current_user.locale = locale
+    db.commit()
+    db.refresh(current_user)
     return current_user

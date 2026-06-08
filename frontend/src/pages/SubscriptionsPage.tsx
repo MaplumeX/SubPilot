@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import {
   listSubscriptions,
   deleteSubscription,
@@ -25,7 +26,23 @@ import {
 } from "@/components/ui/select";
 import SubscriptionForm from "@/components/SubscriptionForm";
 
+const CATEGORIES = [
+  "streaming",
+  "software",
+  "cloud",
+  "fitness",
+  "music",
+  "gaming",
+  "news",
+  "productivity",
+  "other",
+] as const;
+
+const STATUSES = ["active", "cancelled", "trial"] as const;
+const CYCLES = ["weekly", "monthly", "quarterly", "yearly"] as const;
+
 export default function SubscriptionsPage() {
+  const { t } = useTranslation();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterCategory, setFilterCategory] = useState<string>("");
@@ -84,78 +101,77 @@ export default function SubscriptionsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Subscriptions</h2>
+        <h2 className="text-2xl font-bold">{t("subscriptions.title")}</h2>
         <Button
           onClick={() => {
             setEditing(null);
             setFormOpen(true);
           }}
         >
-          Add Subscription
+          {t("subscriptions.addSubscription")}
         </Button>
       </div>
 
       <div className="flex gap-4">
         <Select value={filterCategory || "__all__"} onValueChange={(v) => setFilterCategory(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="All categories" />
+            <SelectValue placeholder={t("subscriptions.allCategories")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="__all__">All categories</SelectItem>
-            <SelectItem value="streaming">Streaming</SelectItem>
-            <SelectItem value="software">Software</SelectItem>
-            <SelectItem value="cloud">Cloud</SelectItem>
-            <SelectItem value="fitness">Fitness</SelectItem>
-            <SelectItem value="music">Music</SelectItem>
-            <SelectItem value="gaming">Gaming</SelectItem>
-            <SelectItem value="news">News</SelectItem>
-            <SelectItem value="productivity">Productivity</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
+            <SelectItem value="__all__">{t("subscriptions.allCategories")}</SelectItem>
+            {CATEGORIES.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {t(`subscriptions.categories.${cat}`)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
         <Select value={filterStatus || "__all__"} onValueChange={(v) => setFilterStatus(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="All statuses" />
+            <SelectValue placeholder={t("subscriptions.allStatuses")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="__all__">All statuses</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
-            <SelectItem value="trial">Trial</SelectItem>
+            <SelectItem value="__all__">{t("subscriptions.allStatuses")}</SelectItem>
+            {STATUSES.map((s) => (
+              <SelectItem key={s} value={s}>
+                {t(`subscriptions.statuses.${s}`)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
         <Select value={filterCycle || "__all__"} onValueChange={(v) => setFilterCycle(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="All cycles" />
+            <SelectValue placeholder={t("subscriptions.allCycles")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="__all__">All cycles</SelectItem>
-            <SelectItem value="weekly">Weekly</SelectItem>
-            <SelectItem value="monthly">Monthly</SelectItem>
-            <SelectItem value="quarterly">Quarterly</SelectItem>
-            <SelectItem value="yearly">Yearly</SelectItem>
+            <SelectItem value="__all__">{t("subscriptions.allCycles")}</SelectItem>
+            {CYCLES.map((c) => (
+              <SelectItem key={c} value={c}>
+                {t(`subscriptions.cycles.${c}`)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
 
       {loading ? (
-        <p className="text-muted-foreground">Loading...</p>
+        <p className="text-muted-foreground">{t("subscriptions.loading")}</p>
       ) : subscriptions.length === 0 ? (
-        <p className="text-muted-foreground">No subscriptions found</p>
+        <p className="text-muted-foreground">{t("subscriptions.noSubscriptions")}</p>
       ) : (
         <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Cycle</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Next Billing</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t("subscriptions.name")}</TableHead>
+                <TableHead>{t("subscriptions.price")}</TableHead>
+                <TableHead>{t("subscriptions.cycle")}</TableHead>
+                <TableHead>{t("subscriptions.category")}</TableHead>
+                <TableHead>{t("subscriptions.status")}</TableHead>
+                <TableHead>{t("subscriptions.nextBilling")}</TableHead>
+                <TableHead className="text-right">{t("subscriptions.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -165,15 +181,17 @@ export default function SubscriptionsPage() {
                     {sub.name}
                     {isDueSoon(sub) && (
                       <Badge variant="destructive" className="ml-2">
-                        Due Soon
+                        {t("dashboard.dueSoon")}
                       </Badge>
                     )}
                   </TableCell>
                   <TableCell>
                     {sub.currency} {sub.price.toFixed(2)}
                   </TableCell>
-                  <TableCell className="capitalize">{sub.billing_cycle}</TableCell>
-                  <TableCell className="capitalize">{sub.category ?? "-"}</TableCell>
+                  <TableCell>{t(`subscriptions.cycles.${sub.billing_cycle}`)}</TableCell>
+                  <TableCell>
+                    {sub.category ? t(`subscriptions.categories.${sub.category}`) : "-"}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant={
@@ -184,7 +202,7 @@ export default function SubscriptionsPage() {
                             : "outline"
                       }
                     >
-                      {sub.status}
+                      {t(`subscriptions.statuses.${sub.status}`)}
                     </Badge>
                   </TableCell>
                   <TableCell>{sub.next_billing_date ?? "-"}</TableCell>
@@ -198,14 +216,14 @@ export default function SubscriptionsPage() {
                           setFormOpen(true);
                         }}
                       >
-                        Edit
+                        {t("subscriptions.edit")}
                       </Button>
                       <Button
                         variant="destructive"
                         size="sm"
                         onClick={() => handleDelete(sub.id)}
                       >
-                        Delete
+                        {t("subscriptions.delete")}
                       </Button>
                     </div>
                   </TableCell>

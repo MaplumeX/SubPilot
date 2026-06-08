@@ -1,0 +1,114 @@
+{
+  "auth": {
+    "signIn": "Sign in to SubPilot",
+    "signInSubtitle": "Enter your credentials to continue",
+    "email": "Email",
+    "password": "Password",
+    "signInButton": "Sign in",
+    "noAccount": "No account?",
+    "register": "Register",
+    "loginFailed": "Login failed",
+    "createAccount": "Create your account",
+    "createAccountSubtitle": "Start managing your subscriptions",
+    "confirmPassword": "Confirm password",
+    "createAccountButton": "Create account",
+    "hasAccount": "Already have an account?",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "registrationFailed": "Registration failed"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "addSubscription": "Add Subscription",
+    "loading": "Loading...",
+    "monthlySpend": "Monthly Spend",
+    "yearlySpend": "Yearly Spend",
+    "activeSubscriptions": "Active Subscriptions",
+    "dueSoon": "Due Soon",
+    "monthlyTrend": "Monthly Spending Trend",
+    "emptyTrend": "Add subscriptions to see spending trends"
+  },
+  "subscriptions": {
+    "title": "Subscriptions",
+    "addSubscription": "Add Subscription",
+    "allCategories": "All categories",
+    "allStatuses": "All statuses",
+    "allCycles": "All cycles",
+    "loading": "Loading...",
+    "noSubscriptions": "No subscriptions found",
+    "name": "Name",
+    "price": "Price",
+    "cycle": "Cycle",
+    "category": "Category",
+    "status": "Status",
+    "nextBilling": "Next Billing",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "categories": {
+      "streaming": "Streaming",
+      "software": "Software",
+      "cloud": "Cloud",
+      "fitness": "Fitness",
+      "music": "Music",
+      "gaming": "Gaming",
+      "news": "News",
+      "productivity": "Productivity",
+      "other": "Other"
+    },
+    "statuses": {
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "trial": "Trial"
+    },
+    "cycles": {
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "yearly": "Yearly"
+    }
+  },
+  "subscriptionForm": {
+    "editTitle": "Edit Subscription",
+    "addTitle": "Add Subscription",
+    "name": "Name",
+    "price": "Price",
+    "currency": "Currency",
+    "billingCycle": "Billing Cycle",
+    "status": "Status",
+    "category": "Category",
+    "startDate": "Start Date",
+    "nextBillingDate": "Next Billing Date",
+    "notes": "Notes",
+    "selectCategory": "Select category",
+    "none": "None",
+    "nameRequired": "Name is required",
+    "pricePositive": "Price must be greater than 0",
+    "startDateRequired": "Start date is required",
+    "saving": "Saving...",
+    "update": "Update",
+    "create": "Create",
+    "saveFailed": "Failed to save subscription"
+  },
+  "layout": {
+    "appName": "SubPilot",
+    "dashboard": "Dashboard",
+    "subscriptions": "Subscriptions",
+    "signOut": "Sign out",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languageDescription": "Choose your preferred language",
+    "english": "English",
+    "chinese": "简体中文"
+  },
+  "errors": {
+    "emailRegistered": "Email already registered",
+    "invalidCredentials": "Invalid credentials",
+    "invalidRefreshToken": "Invalid refresh token",
+    "userNotFound": "User not found",
+    "subscriptionNotFound": "Subscription not found"
+  }
+}

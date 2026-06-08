@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
 import DashboardPage from "@/pages/DashboardPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
+import SettingsPage from "@/pages/SettingsPage";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import { createSubscription } from "@/api/subscriptions";
 import type { SubscriptionCreate } from "@/api/types";
 
 export default function AppLayout() {
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [formOpen, setFormOpen] = useState(false);
@@ -26,19 +29,25 @@ export default function AppLayout() {
     <div className="flex min-h-screen flex-col">
       <header className="flex items-center justify-between border-b px-6 py-3">
         <div className="flex items-center gap-6">
-          <h1 className="text-lg font-semibold">SubPilot</h1>
+          <h1 className="text-lg font-semibold">{t("layout.appName")}</h1>
           <nav className="flex items-center gap-4">
             <button
               onClick={() => navigate("/")}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Dashboard
+              {t("layout.dashboard")}
             </button>
             <button
               onClick={() => navigate("/subscriptions")}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Subscriptions
+              {t("layout.subscriptions")}
+            </button>
+            <button
+              onClick={() => navigate("/settings")}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {t("layout.settings")}
             </button>
           </nav>
         </div>
@@ -48,7 +57,7 @@ export default function AppLayout() {
             onClick={handleLogout}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Sign out
+            {t("layout.signOut")}
           </button>
         </div>
       </header>
@@ -64,6 +73,7 @@ export default function AppLayout() {
             }
           />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

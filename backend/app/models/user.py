@@ -17,6 +17,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    locale: Mapped[str] = mapped_column(String(10), nullable=False, default="en")
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=_utcnow
     )

@@ -1,5 +1,6 @@
 import { useState, type FormEvent as ReactFormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
 import { register } from "@/api/auth";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+const ERROR_KEY_MAP: Record<string, string> = {
+  "Invalid credentials": "errors.invalidCredentials",
+  "Email already registered": "errors.emailRegistered",
+  "Invalid refresh token": "errors.invalidRefreshToken",
+  "User not found": "errors.userNotFound",
+  "Subscription not found": "errors.subscriptionNotFound",
+};
+
 export default function RegisterPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,11 +36,11 @@ export default function RegisterPage() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(t("auth.passwordMismatch"));
       return;
     }
     if (password.length < 8) {
-      setError("Password must be at least 8 characters");
+      setError(t("auth.passwordTooShort"));
       return;
     }
 
@@ -39,10 +49,11 @@ export default function RegisterPage() {
       setTokens(tokens.access_token, tokens.refresh_token);
       navigate("/");
     } catch (err: unknown) {
-      const message =
+      const detail =
         (err as { response?: { data?: { detail?: string } } })?.response?.data
           ?.detail ?? "Registration failed";
-      setError(message);
+      const key = ERROR_KEY_MAP[detail];
+      setError(key ? t(key) : t("auth.registrationFailed"));
     }
   };
 
@@ -50,8 +61,8 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Create your account</CardTitle>
-          <CardDescription>Start managing your subscriptions</CardDescription>
+          <CardTitle>{t("auth.createAccount")}</CardTitle>
+          <CardDescription>{t("auth.createAccountSubtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -59,7 +70,7 @@ export default function RegisterPage() {
               <p className="text-sm text-destructive">{error}</p>
             )}
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -69,7 +80,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("auth.password")}</Label>
               <Input
                 id="password"
                 type="password"
@@ -80,7 +91,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="confirm-password">Confirm password</Label>
+              <Label htmlFor="confirm-password">{t("auth.confirmPassword")}</Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -89,11 +100,11 @@ export default function RegisterPage() {
                 required
               />
             </div>
-            <Button type="submit">Create account</Button>
+            <Button type="submit">{t("auth.createAccountButton")}</Button>
             <p className="text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
+              {t("auth.hasAccount")}{" "}
               <Link to="/login" className="text-primary underline">
-                Sign in
+                {t("auth.signInButton")}
               </Link>
             </p>
           </form>

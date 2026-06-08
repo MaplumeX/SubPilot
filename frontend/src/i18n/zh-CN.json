@@ -1,0 +1,114 @@
+{
+  "auth": {
+    "signIn": "登录 SubPilot",
+    "signInSubtitle": "输入您的凭据以继续",
+    "email": "邮箱",
+    "password": "密码",
+    "signInButton": "登录",
+    "noAccount": "没有账号？",
+    "register": "注册",
+    "loginFailed": "登录失败",
+    "createAccount": "创建账号",
+    "createAccountSubtitle": "开始管理您的订阅",
+    "confirmPassword": "确认密码",
+    "createAccountButton": "创建账号",
+    "hasAccount": "已有账号？",
+    "passwordMismatch": "两次密码不一致",
+    "passwordTooShort": "密码至少需要 8 个字符",
+    "registrationFailed": "注册失败"
+  },
+  "dashboard": {
+    "title": "仪表盘",
+    "addSubscription": "添加订阅",
+    "loading": "加载中...",
+    "monthlySpend": "月度支出",
+    "yearlySpend": "年度支出",
+    "activeSubscriptions": "活跃订阅",
+    "dueSoon": "即将到期",
+    "monthlyTrend": "月度支出趋势",
+    "emptyTrend": "添加订阅以查看支出趋势"
+  },
+  "subscriptions": {
+    "title": "订阅管理",
+    "addSubscription": "添加订阅",
+    "allCategories": "全部分类",
+    "allStatuses": "全部状态",
+    "allCycles": "全部周期",
+    "loading": "加载中...",
+    "noSubscriptions": "暂无订阅",
+    "name": "名称",
+    "price": "价格",
+    "cycle": "周期",
+    "category": "分类",
+    "status": "状态",
+    "nextBilling": "下次扣费",
+    "actions": "操作",
+    "edit": "编辑",
+    "delete": "删除",
+    "categories": {
+      "streaming": "流媒体",
+      "software": "软件",
+      "cloud": "云服务",
+      "fitness": "健身",
+      "music": "音乐",
+      "gaming": "游戏",
+      "news": "新闻",
+      "productivity": "生产力",
+      "other": "其他"
+    },
+    "statuses": {
+      "active": "活跃",
+      "cancelled": "已取消",
+      "trial": "试用"
+    },
+    "cycles": {
+      "weekly": "每周",
+      "monthly": "每月",
+      "quarterly": "每季度",
+      "yearly": "每年"
+    }
+  },
+  "subscriptionForm": {
+    "editTitle": "编辑订阅",
+    "addTitle": "添加订阅",
+    "name": "名称",
+    "price": "价格",
+    "currency": "货币",
+    "billingCycle": "计费周期",
+    "status": "状态",
+    "category": "分类",
+    "startDate": "开始日期",
+    "nextBillingDate": "下次计费日期",
+    "notes": "备注",
+    "selectCategory": "选择分类",
+    "none": "无",
+    "nameRequired": "名称为必填项",
+    "pricePositive": "价格必须大于 0",
+    "startDateRequired": "开始日期为必填项",
+    "saving": "保存中...",
+    "update": "更新",
+    "create": "创建",
+    "saveFailed": "保存订阅失败"
+  },
+  "layout": {
+    "appName": "SubPilot",
+    "dashboard": "仪表盘",
+    "subscriptions": "订阅管理",
+    "signOut": "退出登录",
+    "settings": "设置"
+  },
+  "settings": {
+    "title": "设置",
+    "language": "语言",
+    "languageDescription": "选择您偏好的语言",
+    "english": "English",
+    "chinese": "简体中文"
+  },
+  "errors": {
+    "emailRegistered": "该邮箱已注册",
+    "invalidCredentials": "用户名或密码错误",
+    "invalidRefreshToken": "无效的刷新令牌",
+    "userNotFound": "用户未找到",
+    "subscriptionNotFound": "订阅未找到"
+  }
+}

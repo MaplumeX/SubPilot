@@ -1,5 +1,6 @@
 import { useState, type FormEvent as ReactFormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
 import { login } from "@/api/auth";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+const ERROR_KEY_MAP: Record<string, string> = {
+  "Invalid credentials": "errors.invalidCredentials",
+  "Email already registered": "errors.emailRegistered",
+  "Invalid refresh token": "errors.invalidRefreshToken",
+  "User not found": "errors.userNotFound",
+  "Subscription not found": "errors.subscriptionNotFound",
+};
+
 export default function LoginPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,10 +38,11 @@ export default function LoginPage() {
       setTokens(tokens.access_token, tokens.refresh_token);
       navigate("/");
     } catch (err: unknown) {
-      const message =
+      const detail =
         (err as { response?: { data?: { detail?: string } } })?.response?.data
           ?.detail ?? "Login failed";
-      setError(message);
+      const key = ERROR_KEY_MAP[detail];
+      setError(key ? t(key) : t("auth.loginFailed"));
     }
   };
 
@@ -39,9 +50,9 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Sign in to SubPilot</CardTitle>
+          <CardTitle>{t("auth.signIn")}</CardTitle>
           <CardDescription>
-            Enter your credentials to continue
+            {t("auth.signInSubtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -50,7 +61,7 @@ export default function LoginPage() {
               <p className="text-sm text-destructive">{error}</p>
             )}
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -60,7 +71,7 @@ export default function LoginPage() {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("auth.password")}</Label>
               <Input
                 id="password"
                 type="password"
@@ -69,11 +80,11 @@ export default function LoginPage() {
                 required
               />
             </div>
-            <Button type="submit">Sign in</Button>
+            <Button type="submit">{t("auth.signInButton")}</Button>
             <p className="text-center text-sm text-muted-foreground">
-              No account?{" "}
+              {t("auth.noAccount")}{" "}
               <Link to="/register" className="text-primary underline">
-                Register
+                {t("auth.register")}
               </Link>
             </p>
           </form>

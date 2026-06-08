@@ -1,4 +1,5 @@
 import { useState, type FormEvent as ReactFormEvent } from "react";
+import { useTranslation } from "react-i18next";
 import type { Subscription, SubscriptionCreate, BillingCycle, SubscriptionStatus } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,7 +36,13 @@ const CATEGORIES = [
   "news",
   "productivity",
   "other",
-];
+] as const;
+
+const ERROR_KEY_MAP: Record<string, string> = {
+  "Invalid credentials": "errors.invalidCredentials",
+  "Email already registered": "errors.emailRegistered",
+  "Subscription not found": "errors.subscriptionNotFound",
+};
 
 export default function SubscriptionForm({
   open,
@@ -43,6 +50,7 @@ export default function SubscriptionForm({
   subscription,
   onSubmit,
 }: SubscriptionFormProps) {
+  const { t } = useTranslation();
   const isEdit = !!subscription;
 
   const [name, setName] = useState(subscription?.name ?? "");
@@ -68,16 +76,16 @@ export default function SubscriptionForm({
     setError("");
 
     if (!name.trim()) {
-      setError("Name is required");
+      setError(t("subscriptionForm.nameRequired"));
       return;
     }
     const priceNum = parseFloat(price);
     if (isNaN(priceNum) || priceNum <= 0) {
-      setError("Price must be greater than 0");
+      setError(t("subscriptionForm.pricePositive"));
       return;
     }
     if (!startDate) {
-      setError("Start date is required");
+      setError(t("subscriptionForm.startDateRequired"));
       return;
     }
 
@@ -97,10 +105,11 @@ export default function SubscriptionForm({
       await onSubmit(payload);
       onOpenChange(false);
     } catch (err: unknown) {
-      const message =
+      const detail =
         (err as { response?: { data?: { detail?: string } } })?.response?.data
           ?.detail ?? "Failed to save subscription";
-      setError(message);
+      const key = ERROR_KEY_MAP[detail];
+      setError(key ? t(key) : t("subscriptionForm.saveFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -111,14 +120,14 @@ export default function SubscriptionForm({
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {isEdit ? "Edit Subscription" : "Add Subscription"}
+            {isEdit ? t("subscriptionForm.editTitle") : t("subscriptionForm.addTitle")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{t("subscriptionForm.name")}</Label>
             <Input
               id="name"
               value={name}
@@ -129,7 +138,7 @@ export default function SubscriptionForm({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="price">Price</Label>
+              <Label htmlFor="price">{t("subscriptionForm.price")}</Label>
               <Input
                 id="price"
                 type="number"
@@ -140,7 +149,7 @@ export default function SubscriptionForm({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="currency">Currency</Label>
+              <Label htmlFor="currency">{t("subscriptionForm.currency")}</Label>
               <Input
                 id="currency"
                 value={currency}
@@ -151,7 +160,7 @@ export default function SubscriptionForm({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label>Billing Cycle</Label>
+              <Label>{t("subscriptionForm.billingCycle")}</Label>
               <Select
                 value={billingCycle}
                 onValueChange={(v) => setBillingCycle(v as BillingCycle)}
@@ -160,15 +169,15 @@ export default function SubscriptionForm({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="quarterly">Quarterly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
+                  <SelectItem value="weekly">{t("subscriptions.cycles.weekly")}</SelectItem>
+                  <SelectItem value="monthly">{t("subscriptions.cycles.monthly")}</SelectItem>
+                  <SelectItem value="quarterly">{t("subscriptions.cycles.quarterly")}</SelectItem>
+                  <SelectItem value="yearly">{t("subscriptions.cycles.yearly")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex flex-col gap-2">
-              <Label>Status</Label>
+              <Label>{t("subscriptionForm.status")}</Label>
               <Select
                 value={subStatus}
                 onValueChange={(v) => setSubStatus(v as SubscriptionStatus)}
@@ -177,25 +186,25 @@ export default function SubscriptionForm({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                  <SelectItem value="trial">Trial</SelectItem>
+                  <SelectItem value="active">{t("subscriptions.statuses.active")}</SelectItem>
+                  <SelectItem value="cancelled">{t("subscriptions.statuses.cancelled")}</SelectItem>
+                  <SelectItem value="trial">{t("subscriptions.statuses.trial")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>Category</Label>
+            <Label>{t("subscriptionForm.category")}</Label>
             <Select value={category || "__none__"} onValueChange={(v) => setCategory(v === "__none__" ? "" : (v ?? ""))}>
               <SelectTrigger>
-                <SelectValue placeholder="Select category" />
+                <SelectValue placeholder={t("subscriptionForm.selectCategory")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__none__">None</SelectItem>
+                <SelectItem value="__none__">{t("subscriptionForm.none")}</SelectItem>
                 {CATEGORIES.map((cat) => (
                   <SelectItem key={cat} value={cat}>
-                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    {t(`subscriptions.categories.${cat}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -204,7 +213,7 @@ export default function SubscriptionForm({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="start_date">Start Date</Label>
+              <Label htmlFor="start_date">{t("subscriptionForm.startDate")}</Label>
               <Input
                 id="start_date"
                 type="date"
@@ -214,7 +223,7 @@ export default function SubscriptionForm({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="next_billing_date">Next Billing Date</Label>
+              <Label htmlFor="next_billing_date">{t("subscriptionForm.nextBillingDate")}</Label>
               <Input
                 id="next_billing_date"
                 type="date"
@@ -225,7 +234,7 @@ export default function SubscriptionForm({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes">{t("subscriptionForm.notes")}</Label>
             <Textarea
               id="notes"
               value={notes}
@@ -235,7 +244,7 @@ export default function SubscriptionForm({
           </div>
 
           <Button type="submit" disabled={submitting}>
-            {submitting ? "Saving..." : isEdit ? "Update" : "Create"}
+            {submitting ? t("subscriptionForm.saving") : isEdit ? t("subscriptionForm.update") : t("subscriptionForm.create")}
           </Button>
         </form>
       </DialogContent>

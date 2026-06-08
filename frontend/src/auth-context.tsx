@@ -5,6 +5,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { getMe } from "@/api/auth";
 import type { UserResponse } from "@/api/types";
 
@@ -21,6 +22,7 @@ export type { AuthContextValue };
 export { AuthContext };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { i18n } = useTranslation();
   const [user, setUser] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -39,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     getMe()
       .then((u) => {
         setUser(u);
+        i18n.changeLanguage(u.locale || "en");
       })
       .catch(() => {
         localStorage.removeItem("access_token");
@@ -47,15 +50,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [i18n]);
 
   const setTokens = useCallback(
     (accessToken: string, refreshToken: string) => {
       localStorage.setItem("access_token", accessToken);
       localStorage.setItem("refresh_token", refreshToken);
-      getMe().then(setUser).catch(logout);
+      getMe().then((u) => {
+        setUser(u);
+        i18n.changeLanguage(u.locale || "en");
+      }).catch(logout);
     },
-    [logout]
+    [logout, i18n]
   );
 
   return (
