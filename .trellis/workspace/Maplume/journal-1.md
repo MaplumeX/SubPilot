@@ -152,3 +152,36 @@ Fixed 5 frontend UI bugs: Dialog width conflict (sm:max-w-sm→sm:max-w-lg), Rec
 ### Next Steps
 
 - None - task complete
+
+
+## Session 5: Fix Select text/style mismatch
+
+**Date**: 2026-06-08
+**Task**: Fix Select text/style mismatch
+**Branch**: `MaplumeX/fix-text-and-menu-mismatch`
+
+### Summary
+
+SelectTrigger default width w-fit→w-full, currency Input→Select (CNY/USD/EUR/GBP/JPY with i18n), fix onValueChange null typing for base-ui Select
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9f923d9` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
