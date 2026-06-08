@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Verify migration follows naming and column conventions"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Check auto_renew type consistency across layers"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Verify data flow: model field → schema → API → frontend type → form toggle"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Code quality checks for new service module and scheduler"}

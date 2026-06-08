@@ -218,3 +218,36 @@ Added label prop to SelectValue so trigger displays translated text instead of r
 ### Next Steps
 
 - None - task complete
+
+
+## Session 7: Add auto-renewal feature for subscriptions
+
+**Date**: 2026-06-08
+**Task**: Add auto-renewal feature for subscriptions
+**Branch**: `MaplumeX/auto-renewal`
+
+### Summary
+
+Added auto_renew boolean field (default True) to Subscription model, renewal service with date advancement logic (weekly/monthly/quarterly/yearly including month-end edge cases), APScheduler daily background job in FastAPI lifespan, frontend Switch toggle in SubscriptionForm, RefreshCw icon column in SubscriptionsPage table, i18n translations (en/zh-CN), alembic migration. Updated backend spec for services directory and Boolean server_default convention.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0cf7aa7` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
