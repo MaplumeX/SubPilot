@@ -74,3 +74,36 @@ Implemented theme system using next-themes: ThemeProvider with class attribute, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 3: Fix Select sentinel value display
+
+**Date**: 2026-06-08
+**Task**: Fix Select sentinel value display
+**Branch**: `MaplumeX/fix-subscription-all-display`
+
+### Summary
+
+Fixed __all__/__none__ appearing as raw text in @base-ui/react Select components by using value={x||undefined} instead of sentinel string values, so SelectValue placeholder is triggered correctly.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9af6931` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
