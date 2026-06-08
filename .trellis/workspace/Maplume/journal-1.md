@@ -185,3 +185,36 @@ SelectTrigger default width w-fit→w-full, currency Input→Select (CNY/USD/EUR
 ### Next Steps
 
 - None - task complete
+
+
+## Session 6: Fix Select trigger showing raw value instead of translated label
+
+**Date**: 2026-06-08
+**Task**: Fix Select trigger showing raw value instead of translated label
+**Branch**: `MaplumeX/select-label-mismatch`
+
+### Summary
+
+Added label prop to SelectValue so trigger displays translated text instead of raw value string. Root cause: Base UI Portal renders SelectItem outside DOM, so SelectPrimitive.Value cannot resolve ItemText on mount.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f215204` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

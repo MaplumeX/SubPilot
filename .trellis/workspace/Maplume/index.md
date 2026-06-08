@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 5
+- **Total Sessions**: 6
 - **Last Active**: 2026-06-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~187 | Active |
+| `journal-1.md` | ~220 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 6 | 2026-06-08 | Fix Select trigger showing raw value instead of translated label | `f215204` | `MaplumeX/select-label-mismatch` |
 | 5 | 2026-06-08 | Fix Select text/style mismatch | `9f923d9` | `MaplumeX/fix-text-and-menu-mismatch` |
 | 4 | 2026-06-08 | Fix frontend component and style issues | `275ef8e` | `MaplumeX/frontend-component-issues` |
 | 3 | 2026-06-08 | Fix Select sentinel value display | `9af6931` | `MaplumeX/fix-subscription-all-display` |

@@ -50,7 +50,7 @@ export default function SettingsPage() {
               onValueChange={handleLanguageChange}
             >
               <SelectTrigger className="w-[200px]">
-                <SelectValue />
+                <SelectValue label={i18n.language === "zh-CN" ? t("settings.chinese") : t("settings.english")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="en">{t("settings.english")}</SelectItem>
