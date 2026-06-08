@@ -7,11 +7,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
 
-class BillingCycle(str, enum.Enum):
-    weekly = "weekly"
-    monthly = "monthly"
-    quarterly = "quarterly"
-    yearly = "yearly"
+class CycleUnit(str, enum.Enum):
+    day = "day"
+    week = "week"
+    month = "month"
+    year = "year"
 
 
 class SubscriptionStatus(str, enum.Enum):
@@ -34,8 +34,9 @@ class Subscription(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False)
     currency: Mapped[str] = mapped_column(String(3), default="CNY")
-    billing_cycle: Mapped[BillingCycle] = mapped_column(
-        Enum(BillingCycle), nullable=False
+    cycle_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1")
+    cycle_unit: Mapped[CycleUnit] = mapped_column(
+        Enum(CycleUnit), nullable=False
     )
     category: Mapped[str | None] = mapped_column(String(100), nullable=True)
     status: Mapped[SubscriptionStatus] = mapped_column(

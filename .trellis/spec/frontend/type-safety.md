@@ -31,7 +31,7 @@
 
 ## Common Patterns
 
-- Enum types shared as string union types: `BillingCycle = "weekly" | "monthly" | "quarterly" | "yearly"`
+- Enum types shared as string union types: `CycleUnit = "day" | "week" | "month" | "year"`
 - API response types: `UserResponse`, `SubscriptionResponse`, `TokenResponse`
 - Error type narrowing: `(err as { response?: { data?: { detail?: string } } })?.response?.data?.detail`
 

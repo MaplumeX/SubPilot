@@ -51,3 +51,5 @@ alembic upgrade head
 - **Using `datetime.utcnow()`** → deprecated; use `datetime.now(timezone.utc)` via a `_utcnow` helper
 - **Using `!= None`** → SQLAlchemy doesn't translate this correctly; use `.isnot(None)`
 - **Missing `ondelete="CASCADE"`** on ForeignKey → orphaned records in SQLite when parent is deleted
+- **Adding CHECK constraints with plain ALTER TABLE** → not supported by SQLite; use `batch_alter_table` with `create_check_constraint` instead
+- **Replacing an enum column with multiple columns** → migrate data first (add new cols → UPDATE data → drop old col), and use `batch_alter_table` for cross-dialect compatibility
