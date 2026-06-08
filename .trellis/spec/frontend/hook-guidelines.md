@@ -17,7 +17,7 @@ When extracting stateful logic into a custom hook:
 1. Name the file `src/<hook-name>.ts` or `src/<hook-name>.tsx` (flat under `src/`, matching the existing `auth-hook.ts` convention).
 2. Export a single `use<Name>()` function.
 3. If the hook reads from React Context, follow the `useAuth` pattern: `useContext(MyContext)` with a null guard that throws if used outside the provider.
-4. Keep hooks focused on one concern — don't bundle unrelated state in a single hook.
+4. If the hook wraps a third-party library (e.g., `useTheme` from `next-themes`), re-export from a flat `src/*.ts` file so consumers import from `@/theme-hook` instead of the library directly. This decouples components from the specific library implementation.
 
 Example (`src/auth-hook.ts`):
 

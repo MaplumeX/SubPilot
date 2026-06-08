@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Theme provider and dropdown toggle must follow component conventions"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Place theme-provider and toggle in correct directories"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "ThemeProvider uses React Context — must align with state management patterns"}
+{"file": ".trellis/spec/frontend/hook-guidelines.md", "reason": "useTheme hook must follow hook conventions"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Theme type definitions must follow type safety guidelines"}
+{"file": ".trellis/tasks/06-08-theme-system-support/prd.md", "reason": "Task requirements, decisions, and acceptance criteria"}
