@@ -45,6 +45,7 @@
     "actions": "操作",
     "edit": "编辑",
     "delete": "删除",
+    "confirmDelete": "确定要删除此订阅吗？",
     "categories": {
       "streaming": "流媒体",
       "software": "软件",

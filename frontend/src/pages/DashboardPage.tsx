@@ -131,7 +131,7 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
                     <Line
                       type="monotone"
                       dataKey="amount"
-                      stroke="hsl(var(--primary))"
+                      stroke="var(--primary)"
                       strokeWidth={2}
                     />
                   </LineChart>

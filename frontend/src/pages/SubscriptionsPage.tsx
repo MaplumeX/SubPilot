@@ -85,6 +85,9 @@ export default function SubscriptionsPage() {
   };
 
   const handleDelete = async (id: number) => {
+    if (!window.confirm(t("subscriptions.confirmDelete"))) {
+      return;
+    }
     await deleteSubscription(id);
     fetchSubscriptions();
   };
@@ -161,7 +164,7 @@ export default function SubscriptionsPage() {
       ) : subscriptions.length === 0 ? (
         <p className="text-muted-foreground">{t("subscriptions.noSubscriptions")}</p>
       ) : (
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

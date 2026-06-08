@@ -45,6 +45,7 @@
     "actions": "Actions",
     "edit": "Edit",
     "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this subscription?",
     "categories": {
       "streaming": "Streaming",
       "software": "Software",

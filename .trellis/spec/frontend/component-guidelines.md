@@ -62,6 +62,7 @@ if (theme === 'dark' || ((theme === 'system' || !theme) && window.matchMedia('(p
 - **Forgetting `useCallback` for context values** — causes consumers to re-render on every provider update
 - **Using `theme` instead of `resolvedTheme` for icon display** — in system mode `theme` is `"system"`, but the icon should reflect the actual resolved value (`"light"` or `"dark"`). Use `resolvedTheme` for UI that reflects what the user sees.
 - **FOUC script missing `system` branch** — if the inline script only checks `theme === 'dark'`, users who selected "System" with a dark OS preference will see a white flash before `.dark` is applied
+- **Wrapping oklch CSS vars with `hsl()`** — theme variables are defined in oklch format; `hsl(var(--primary))` produces invalid CSS like `hsl(oklch(0.205 0 0))`. Always use bare `var(--primary)` for SVG attributes (Recharts stroke/fill, etc.)
 
 ---
 
@@ -96,6 +97,28 @@ if (theme === 'dark' || ((theme === 'system' || !theme) && window.matchMedia('(p
 ```
 
 Key: `placeholder` only renders when `value` is `undefined`/empty. The sentinel `SelectItem` is still needed in the dropdown so users can explicitly select "All X" to clear the filter — but the trigger display must not depend on portal-mounted items for its initial text.
+
+### oklch CSS variables in SVG / Recharts
+
+> **Warning**: Theme variables in this project use oklch color space (e.g., `--primary: oklch(0.205 0 0)`).
+>
+> When passing CSS variables as SVG attributes (Recharts `stroke`, `fill`, etc.), do NOT wrap with `hsl()`. The variable already includes the color function, so `hsl(var(--primary))` resolves to `hsl(oklch(...))` which is invalid CSS and silently fails (color falls back to default/black).
+>
+> Use the bare variable reference instead:
+>
+> **Wrong**:
+> ```tsx
+> <Line stroke="hsl(var(--primary))" />
+> ```
+>
+> **Correct**:
+> ```tsx
+> <Line stroke="var(--primary)" />
+> ```
+
+### Dialog width for forms
+
+`DialogContent` defaults to `sm:max-w-lg` (512px) to accommodate form content. If a smaller dialog is needed, pass `className="sm:max-w-sm"` to override. Do NOT revert the base class to `sm:max-w-sm` — it conflicts with form layouts that need wider content (e.g., SubscriptionForm with two-column grid fields).
 
 ---
 
