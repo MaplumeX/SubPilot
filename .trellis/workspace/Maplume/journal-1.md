@@ -218,3 +218,36 @@ Added label prop to SelectValue so trigger displays translated text instead of r
 ### Next Steps
 
 - None - task complete
+
+
+## Session 7: Customizable Billing Cycle
+
+**Date**: 2026-06-08
+**Task**: Customizable Billing Cycle
+**Branch**: `MaplumeX/custom-billing-cycle`
+
+### Summary
+
+Replace BillingCycle enum with cycle_count (int) + cycle_unit (CycleUnit: day/week/month/year). Auto-compute next_billing_date. Preset buttons + custom entry in form. Removed cycle filter from list page.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a8f665f` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
