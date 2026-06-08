@@ -31,6 +31,7 @@ export interface Subscription {
   status: SubscriptionStatus;
   start_date: string;
   next_billing_date: string | null;
+  auto_renew: boolean;
   notes: string | null;
   created_at: string;
   updated_at: string | null;
@@ -45,6 +46,7 @@ export interface SubscriptionCreate {
   category?: string | null;
   status?: SubscriptionStatus;
   start_date: string;
+  auto_renew?: boolean;
   notes?: string | null;
 }
 
@@ -57,6 +59,7 @@ export interface SubscriptionUpdate {
   category?: string | null;
   status?: SubscriptionStatus;
   start_date?: string;
+  auto_renew?: boolean;
   notes?: string | null;
 }
 

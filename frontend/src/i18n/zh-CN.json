@@ -67,19 +67,16 @@
       "quarterly": "每季度",
       "yearly": "每年"
     },
-    "cycle_units": {
-      "day": "天",
-      "week": "周",
-      "month": "月",
-      "year": "年"
-    },
     "cycle_single": {
       "day": "每天",
       "week": "每周",
       "month": "每月",
       "year": "每年"
     },
-    "cycle_multi": "每{{count}}{{unit}}"
+    "cycle_multi": "每{{count}}{{unit}}",
+    "auto_renew": "自动续订",
+    "auto_renew_enabled": "已开启自动续订",
+    "auto_renew_disabled": "未开启自动续订"
   },
   "subscriptionForm": {
     "editTitle": "编辑订阅",
@@ -110,7 +107,8 @@
     },
     "update": "更新",
     "create": "创建",
-    "saveFailed": "保存订阅失败"
+    "saveFailed": "保存订阅失败",
+    "auto_renew": "自动续订"
   },
   "layout": {
     "appName": "SubPilot",

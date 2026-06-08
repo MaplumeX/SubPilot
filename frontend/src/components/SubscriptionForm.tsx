@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -92,6 +93,7 @@ export default function SubscriptionForm({
   );
   const [startDate, setStartDate] = useState(subscription?.start_date ?? "");
   const [notes, setNotes] = useState(subscription?.notes ?? "");
+  const [autoRenew, setAutoRenew] = useState(subscription?.auto_renew ?? true);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -137,6 +139,7 @@ export default function SubscriptionForm({
         category: category || null,
         status: subStatus,
         start_date: startDate,
+        auto_renew: autoRenew,
         notes: notes || null,
       };
       await onSubmit(payload);
@@ -304,6 +307,14 @@ export default function SubscriptionForm({
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
             />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Switch
+              checked={autoRenew}
+              onCheckedChange={setAutoRenew}
+            />
+            <Label>{t("subscriptionForm.auto_renew")}</Label>
           </div>
 
           <Button type="submit" disabled={submitting}>

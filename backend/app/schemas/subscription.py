@@ -14,6 +14,7 @@ class SubscriptionCreate(BaseModel):
     category: str | None = None
     status: SubscriptionStatus = SubscriptionStatus.active
     start_date: date
+    auto_renew: bool = True
     notes: str | None = None
 
 
@@ -26,6 +27,7 @@ class SubscriptionUpdate(BaseModel):
     category: str | None = None
     status: SubscriptionStatus | None = None
     start_date: date | None = None
+    auto_renew: bool | None = None
     notes: str | None = None
 
 
@@ -41,6 +43,7 @@ class SubscriptionResponse(BaseModel):
     status: SubscriptionStatus
     start_date: date
     next_billing_date: date | None
+    auto_renew: bool
     notes: str | None
     created_at: datetime
     updated_at: datetime | None

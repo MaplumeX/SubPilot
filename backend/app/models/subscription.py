@@ -1,8 +1,9 @@
 import enum
 from datetime import date, datetime, timezone
 
-from sqlalchemy import Date, DateTime, Enum, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Date, DateTime, Enum, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql import text
 
 from app.database import Base
 
@@ -44,6 +45,9 @@ class Subscription(Base):
     )
     start_date: Mapped[date] = mapped_column(Date, nullable=False)
     next_billing_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    auto_renew: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default=text("1"), nullable=False
+    )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)
     updated_at: Mapped[datetime | None] = mapped_column(DateTime, onupdate=_utcnow)

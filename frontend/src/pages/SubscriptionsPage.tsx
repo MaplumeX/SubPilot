@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { RefreshCw } from "lucide-react";
 import {
   listSubscriptions,
   deleteSubscription,
@@ -163,6 +164,7 @@ export default function SubscriptionsPage() {
                 <TableHead>{t("subscriptions.cycle")}</TableHead>
                 <TableHead>{t("subscriptions.category")}</TableHead>
                 <TableHead>{t("subscriptions.status")}</TableHead>
+                <TableHead>{t("subscriptions.auto_renew")}</TableHead>
                 <TableHead>{t("subscriptions.nextBilling")}</TableHead>
                 <TableHead className="text-right">{t("subscriptions.actions")}</TableHead>
               </TableRow>
@@ -197,6 +199,16 @@ export default function SubscriptionsPage() {
                     >
                       {t(`subscriptions.statuses.${sub.status}`)}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      title={sub.auto_renew ? t("subscriptions.auto_renew_enabled") : t("subscriptions.auto_renew_disabled")}
+                      className="inline-flex items-center"
+                    >
+                      <RefreshCw
+                        className={`size-4 ${sub.auto_renew ? "text-primary" : "text-muted-foreground/40"}`}
+                      />
+                    </span>
                   </TableCell>
                   <TableCell>{sub.next_billing_date ?? "-"}</TableCell>
                   <TableCell className="text-right">

@@ -67,19 +67,16 @@
       "quarterly": "Quarterly",
       "yearly": "Yearly"
     },
-    "cycle_units": {
-      "day": "Day",
-      "week": "Week",
-      "month": "Month",
-      "year": "Year"
-    },
     "cycle_single": {
       "day": "Daily",
       "week": "Weekly",
       "month": "Monthly",
       "year": "Yearly"
     },
-    "cycle_multi": "Every {{count}} {{unit}}"
+    "cycle_multi": "Every {{count}} {{unit}}",
+    "auto_renew": "Auto Renew",
+    "auto_renew_enabled": "Auto renewal enabled",
+    "auto_renew_disabled": "Auto renewal disabled"
   },
   "subscriptionForm": {
     "editTitle": "Edit Subscription",
@@ -110,7 +107,8 @@
     },
     "update": "Update",
     "create": "Create",
-    "saveFailed": "Failed to save subscription"
+    "saveFailed": "Failed to save subscription",
+    "auto_renew": "Auto Renew"
   },
   "layout": {
     "appName": "SubPilot",
