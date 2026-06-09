@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "DB migration and ORM patterns for adding logo_url column"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Error handling for file upload validation and failures"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Backend code standards for upload endpoint"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Component patterns for Avatar, Tabs in subscription form"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend code standards for logo UI implementation"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Type patterns for logo_url in TypeScript interfaces"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Full-stack logo feature spans model, API, schema, and frontend"}
