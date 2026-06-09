@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.deps import get_current_user, get_db
 from app.models.subscription import CycleUnit, Subscription, SubscriptionStatus
 from app.models.user import User
+from app.services.exchange_rate import get_rate
 from app.schemas.subscription import (
     SubscriptionCreate,
     SubscriptionResponse,
@@ -75,6 +76,10 @@ def create_subscription(
     db.add(subscription)
     db.commit()
     db.refresh(subscription)
+    base = current_user.base_currency
+    monthly = _normalize_to_monthly(subscription.price, subscription.cycle_count, subscription.cycle_unit)
+    rate = get_rate(db, subscription.currency, base)
+    subscription.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
     return subscription
 
 
@@ -90,7 +95,13 @@ def list_subscriptions(
         query = query.filter(Subscription.category == category)
     if status is not None:
         query = query.filter(Subscription.status == status)
-    return query.all()
+    subs = query.all()
+    base = current_user.base_currency
+    for sub in subs:
+        monthly = _normalize_to_monthly(sub.price, sub.cycle_count, sub.cycle_unit)
+        rate = get_rate(db, sub.currency, base)
+        sub.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
+    return subs
 
 
 @router.get("/stats", response_model=SubscriptionStats)
@@ -98,6 +109,7 @@ def get_stats(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    base = current_user.base_currency
     subscriptions = (
         db.query(Subscription)
         .filter(Subscription.user_id == current_user.id, Subscription.status == SubscriptionStatus.active)
@@ -109,9 +121,11 @@ def get_stats(
 
     for sub in subscriptions:
         monthly = _normalize_to_monthly(sub.price, sub.cycle_count, sub.cycle_unit)
-        total_monthly += monthly
+        rate = get_rate(db, sub.currency, base)
+        converted = monthly * rate
+        total_monthly += converted
         cat = sub.category or "other"
-        by_category[cat] = by_category.get(cat, 0.0) + monthly
+        by_category[cat] = by_category.get(cat, 0.0) + converted
 
     today = date.today()
     three_days = today + timedelta(days=3)
@@ -133,6 +147,7 @@ def get_stats(
         by_category={k: round(v, 2) for k, v in by_category.items()},
         count=len(subscriptions),
         due_soon=due_soon_subs,
+        base_currency=base,
     )
 
 
@@ -179,6 +194,10 @@ def get_subscription(
 ):
     subscription = db.query(Subscription).filter(Subscription.id == subscription_id).first()
     _check_ownership(subscription, current_user.id)
+    base = current_user.base_currency
+    monthly = _normalize_to_monthly(subscription.price, subscription.cycle_count, subscription.cycle_unit)
+    rate = get_rate(db, subscription.currency, base)
+    subscription.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
     return subscription
 
 
@@ -205,6 +224,10 @@ def update_subscription(
 
     db.commit()
     db.refresh(subscription)
+    base = current_user.base_currency
+    monthly = _normalize_to_monthly(subscription.price, subscription.cycle_count, subscription.cycle_unit)
+    rate = get_rate(db, subscription.currency, base)
+    subscription.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
     return subscription
 
 

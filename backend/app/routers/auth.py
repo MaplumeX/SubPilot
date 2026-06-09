@@ -118,3 +118,14 @@ def update_locale(locale: str = Query(...), current_user: User = Depends(get_cur
     db.commit()
     db.refresh(current_user)
     return current_user
+
+
+@router.patch("/me/base-currency", response_model=UserResponse)
+def update_base_currency(currency: str = Query(...), current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    valid = {"CNY", "USD", "EUR", "GBP", "JPY"}
+    if currency not in valid:
+        raise HTTPException(status_code=400, detail=f"Unsupported currency. Valid: {', '.join(sorted(valid))}")
+    current_user.base_currency = currency
+    db.commit()
+    db.refresh(current_user)
+    return current_user

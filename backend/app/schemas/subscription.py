@@ -50,6 +50,7 @@ class SubscriptionResponse(BaseModel):
     logo_url: str | None
     created_at: datetime
     updated_at: datetime | None
+    converted_price: float | None = None
 
     model_config = {"from_attributes": True}
 
@@ -60,3 +61,4 @@ class SubscriptionStats(BaseModel):
     by_category: dict[str, float]
     count: int
     due_soon: list[SubscriptionResponse]
+    base_currency: str = "CNY"

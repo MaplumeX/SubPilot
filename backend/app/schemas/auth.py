@@ -18,6 +18,7 @@ class UserResponse(BaseModel):
     email: str
     is_active: bool
     locale: str = "en"
+    base_currency: str = "CNY"
     created_at: datetime
 
     model_config = {"from_attributes": True}

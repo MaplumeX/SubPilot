@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, Integer, String, func
+from sqlalchemy import Boolean, DateTime, Integer, String, func, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -17,7 +17,8 @@ class User(Base):
     email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    locale: Mapped[str] = mapped_column(String(10), nullable=False, default="en")
+    locale: Mapped[str] = mapped_column(String(10), nullable=False, default="en", server_default=text("en"))
+    base_currency: Mapped[str] = mapped_column(String(3), nullable=False, default="CNY", server_default=text("CNY"))
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=_utcnow
     )

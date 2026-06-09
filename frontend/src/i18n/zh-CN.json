@@ -133,7 +133,9 @@
     "language": "语言",
     "languageDescription": "选择您偏好的语言",
     "english": "English",
-    "chinese": "简体中文"
+    "chinese": "简体中文",
+    "baseCurrency": "基准货币",
+    "baseCurrencyDescription": "所有支出金额将转换为该货币显示"
   },
   "errors": {
     "emailRegistered": "该邮箱已注册",
