@@ -220,15 +220,25 @@ Added label prop to SelectValue so trigger displays translated text instead of r
 - None - task complete
 
 
-## Session 7: Add subscription logo display
+## Session 7: Customizable Billing Cycle
 
-**Date**: 2026-06-09
-**Task**: Add subscription logo display
-**Branch**: `MaplumeX/subscription-logo`
+**Date**: 2026-06-08
+**Task**: Customizable Billing Cycle
+**Branch**: `MaplumeX/custom-billing-cycle`
 
 ### Summary
 
-为订阅条目添加 logo 显示功能，支持搜索(Google Favicon API)、上传、链接 3 种方式获取 logo。后端新增 upload-logo 端点和 StaticFiles 挂载，前端使用 Avatar 组件在列表和 Dashboard 中展示圆形 logo，无 logo 时显示首字母 fallback。
+Replace BillingCycle enum with cycle_count (int) + cycle_unit (CycleUnit: day/week/month/year). Auto-compute next_billing_date. Preset buttons + custom entry in form. Removed cycle filter from list page.
+
+## Session 7: Add auto-renewal feature for subscriptions
+
+**Date**: 2026-06-08
+**Task**: Add auto-renewal feature for subscriptions
+**Branch**: `MaplumeX/auto-renewal`
+
+### Summary
+
+Added auto_renew boolean field (default True) to Subscription model, renewal service with date advancement logic (weekly/monthly/quarterly/yearly including month-end edge cases), APScheduler daily background job in FastAPI lifespan, frontend Switch toggle in SubscriptionForm, RefreshCw icon column in SubscriptionsPage table, i18n translations (en/zh-CN), alembic migration. Updated backend spec for services directory and Boolean server_default convention.
 
 ### Main Changes
 
@@ -239,6 +249,8 @@ Added label prop to SelectValue so trigger displays translated text instead of r
 | Hash | Message |
 |------|---------|
 | `8795659` | (see git log) |
+| `a8f665f` | (see git log) |
+| `0cf7aa7` | (see git log) |
 
 ### Testing
 

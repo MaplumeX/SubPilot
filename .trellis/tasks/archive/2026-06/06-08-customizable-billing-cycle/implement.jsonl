@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Migration strategy for replacing enum column with dual int+enum columns"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Validation error handling for cycle_count < 1"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Backend code quality and test standards"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Form component patterns for preset buttons + custom input"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Type definitions for CycleUnit and cycle_count"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend code quality standards"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Backend-to-frontend type/schema alignment for cycle fields"}

@@ -16,7 +16,7 @@ export interface AuthError {
   detail: string;
 }
 
-export type BillingCycle = "weekly" | "monthly" | "quarterly" | "yearly";
+export type CycleUnit = "day" | "week" | "month" | "year";
 export type SubscriptionStatus = "active" | "cancelled" | "trial";
 
 export interface Subscription {
@@ -25,11 +25,13 @@ export interface Subscription {
   name: string;
   price: number;
   currency: string;
-  billing_cycle: BillingCycle;
+  cycle_count: number;
+  cycle_unit: CycleUnit;
   category: string | null;
   status: SubscriptionStatus;
   start_date: string;
   next_billing_date: string | null;
+  auto_renew: boolean;
   notes: string | null;
   logo_url: string | null;
   created_at: string;
@@ -40,11 +42,12 @@ export interface SubscriptionCreate {
   name: string;
   price: number;
   currency?: string;
-  billing_cycle: BillingCycle;
+  cycle_count: number;
+  cycle_unit: CycleUnit;
   category?: string | null;
   status?: SubscriptionStatus;
   start_date: string;
-  next_billing_date?: string | null;
+  auto_renew?: boolean;
   notes?: string | null;
   logo_url?: string | null;
 }
@@ -53,11 +56,12 @@ export interface SubscriptionUpdate {
   name?: string;
   price?: number;
   currency?: string;
-  billing_cycle?: BillingCycle;
+  cycle_count?: number;
+  cycle_unit?: CycleUnit;
   category?: string | null;
   status?: SubscriptionStatus;
   start_date?: string;
-  next_billing_date?: string | null;
+  auto_renew?: boolean;
   notes?: string | null;
   logo_url?: string | null;
 }

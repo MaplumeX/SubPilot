@@ -16,7 +16,6 @@ export async function createSubscription(
 export async function listSubscriptions(params?: {
   category?: string;
   status?: string;
-  billing_cycle?: string;
 }): Promise<Subscription[]> {
   const { data } = await api.get<Subscription[]>("/subscriptions", { params });
   return data;

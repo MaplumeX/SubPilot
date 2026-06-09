@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "ORM patterns, migration conventions, and naming rules for adding auto_renew column"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Where to place new service module and scheduler setup"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Error handling patterns for scheduled task failures"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Component patterns for adding Switch toggle to SubscriptionForm"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Type contract patterns for auto_renew field across API boundary"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Data flow consistency across backend model → schema → API → frontend types → form"}

@@ -2,11 +2,12 @@ import os
 import uuid
 from datetime import date, timedelta
 
+from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
 from sqlalchemy.orm import Session
 
 from app.deps import get_current_user, get_db
-from app.models.subscription import BillingCycle, Subscription, SubscriptionStatus
+from app.models.subscription import CycleUnit, Subscription, SubscriptionStatus
 from app.models.user import User
 from app.schemas.subscription import (
     SubscriptionCreate,
@@ -23,16 +24,28 @@ LOGOS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file_
 router = APIRouter(prefix="/api/v1/subscriptions", tags=["subscriptions"])
 
 
-def _normalize_to_monthly(price: float, cycle: BillingCycle) -> float:
-    if cycle == BillingCycle.weekly:
-        return price * 52 / 12
-    if cycle == BillingCycle.monthly:
-        return price
-    if cycle == BillingCycle.quarterly:
-        return price / 3
-    if cycle == BillingCycle.yearly:
-        return price / 12
+def _normalize_to_monthly(price: float, cycle_count: int, cycle_unit: CycleUnit) -> float:
+    if cycle_unit == CycleUnit.day:
+        return price * cycle_count * 365 / 12
+    if cycle_unit == CycleUnit.week:
+        return price * cycle_count * 52 / 12
+    if cycle_unit == CycleUnit.month:
+        return price * cycle_count
+    if cycle_unit == CycleUnit.year:
+        return price * cycle_count / 12
     return price
+
+
+def _compute_next_billing_date(start_date: date, cycle_count: int, cycle_unit: CycleUnit) -> date:
+    if cycle_unit == CycleUnit.day:
+        return start_date + timedelta(days=cycle_count)
+    if cycle_unit == CycleUnit.week:
+        return start_date + timedelta(weeks=cycle_count)
+    if cycle_unit == CycleUnit.month:
+        return start_date + relativedelta(months=cycle_count)
+    if cycle_unit == CycleUnit.year:
+        return start_date + relativedelta(years=cycle_count)
+    return start_date
 
 
 def _check_ownership(subscription: Subscription | None, user_id: int) -> None:
@@ -54,7 +67,11 @@ def create_subscription(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    subscription = Subscription(user_id=current_user.id, **data.model_dump())
+    dump = data.model_dump()
+    dump["next_billing_date"] = _compute_next_billing_date(
+        data.start_date, data.cycle_count, data.cycle_unit
+    )
+    subscription = Subscription(user_id=current_user.id, **dump)
     db.add(subscription)
     db.commit()
     db.refresh(subscription)
@@ -65,7 +82,6 @@ def create_subscription(
 def list_subscriptions(
     category: str | None = Query(None),
     status: SubscriptionStatus | None = Query(None),
-    billing_cycle: BillingCycle | None = Query(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -74,8 +90,6 @@ def list_subscriptions(
         query = query.filter(Subscription.category == category)
     if status is not None:
         query = query.filter(Subscription.status == status)
-    if billing_cycle is not None:
-        query = query.filter(Subscription.billing_cycle == billing_cycle)
     return query.all()
 
 
@@ -94,7 +108,7 @@ def get_stats(
     by_category: dict[str, float] = {}
 
     for sub in subscriptions:
-        monthly = _normalize_to_monthly(sub.price, sub.billing_cycle)
+        monthly = _normalize_to_monthly(sub.price, sub.cycle_count, sub.cycle_unit)
         total_monthly += monthly
         cat = sub.category or "other"
         by_category[cat] = by_category.get(cat, 0.0) + monthly
@@ -181,6 +195,13 @@ def update_subscription(
     update_data = data.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(subscription, field, value)
+
+    cycle_changed = "cycle_count" in update_data or "cycle_unit" in update_data
+    start_changed = "start_date" in update_data
+    if cycle_changed or start_changed:
+        subscription.next_billing_date = _compute_next_billing_date(
+            subscription.start_date, subscription.cycle_count, subscription.cycle_unit
+        )
 
     db.commit()
     db.refresh(subscription)
