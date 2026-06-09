@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 8
+- **Total Sessions**: 9
 - **Last Active**: 2026-06-09
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~253 | Active |
+| `journal-1.md` | ~299 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 9 | 2026-06-09 | Add currency exchange rate conversion | `57fc951`, `7baf356` | `MaplumeX/exchange-rate-conversion` |
 | 8 | 2026-06-09 | Add subscription logo display | `8795659` | `MaplumeX/subscription-logo` |
 | 7 | 2026-06-08 | Customizable Billing Cycle | `a8f665f` | `MaplumeX/custom-billing-cycle` |
 | 7 | 2026-06-08 | Add auto-renewal feature for subscriptions | `0cf7aa7` | `MaplumeX/auto-renewal` |
