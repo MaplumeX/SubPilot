@@ -218,3 +218,36 @@ Added label prop to SelectValue so trigger displays translated text instead of r
 ### Next Steps
 
 - None - task complete
+
+
+## Session 7: Add subscription logo display
+
+**Date**: 2026-06-09
+**Task**: Add subscription logo display
+**Branch**: `MaplumeX/subscription-logo`
+
+### Summary
+
+为订阅条目添加 logo 显示功能，支持搜索(Google Favicon API)、上传、链接 3 种方式获取 logo。后端新增 upload-logo 端点和 StaticFiles 挂载，前端使用 Avatar 组件在列表和 Dashboard 中展示圆形 logo，无 logo 时显示首字母 fallback。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8795659` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
