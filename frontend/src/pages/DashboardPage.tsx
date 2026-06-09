@@ -5,6 +5,7 @@ import type { SubscriptionStats } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   LineChart,
   Line,
@@ -102,11 +103,17 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
                       key={sub.id}
                       className="flex items-center justify-between rounded-lg border p-3"
                     >
-                      <div>
-                        <p className="font-medium">{sub.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {sub.next_billing_date}
-                        </p>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="size-7">
+                          <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} />
+                          <AvatarFallback>{sub.name.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{sub.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {sub.next_billing_date}
+                          </p>
+                        </div>
                       </div>
                       <Badge variant="destructive">{t("dashboard.dueSoon")}</Badge>
                     </div>

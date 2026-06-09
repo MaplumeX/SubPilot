@@ -49,6 +49,7 @@ class Subscription(Base):
         Boolean, default=True, server_default=text("1"), nullable=False
     )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    logo_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)
     updated_at: Mapped[datetime | None] = mapped_column(DateTime, onupdate=_utcnow)
 

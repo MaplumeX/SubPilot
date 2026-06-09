@@ -27,3 +27,9 @@ frontend/.vite/
 /package-lock.json
 
 .DS_Store
+
+# Uploaded logo files
+backend/static/logos/*.jpg
+backend/static/logos/*.png
+backend/static/logos/*.svg
+backend/static/logos/*.gif

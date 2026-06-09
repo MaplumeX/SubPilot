@@ -16,6 +16,7 @@ class SubscriptionCreate(BaseModel):
     start_date: date
     auto_renew: bool = True
     notes: str | None = None
+    logo_url: str | None = None
 
 
 class SubscriptionUpdate(BaseModel):
@@ -29,6 +30,7 @@ class SubscriptionUpdate(BaseModel):
     start_date: date | None = None
     auto_renew: bool | None = None
     notes: str | None = None
+    logo_url: str | None = None
 
 
 class SubscriptionResponse(BaseModel):
@@ -45,6 +47,7 @@ class SubscriptionResponse(BaseModel):
     next_billing_date: date | None
     auto_renew: bool
     notes: str | None
+    logo_url: str | None
     created_at: datetime
     updated_at: datetime | None
 

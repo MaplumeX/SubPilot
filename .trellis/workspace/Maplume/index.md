@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 7
-- **Last Active**: 2026-06-08
+- **Total Sessions**: 8
+- **Last Active**: 2026-06-09
 <!-- @@@/auto:current-status -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 8 | 2026-06-09 | Add subscription logo display | `8795659` | `MaplumeX/subscription-logo` |
 | 7 | 2026-06-08 | Customizable Billing Cycle | `a8f665f` | `MaplumeX/custom-billing-cycle` |
 | 7 | 2026-06-08 | Add auto-renewal feature for subscriptions | `0cf7aa7` | `MaplumeX/auto-renewal` |
 | 6 | 2026-06-08 | Fix Select trigger showing raw value instead of translated label | `f215204` | `MaplumeX/select-label-mismatch` |

@@ -248,6 +248,7 @@ Added auto_renew boolean field (default True) to Subscription model, renewal ser
 
 | Hash | Message |
 |------|---------|
+| `8795659` | (see git log) |
 | `a8f665f` | (see git log) |
 | `0cf7aa7` | (see git log) |
 

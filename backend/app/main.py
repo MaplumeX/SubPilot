@@ -1,9 +1,11 @@
+import os
 from contextlib import asynccontextmanager
 import logging
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import Base, SessionLocal, engine
@@ -32,6 +34,7 @@ async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     scheduler.add_job(_run_renewals, "interval", days=1, id="auto_renewal")
     scheduler.start()
+    os.makedirs("static/logos", exist_ok=True)
     yield
     scheduler.shutdown(wait=False)
 
@@ -48,3 +51,5 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(subscriptions.router)
+
+app.mount("/static", StaticFiles(directory="static"), name="static")

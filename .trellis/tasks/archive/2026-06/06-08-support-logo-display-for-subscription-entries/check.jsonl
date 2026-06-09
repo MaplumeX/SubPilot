@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Verify migration follows project ORM conventions"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Verify upload error handling matches project patterns"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Verify backend code quality standards"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Verify Avatar/Tabs component usage follows conventions"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Verify frontend code quality standards"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Verify TypeScript types are properly updated"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Verify end-to-end data flow consistency"}
