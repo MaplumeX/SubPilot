@@ -73,6 +73,12 @@
       "month": "Monthly",
       "year": "Yearly"
     },
+    "cycle_units": {
+      "day": "day",
+      "week": "week",
+      "month": "month",
+      "year": "year"
+    },
     "cycle_multi": "Every {{count}} {{unit}}",
     "auto_renew": "Auto Renew",
     "auto_renew_enabled": "Auto renewal enabled",
