@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Combobox pattern must follow existing component conventions"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Category list fetching and caching strategy"}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "New categories endpoint must follow DB query conventions"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "New endpoint error handling patterns"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Categories endpoint spans backend API to frontend consumption"}
