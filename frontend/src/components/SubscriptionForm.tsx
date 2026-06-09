@@ -1,7 +1,7 @@
-import { useState, type FormEvent as ReactSubmitEvent } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import type { Subscription, SubscriptionCreate, CycleUnit, SubscriptionStatus } from "@/api/types";
-import { uploadLogo } from "@/api/subscriptions";
+import { uploadLogo, listCategories } from "@/api/subscriptions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +26,21 @@ import {
   AvatarFallback,
 } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CheckIcon, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SubscriptionFormProps {
   key?: React.Key;
@@ -34,18 +49,6 @@ interface SubscriptionFormProps {
   subscription?: Subscription | null;
   onSubmit: (data: SubscriptionCreate) => Promise<void>;
 }
-
-const CATEGORIES = [
-  "streaming",
-  "software",
-  "cloud",
-  "fitness",
-  "music",
-  "gaming",
-  "news",
-  "productivity",
-  "other",
-] as const;
 
 const CURRENCIES = ["CNY", "USD", "EUR", "GBP", "JPY"] as const;
 
@@ -110,6 +113,12 @@ export default function SubscriptionForm({
   const [autoRenew, setAutoRenew] = useState(subscription?.auto_renew ?? true);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [existingCategories, setExistingCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    listCategories().then(setExistingCategories).catch(() => {});
+  }, []);
 
   const previewUrl = logoUrl || null;
 
@@ -168,7 +177,7 @@ export default function SubscriptionForm({
     }
   };
 
-  const handleSubmit = async (e: ReactSubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -394,19 +403,44 @@ export default function SubscriptionForm({
             </div>
             <div className="flex flex-col gap-2">
               <Label>{t("subscriptionForm.category")}</Label>
-              <Select value={category || undefined} onValueChange={(v) => setCategory(v === "__none__" ? "" : (v ?? ""))}>
-                <SelectTrigger>
-                  <SelectValue label={category ? t(`subscriptions.categories.${category}`) : undefined} placeholder={t("subscriptionForm.none")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__none__">{t("subscriptionForm.none")}</SelectItem>
-                  {CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {t(`subscriptions.categories.${cat}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
+                <PopoverTrigger render={<Button variant="outline" role="combobox" aria-expanded={categoryOpen} className="w-full justify-between font-normal" />}>
+                  {category || t("subscriptionForm.selectCategory")}
+                  <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
+                </PopoverTrigger>
+                <PopoverContent className="p-0" align="start" sideOffset={4}>
+                  <Command shouldFilter={false}>
+                    <CommandInput
+                      placeholder={t("subscriptionForm.selectCategory")}
+                      value={category}
+                      onValueChange={setCategory}
+                    />
+                    <CommandList>
+                      <CommandEmpty>{t("subscriptionForm.selectCategory")}</CommandEmpty>
+                      <CommandGroup>
+                        {category && (
+                          <CommandItem
+                            value="__none__"
+                            onSelect={() => { setCategory(""); setCategoryOpen(false); }}
+                          >
+                            {t("subscriptionForm.none")}
+                          </CommandItem>
+                        )}
+                        {existingCategories.map((cat) => (
+                          <CommandItem
+                            key={cat}
+                            value={cat}
+                            onSelect={() => { setCategory(cat); setCategoryOpen(false); }}
+                          >
+                            <CheckIcon className={cn("mr-2 size-4", category === cat ? "opacity-100" : "opacity-0")} />
+                            {cat}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 

@@ -6,6 +6,7 @@ import {
   deleteSubscription,
   createSubscription,
   updateSubscription,
+  listCategories,
 } from "@/api/subscriptions";
 import type { Subscription, SubscriptionCreate, SubscriptionUpdate, CycleUnit } from "@/api/types";
 import { Button } from "@/components/ui/button";
@@ -28,18 +29,6 @@ import {
 } from "@/components/ui/select";
 import SubscriptionForm from "@/components/SubscriptionForm";
 
-const CATEGORIES = [
-  "streaming",
-  "software",
-  "cloud",
-  "fitness",
-  "music",
-  "gaming",
-  "news",
-  "productivity",
-  "other",
-] as const;
-
 const STATUSES = ["active", "cancelled", "trial"] as const;
 
 export default function SubscriptionsPage() {
@@ -50,6 +39,20 @@ export default function SubscriptionsPage() {
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const data = await listCategories();
+      setCategories(data);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   const fetchSubscriptions = useCallback(async () => {
     try {
@@ -69,10 +72,15 @@ export default function SubscriptionsPage() {
     fetchSubscriptions();
   }, [fetchSubscriptions]);
 
+  const reload = useCallback(() => {
+    fetchSubscriptions();
+    fetchCategories();
+  }, [fetchSubscriptions, fetchCategories]);
+
   const handleCreate = async (data: SubscriptionCreate) => {
     await createSubscription(data);
     setFormOpen(false);
-    fetchSubscriptions();
+    reload();
   };
 
   const handleUpdate = async (data: SubscriptionCreate) => {
@@ -80,7 +88,7 @@ export default function SubscriptionsPage() {
     await updateSubscription(editing.id, data as SubscriptionUpdate);
     setEditing(null);
     setFormOpen(false);
-    fetchSubscriptions();
+    reload();
   };
 
   const handleDelete = async (id: number) => {
@@ -88,7 +96,7 @@ export default function SubscriptionsPage() {
       return;
     }
     await deleteSubscription(id);
-    fetchSubscriptions();
+    reload();
   };
 
   const isDueSoon = (sub: Subscription) => {
@@ -124,13 +132,13 @@ export default function SubscriptionsPage() {
       <div className="flex gap-4">
         <Select value={filterCategory || undefined} onValueChange={(v) => setFilterCategory(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue label={filterCategory ? t(`subscriptions.categories.${filterCategory}`) : undefined} placeholder={t("subscriptions.allCategories")} />
+            <SelectValue label={filterCategory || undefined} placeholder={t("subscriptions.allCategories")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">{t("subscriptions.allCategories")}</SelectItem>
-            {CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>
-                {t(`subscriptions.categories.${cat}`)}
+                {cat}
               </SelectItem>
             ))}
           </SelectContent>
@@ -192,7 +200,7 @@ export default function SubscriptionsPage() {
                   </TableCell>
                   <TableCell>{formatCycle(sub.cycle_count, sub.cycle_unit)}</TableCell>
                   <TableCell>
-                    {sub.category ? t(`subscriptions.categories.${sub.category}`) : "-"}
+                    {sub.category || "-"}
                   </TableCell>
                   <TableCell>
                     <Badge

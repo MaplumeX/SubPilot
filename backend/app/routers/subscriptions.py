@@ -93,6 +93,21 @@ def list_subscriptions(
     return query.all()
 
 
+@router.get("/categories", response_model=list[str])
+def list_categories(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    rows = (
+        db.query(Subscription.category)
+        .filter(Subscription.user_id == current_user.id, Subscription.category.isnot(None))
+        .distinct()
+        .order_by(Subscription.category)
+        .all()
+    )
+    return [row[0] for row in rows]
+
+
 @router.get("/stats", response_model=SubscriptionStats)
 def get_stats(
     db: Session = Depends(get_db),
@@ -110,7 +125,7 @@ def get_stats(
     for sub in subscriptions:
         monthly = _normalize_to_monthly(sub.price, sub.cycle_count, sub.cycle_unit)
         total_monthly += monthly
-        cat = sub.category or "other"
+        cat = sub.category
         by_category[cat] = by_category.get(cat, 0.0) + monthly
 
     today = date.today()
