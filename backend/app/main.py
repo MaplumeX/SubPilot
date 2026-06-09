@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from app.database import Base, SessionLocal, engine
 from app.routers import auth, subscriptions
+from app.services.exchange_rate import fetch_exchange_rates
 from app.services.renewal import process_renewals
 
 logger = logging.getLogger(__name__)
@@ -29,10 +30,22 @@ def _run_renewals() -> None:
         db.close()
 
 
+def _run_exchange_rates() -> None:
+    db = SessionLocal()
+    try:
+        fetch_exchange_rates(db)
+    except Exception:
+        logger.exception("Error during exchange rate fetch")
+    finally:
+        db.close()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     scheduler.add_job(_run_renewals, "interval", days=1, id="auto_renewal")
+    scheduler.add_job(_run_exchange_rates, "interval", days=1, id="fetch_exchange_rates")
+    _run_exchange_rates()
     scheduler.start()
     os.makedirs("static/logos", exist_ok=True)
     yield

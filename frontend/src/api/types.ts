@@ -9,6 +9,7 @@ export interface UserResponse {
   email: string;
   is_active: boolean;
   locale: string;
+  base_currency: string;
   created_at: string;
 }
 
@@ -36,6 +37,7 @@ export interface Subscription {
   logo_url: string | null;
   created_at: string;
   updated_at: string | null;
+  converted_price: number | null;
 }
 
 export interface SubscriptionCreate {
@@ -72,4 +74,5 @@ export interface SubscriptionStats {
   by_category: Record<string, number>;
   count: number;
   due_soon: Subscription[];
+  base_currency: string;
 }

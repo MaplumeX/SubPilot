@@ -6,6 +6,7 @@ import {
   deleteSubscription,
   createSubscription,
   updateSubscription,
+  getStats,
 } from "@/api/subscriptions";
 import type { Subscription, SubscriptionCreate, SubscriptionUpdate, CycleUnit } from "@/api/types";
 import { Button } from "@/components/ui/button";
@@ -43,11 +44,12 @@ const CATEGORIES = [
 const STATUSES = ["active", "cancelled", "trial"] as const;
 
 export default function SubscriptionsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterCategory, setFilterCategory] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("");
+  const [baseCurrency, setBaseCurrency] = useState<string>("CNY");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | null>(null);
 
@@ -58,6 +60,8 @@ export default function SubscriptionsPage() {
       if (filterStatus) params.status = filterStatus;
       const data = await listSubscriptions(params);
       setSubscriptions(data);
+      const stats = await getStats();
+      setBaseCurrency(stats.base_currency);
     } catch {
       // 401 handled by interceptor
     } finally {
@@ -189,6 +193,11 @@ export default function SubscriptionsPage() {
                   </TableCell>
                   <TableCell>
                     {sub.currency} {sub.price.toFixed(2)}
+                    {sub.converted_price != null && sub.currency !== baseCurrency && (
+                      <span className="ml-1 text-xs text-muted-foreground">
+                        (~{new Intl.NumberFormat(i18n.language, { style: "currency", currency: baseCurrency }).format(sub.converted_price)})
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>{formatCycle(sub.cycle_count, sub.cycle_unit)}</TableCell>
                   <TableCell>

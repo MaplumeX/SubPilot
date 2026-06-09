@@ -43,3 +43,10 @@ export async function updateLocale(locale: string): Promise<UserResponse> {
   });
   return data;
 }
+
+export async function updateBaseCurrency(currency: string): Promise<UserResponse> {
+  const { data } = await api.patch<UserResponse>("/auth/me/base-currency", null, {
+    params: { currency },
+  });
+  return data;
+}
