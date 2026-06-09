@@ -19,7 +19,7 @@
 - `401 Unauthorized` — missing/invalid/expired JWT, wrong password
 - `403 Forbidden` — accessing another user's resource
 - `404 Not Found` — resource doesn't exist or belongs to another user
-- `400 Bad Request` — duplicate email, invalid input
+- `400 Bad Request` — duplicate email, invalid input, unsupported locale/currency
 - `422 Validation Error` — Pydantic schema validation (auto)
 
 ---

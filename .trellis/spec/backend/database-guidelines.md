@@ -54,3 +54,4 @@ alembic upgrade head
 - **Adding CHECK constraints with plain ALTER TABLE** → not supported by SQLite; use `batch_alter_table` with `create_check_constraint` instead
 - **Replacing an enum column with multiple columns** → migrate data first (add new cols → UPDATE data → drop old col), and use `batch_alter_table` for cross-dialect compatibility
 - **Missing `server_default` on Boolean columns** — SQLite can't handle Python-side defaults in ALTER TABLE; always use `server_default=text("1")` / `text("0")` for non-nullable Boolean columns
+- **Missing `server_default` on non-nullable String columns** — SQLite ALTER TABLE requires `server_default` for adding NOT NULL columns to existing tables; always provide `server_default=text("...")` (e.g., `server_default=text("CNY")` for currency fields)
