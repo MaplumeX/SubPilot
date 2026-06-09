@@ -263,3 +263,37 @@ Added auto_renew boolean field (default True) to Subscription model, renewal ser
 ### Next Steps
 
 - None - task complete
+
+
+## Session 9: Remove preset categories and add custom category input
+
+**Date**: 2026-06-09
+**Task**: Remove preset categories and add custom category input
+**Branch**: `MaplumeX/custom-category-management`
+
+### Summary
+
+Replaced hardcoded 9 preset categories with a Combobox (Command+Popover) that supports free-text input for creating new categories and selecting from existing ones. Added GET /subscriptions/categories backend endpoint. Filter dropdown on subscriptions page now dynamically fetches categories. Removed i18n category translations — categories display as raw text. Updated component guidelines spec with Combobox pattern.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9325490` | (see git log) |
+| `d758559` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
