@@ -1,0 +1,8 @@
+{"file": ".trellis/tasks/06-09-currency-exchange-rate-conversion/prd.md", "reason": "Full requirements, decisions, and technical approach for exchange rate feature"}
+{"file": ".trellis/tasks/06-09-currency-exchange-rate-conversion/research/exchange-rate-apis.md", "reason": "API comparison, caching strategies, integration patterns, and cross-rate computation details"}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "DB conventions for new ExchangeRate model and migration"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Where to place new service/model/router files"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Error handling patterns for API fetch failures"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Component conventions for Settings page currency selector"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Frontend file placement conventions"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Type conventions for new API response fields"}

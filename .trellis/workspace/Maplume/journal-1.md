@@ -265,6 +265,17 @@ Added auto_renew boolean field (default True) to Subscription model, renewal ser
 - None - task complete
 
 
+## Session 9: Add currency exchange rate conversion
+
+**Date**: 2026-06-09
+**Task**: Add currency exchange rate conversion
+**Branch**: `MaplumeX/exchange-rate-conversion`
+
+### Summary
+
+Added exchange rate conversion feature: Frankfurter API (ECB data) with daily fetch, SQLite caching, cross-rate calculation, user-level base_currency preference, converted_price in subscription responses, Dashboard dynamic currency display, list page converted price, Settings page base currency selector, i18n (en + zh-CN).
+
+
 ## Session 9: Remove preset categories and add custom category input
 
 **Date**: 2026-06-09
@@ -283,6 +294,8 @@ Replaced hardcoded 9 preset categories with a Combobox (Command+Popover) that su
 
 | Hash | Message |
 |------|---------|
+| `57fc951` | (see git log) |
+| `7baf356` | (see git log) |
 | `9325490` | (see git log) |
 | `d758559` | (see git log) |
 

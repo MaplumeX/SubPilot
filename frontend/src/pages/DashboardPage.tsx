@@ -63,7 +63,7 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
               </CardHeader>
               <CardContent>
                 <p className="text-2xl font-bold">
-                  {new Intl.NumberFormat(locale, { style: "currency", currency: "CNY" }).format(stats?.total_monthly ?? 0)}
+                  {new Intl.NumberFormat(locale, { style: "currency", currency: stats?.base_currency ?? "CNY" }).format(stats?.total_monthly ?? 0)}
                 </p>
               </CardContent>
             </Card>
@@ -75,7 +75,7 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
               </CardHeader>
               <CardContent>
                 <p className="text-2xl font-bold">
-                  {new Intl.NumberFormat(locale, { style: "currency", currency: "CNY" }).format(stats?.total_yearly ?? 0)}
+                  {new Intl.NumberFormat(locale, { style: "currency", currency: stats?.base_currency ?? "CNY" }).format(stats?.total_yearly ?? 0)}
                 </p>
               </CardContent>
             </Card>

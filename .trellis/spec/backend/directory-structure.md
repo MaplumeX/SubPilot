@@ -23,14 +23,16 @@ backend/
 │   ├── models/
 │   │   ├── __init__.py
 │   │   ├── user.py           # User SQLAlchemy model
-│   │   └── subscription.py   # Subscription SQLAlchemy model
+│   │   ├── subscription.py   # Subscription SQLAlchemy model
+│   │   └── exchange_rate.py  # ExchangeRate SQLAlchemy model
 │   ├── schemas/
 │   │   ├── __init__.py
 │   │   ├── auth.py           # Auth Pydantic schemas
 │   │   └── subscription.py   # Subscription Pydantic schemas
 │   ├── services/
 │   │   ├── __init__.py
-│   │   └── renewal.py        # Auto-renewal background service
+│   │   ├── renewal.py        # Auto-renewal background service
+│   │   └── exchange_rate.py  # Exchange rate fetch + lookup service
 │   └── routers/
 │       ├── __init__.py
 │       ├── auth.py           # /api/v1/auth/* endpoints
