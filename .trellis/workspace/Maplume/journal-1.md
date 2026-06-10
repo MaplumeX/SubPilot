@@ -275,6 +275,17 @@ Added auto_renew boolean field (default True) to Subscription model, renewal ser
 
 Added exchange rate conversion feature: Frankfurter API (ECB data) with daily fetch, SQLite caching, cross-rate calculation, user-level base_currency preference, converted_price in subscription responses, Dashboard dynamic currency display, list page converted price, Settings page base currency selector, i18n (en + zh-CN).
 
+
+## Session 9: Remove preset categories and add custom category input
+
+**Date**: 2026-06-09
+**Task**: Remove preset categories and add custom category input
+**Branch**: `MaplumeX/custom-category-management`
+
+### Summary
+
+Replaced hardcoded 9 preset categories with a Combobox (Command+Popover) that supports free-text input for creating new categories and selecting from existing ones. Added GET /subscriptions/categories backend endpoint. Filter dropdown on subscriptions page now dynamically fetches categories. Removed i18n category translations — categories display as raw text. Updated component guidelines spec with Combobox pattern.
+
 ### Main Changes
 
 (Add details)
@@ -285,6 +296,8 @@ Added exchange rate conversion feature: Frankfurter API (ECB data) with daily fe
 |------|---------|
 | `57fc951` | (see git log) |
 | `7baf356` | (see git log) |
+| `9325490` | (see git log) |
+| `d758559` | (see git log) |
 
 ### Testing
 

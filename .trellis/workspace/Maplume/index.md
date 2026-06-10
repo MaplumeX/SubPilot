@@ -30,6 +30,7 @@
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
 | 9 | 2026-06-09 | Add currency exchange rate conversion | `57fc951`, `7baf356` | `MaplumeX/exchange-rate-conversion` |
+| 9 | 2026-06-09 | Remove preset categories and add custom category input | `9325490`, `d758559` | `MaplumeX/custom-category-management` |
 | 8 | 2026-06-09 | Add subscription logo display | `8795659` | `MaplumeX/subscription-logo` |
 | 7 | 2026-06-08 | Customizable Billing Cycle | `a8f665f` | `MaplumeX/custom-billing-cycle` |
 | 7 | 2026-06-08 | Add auto-renewal feature for subscriptions | `0cf7aa7` | `MaplumeX/auto-renewal` |

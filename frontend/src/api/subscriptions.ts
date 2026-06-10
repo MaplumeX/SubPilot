@@ -55,3 +55,8 @@ export async function getStats(): Promise<SubscriptionStats> {
   const { data } = await api.get<SubscriptionStats>("/subscriptions/stats");
   return data;
 }
+
+export async function listCategories(): Promise<string[]> {
+  const { data } = await api.get<string[]>("/subscriptions/categories");
+  return data;
+}

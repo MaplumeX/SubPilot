@@ -142,11 +142,54 @@ When `label` is `undefined`, `SelectValue` falls back to `SelectPrimitive.Value`
 
 ---
 
+## Combobox Pattern (Command + Popover)
+
+For fields where users need to **select from existing values OR type new ones** (e.g., custom categories), use the shadcn Combobox pattern built from `Command` + `Popover` components.
+
+```tsx
+<Popover open={open} onOpenChange={setOpen}>
+  <PopoverTrigger asChild>
+    <Button variant="outline" className="w-full justify-between">
+      {value || <span className="text-muted-foreground">{placeholder}</span>}
+      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+    </Button>
+  </PopoverTrigger>
+  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+    <Command shouldFilter={false}>
+      <CommandInput
+        value={inputValue}
+        onValueChange={(v) => { setInputValue(v); setValue(v); }}
+        placeholder={searchPlaceholder}
+      />
+      <CommandList>
+        <CommandEmpty>{emptyMessage}</CommandEmpty>
+        {options.map((opt) => (
+          <CommandItem
+            key={opt}
+            value={opt}
+            onSelect={() => { setValue(opt); setOpen(false); }}
+          >
+            {opt}
+          </CommandItem>
+        ))}
+      </CommandList>
+    </Command>
+  </PopoverContent>
+</Popover>
+```
+
+Key points:
+- `shouldFilter={false}` when the input directly controls the state value (typing IS the value, not just a search filter)
+- `w-[--radix-popover-trigger-width]` ensures the popover matches the trigger width
+- For filter-only dropdowns (no free-text creation), keep using regular `<Select>` with dynamically fetched options
+
+---
+
 ## i18n in Components
 
 - Use `const { t } = useTranslation()` in every component with user-facing strings
 - Replace all hardcoded strings with `t('namespace.key')`
 - Translation keys are organized by page/component namespace (auth, dashboard, subscriptions, subscriptionForm, layout, settings, errors)
-- For dynamic keys (e.g., category/status/cycle names), use `t(\`subscriptions.categories.\${category}\`)` pattern — ensure all dynamic values exist as keys in both language files
+- For dynamic keys (e.g., status/cycle names), use `t(\`subscriptions.statuses.\${status}\`)` pattern — ensure all dynamic values exist as keys in both language files. **Exception**: user-created free-form values (e.g., custom categories) should be displayed as raw text, not i18n-translated, since users may type anything
 - Date/currency formatting: use `i18n.language` as locale for `toLocaleDateString()` and `Intl.NumberFormat`
 - Backend error messages: map `err?.response?.data?.detail` through a local `ERROR_KEY_MAP` object to translate via `t('errors.xxx')`

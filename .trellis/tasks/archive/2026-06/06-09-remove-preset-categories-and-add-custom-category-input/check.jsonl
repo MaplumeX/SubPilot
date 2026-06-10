@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Verify no hardcoded categories remain and Combobox meets quality standards"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Ensure category types are correct after removing preset constants"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Verify new endpoint follows quality conventions"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Verify backend-to-frontend data flow for categories is consistent"}

@@ -45,17 +45,6 @@
     "edit": "编辑",
     "delete": "删除",
     "confirmDelete": "确定要删除此订阅吗？",
-    "categories": {
-      "streaming": "流媒体",
-      "software": "软件",
-      "cloud": "云服务",
-      "fitness": "健身",
-      "music": "音乐",
-      "gaming": "游戏",
-      "news": "新闻",
-      "productivity": "生产力",
-      "other": "其他"
-    },
     "statuses": {
       "active": "活跃",
       "cancelled": "已取消",
