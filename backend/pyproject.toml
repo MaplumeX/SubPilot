@@ -19,7 +19,7 @@ dependencies = [
     "python-multipart",
     "python-dateutil",
     "apscheduler",
-    "httpx",
+    "httpx[socks]",
 ]
 
 [tool.setuptools.packages.find]
