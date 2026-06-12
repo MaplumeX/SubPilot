@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Verify implementation follows component conventions"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Check code quality standards are met"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Verify TypeScript typing is correct"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Verify file placement follows conventions"}
+{"file": ".trellis/tasks/06-12-statistics-dashboard-ui/prd.md", "reason": "Check implementation against PRD requirements and acceptance criteria"}

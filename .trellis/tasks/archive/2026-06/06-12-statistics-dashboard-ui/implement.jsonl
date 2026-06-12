@@ -1,0 +1,8 @@
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Frontend component conventions for the new StatisticsPage and chart components"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "File placement conventions for the new page and any helper modules"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Data fetching and state management patterns for stats/subscription data"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Code quality standards the implementation must meet"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "TypeScript typing conventions for API data and chart props"}
+{"file": ".trellis/spec/frontend/hook-guidelines.md", "reason": "Custom hook patterns if extracting chart data logic into hooks"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Ensures frontend changes align with backend API contract"}
+{"file": ".trellis/tasks/06-12-statistics-dashboard-ui/prd.md", "reason": "The PRD with requirements, acceptance criteria, and technical approach"}
