@@ -310,3 +310,36 @@ Replaced hardcoded 9 preset categories with a Combobox (Command+Popover) that su
 ### Next Steps
 
 - None - task complete
+
+
+## Session 10: Statistics Dashboard UI
+
+**Date**: 2026-06-12
+**Task**: Statistics Dashboard UI
+**Branch**: `main`
+
+### Summary
+
+Added /statistics page with category distribution donut chart, monthly spending trend bar chart (12-month forward projection), and Top 5 subscriptions ranking. Includes dark mode support via CSS descendant selectors and themed Tooltip styles, i18n (en/zh-CN), loading/empty states.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a2840b0` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
