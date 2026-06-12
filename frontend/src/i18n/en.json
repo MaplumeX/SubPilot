@@ -120,6 +120,7 @@
     "appName": "SubPilot",
     "dashboard": "Dashboard",
     "subscriptions": "Subscriptions",
+    "statistics": "Statistics",
     "signOut": "Sign out",
     "settings": "Settings"
   },
@@ -138,5 +139,15 @@
     "invalidRefreshToken": "Invalid refresh token",
     "userNotFound": "User not found",
     "subscriptionNotFound": "Subscription not found"
+  },
+  "statistics": {
+    "title": "Statistics",
+    "categoryDistribution": "Category Distribution",
+    "monthlyTrend": "Monthly Spending Trend",
+    "topSubscriptions": "Top Subscriptions",
+    "noData": "No subscription data yet",
+    "addFirst": "Add your first subscription to see statistics",
+    "month": "Month",
+    "category": "Category"
   }
 }

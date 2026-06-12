@@ -120,6 +120,7 @@
     "appName": "SubPilot",
     "dashboard": "仪表盘",
     "subscriptions": "订阅管理",
+    "statistics": "统计",
     "signOut": "退出登录",
     "settings": "设置"
   },
@@ -138,5 +139,15 @@
     "invalidRefreshToken": "无效的刷新令牌",
     "userNotFound": "用户未找到",
     "subscriptionNotFound": "订阅未找到"
+  },
+  "statistics": {
+    "title": "统计",
+    "categoryDistribution": "分类花费分布",
+    "monthlyTrend": "月度花费趋势",
+    "topSubscriptions": "订阅排行",
+    "noData": "暂无订阅数据",
+    "addFirst": "添加第一个订阅以查看统计",
+    "month": "月份",
+    "category": "分类"
   }
 }

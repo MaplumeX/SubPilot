@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import DashboardPage from "@/pages/DashboardPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
 import SettingsPage from "@/pages/SettingsPage";
+import StatisticsPage from "@/pages/StatisticsPage";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import ThemeToggle from "@/components/theme-toggle";
 import { createSubscription } from "@/api/subscriptions";
@@ -57,6 +58,17 @@ export default function AppLayout() {
               {t("layout.subscriptions")}
             </button>
             <button
+              onClick={() => navigate("/statistics")}
+              className={cn(
+                "text-sm transition-colors",
+                location.pathname.startsWith("/statistics")
+                  ? "text-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {t("layout.statistics")}
+            </button>
+            <button
               onClick={() => navigate("/settings")}
               className={cn(
                 "text-sm transition-colors",
@@ -92,6 +104,7 @@ export default function AppLayout() {
             }
           />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
