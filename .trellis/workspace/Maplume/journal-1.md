@@ -387,3 +387,36 @@ Kept category and status Select filters controlled with null empty values so cho
 ### Next Steps
 
 - None - task complete
+
+
+## Session 12: Add subscription sorting
+
+**Date**: 2026-06-13
+**Task**: Add subscription sorting
+**Branch**: `MaplumeX/subscription-sorting`
+
+### Summary
+
+Added server-side column sorting to subscriptions list (sort_by + sort_order query params). Sortable columns: name, price (converted_price via SQL JOIN on exchange_rates), next_billing_date (with nullslast). Frontend: clickable column headers with direction arrows and aria-sort accessibility. Updated spec docs with sorting patterns and whitelist validation convention.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9bda160` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
