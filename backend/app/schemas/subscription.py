@@ -55,6 +55,11 @@ class SubscriptionResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class SubscriptionBrief(BaseModel):
+    name: str
+    amount: float
+
+
 class SubscriptionStats(BaseModel):
     total_monthly: float
     total_yearly: float
@@ -62,3 +67,7 @@ class SubscriptionStats(BaseModel):
     count: int
     due_soon: list[SubscriptionResponse]
     base_currency: str = "CNY"
+    avg_monthly: float = 0.0
+    most_expensive: SubscriptionBrief | None = None
+    cheapest: SubscriptionBrief | None = None
+    top3_percentage: float = 0.0

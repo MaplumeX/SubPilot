@@ -132,6 +132,55 @@ export default function StatisticsPage() {
     <div className="space-y-6 [&_.recharts-text]:fill-muted-foreground [&_.recharts-cartesian-grid-horizontal_line]:stroke-border/50 [&_.recharts-cartesian-grid-vertical_line]:stroke-border/50 [&_.recharts-pie-label-text]:fill-foreground">
       <h2 className="text-2xl font-bold">{t("statistics.title")}</h2>
 
+      {/* Summary Metric Cards */}
+      {stats && stats.count > 0 && (
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {t("statistics.avgMonthly")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{fmt(stats.avg_monthly)}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {t("statistics.mostExpensive")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{fmt(stats.most_expensive?.amount ?? 0)}</p>
+              <p className="text-sm text-muted-foreground">{stats.most_expensive?.name}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {t("statistics.cheapest")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{fmt(stats.cheapest?.amount ?? 0)}</p>
+              <p className="text-sm text-muted-foreground">{stats.cheapest?.name}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {t("statistics.top3Percentage")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{stats.top3_percentage.toFixed(1)}%</p>
+              <p className="text-sm text-muted-foreground">{t("statistics.top3Subtitle")}</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Category Distribution */}
         <Card>
