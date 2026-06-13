@@ -30,6 +30,7 @@
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
 | 12 | 2026-06-13 | Add subscription sorting | `9bda160` | `MaplumeX/subscription-sorting` |
+| 12 | 2026-06-13 | Add card view for subscriptions | `e7c1a3f` | `MaplumeX/sub-card-view` |
 | 11 | 2026-06-13 | Add core metric cards to statistics page | `887eba6` | `MaplumeX/more-statistics-data` |
 | 11 | 2026-06-13 | Fix subscription all-filter display | `3f00e1e` | `MaplumeX/kampala` |
 | 10 | 2026-06-12 | Statistics Dashboard UI | `a2840b0` | `main` |

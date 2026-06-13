@@ -71,7 +71,9 @@
     "cycle_multi": "每{{count}}{{unit}}",
     "auto_renew": "自动续订",
     "auto_renew_enabled": "已开启自动续订",
-    "auto_renew_disabled": "未开启自动续订"
+    "auto_renew_disabled": "未开启自动续订",
+    "viewTable": "表格视图",
+    "viewCard": "卡片视图"
   },
   "subscriptionForm": {
     "editTitle": "编辑订阅",

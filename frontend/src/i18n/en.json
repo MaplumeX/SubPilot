@@ -71,7 +71,9 @@
     "cycle_multi": "Every {{count}} {{unit}}",
     "auto_renew": "Auto Renew",
     "auto_renew_enabled": "Auto renewal enabled",
-    "auto_renew_disabled": "Auto renewal disabled"
+    "auto_renew_disabled": "Auto renewal disabled",
+    "viewTable": "Table view",
+    "viewCard": "Card view"
   },
   "subscriptionForm": {
     "editTitle": "Edit Subscription",

@@ -399,6 +399,16 @@ Kept category and status Select filters controlled with null empty values so cho
 
 Added server-side column sorting to subscriptions list (sort_by + sort_order query params). Sortable columns: name, price (converted_price via SQL JOIN on exchange_rates), next_billing_date (with nullslast). Frontend: clickable column headers with direction arrows and aria-sort accessibility. Updated spec docs with sorting patterns and whitelist validation convention.
 
+## Session 12: Add card view for subscriptions
+
+**Date**: 2026-06-13
+**Task**: Add card view for subscriptions
+**Branch**: `MaplumeX/sub-card-view`
+
+### Summary
+
+Added SubscriptionCard component and view mode toggle (table/card) to subscriptions page with responsive grid layout and sessionStorage persistence
+
 ### Main Changes
 
 (Add details)
@@ -408,6 +418,7 @@ Added server-side column sorting to subscriptions list (sort_by + sort_order que
 | Hash | Message |
 |------|---------|
 | `9bda160` | (see git log) |
+| `e7c1a3f` | (see git log) |
 
 ### Testing
 
