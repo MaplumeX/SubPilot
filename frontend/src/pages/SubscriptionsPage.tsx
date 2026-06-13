@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, LayoutGrid, List } from "lucide-react";
 import {
   listSubscriptions,
   deleteSubscription,
@@ -29,6 +29,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import SubscriptionForm from "@/components/SubscriptionForm";
+import SubscriptionCard from "@/components/SubscriptionCard";
+
+type ViewMode = "table" | "card";
+
+function getInitialViewMode(): ViewMode {
+  try {
+    const stored = sessionStorage.getItem("subscription-view-mode");
+    if (stored === "card" || stored === "table") return stored;
+  } catch {
+    // sessionStorage unavailable
+  }
+  return "table";
+}
 
 const STATUSES = ["active", "cancelled", "trial"] as const;
 
@@ -42,6 +55,16 @@ export default function SubscriptionsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<ViewMode>(getInitialViewMode);
+
+  const handleViewModeChange = useCallback((mode: ViewMode) => {
+    setViewMode(mode);
+    try {
+      sessionStorage.setItem("subscription-view-mode", mode);
+    } catch {
+      // sessionStorage unavailable
+    }
+  }, []);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -133,7 +156,7 @@ export default function SubscriptionsPage() {
         </Button>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex items-center gap-4">
         <Select value={filterCategory || null} onValueChange={(v) => setFilterCategory(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
             <SelectValue label={filterCategory || undefined} placeholder={t("subscriptions.allCategories")} />
@@ -161,12 +184,46 @@ export default function SubscriptionsPage() {
             ))}
           </SelectContent>
         </Select>
+
+        <div className="ml-auto flex gap-1">
+          <Button
+            variant={viewMode === "table" ? "default" : "outline"}
+            size="icon-sm"
+            onClick={() => handleViewModeChange("table")}
+            aria-label={t("subscriptions.viewTable")}
+          >
+            <List className="size-4" />
+          </Button>
+          <Button
+            variant={viewMode === "card" ? "default" : "outline"}
+            size="icon-sm"
+            onClick={() => handleViewModeChange("card")}
+            aria-label={t("subscriptions.viewCard")}
+          >
+            <LayoutGrid className="size-4" />
+          </Button>
+        </div>
       </div>
 
       {loading ? (
         <p className="text-muted-foreground">{t("subscriptions.loading")}</p>
       ) : subscriptions.length === 0 ? (
         <p className="text-muted-foreground">{t("subscriptions.noSubscriptions")}</p>
+      ) : viewMode === "card" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {subscriptions.map((sub) => (
+            <SubscriptionCard
+              key={sub.id}
+              subscription={sub}
+              baseCurrency={baseCurrency}
+              locale={i18n.language}
+              onEdit={(s) => { setEditing(s); setFormOpen(true); }}
+              onDelete={handleDelete}
+              isDueSoon={isDueSoon}
+              formatCycle={formatCycle}
+            />
+          ))}
+        </div>
       ) : (
         <div className="rounded-md border overflow-x-auto">
           <Table>
