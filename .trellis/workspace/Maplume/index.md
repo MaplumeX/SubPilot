@@ -30,6 +30,7 @@
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
 | 11 | 2026-06-13 | Add core metric cards to statistics page | `887eba6` | `MaplumeX/more-statistics-data` |
+| 11 | 2026-06-13 | Fix subscription all-filter display | `3f00e1e` | `MaplumeX/kampala` |
 | 10 | 2026-06-12 | Statistics Dashboard UI | `a2840b0` | `main` |
 | 9 | 2026-06-09 | Add currency exchange rate conversion | `57fc951`, `7baf356` | `MaplumeX/exchange-rate-conversion` |
 | 9 | 2026-06-09 | Remove preset categories and add custom category input | `9325490`, `d758559` | `MaplumeX/custom-category-management` |

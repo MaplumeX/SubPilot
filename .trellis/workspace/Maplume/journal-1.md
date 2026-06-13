@@ -355,6 +355,16 @@ Added /statistics page with category distribution donut chart, monthly spending 
 
 Extended statistics page with 4 core metric cards (avg monthly cost, most expensive, cheapest, top3 concentration). Backend: added SubscriptionBrief schema and 4 new fields to stats endpoint. Frontend: responsive grid cards above existing charts, i18n support.
 
+## Session 11: Fix subscription all-filter display
+
+**Date**: 2026-06-13
+**Task**: Fix subscription all-filter display
+**Branch**: `MaplumeX/kampala`
+
+### Summary
+
+Kept category and status Select filters controlled with null empty values so choosing all displays translated placeholders instead of __all__; updated the Base UI Select guideline and verified frontend lint and production build.
+
 ### Main Changes
 
 (Add details)
@@ -364,6 +374,7 @@ Extended statistics page with 4 core metric cards (avg monthly cost, most expens
 | Hash | Message |
 |------|---------|
 | `887eba6` | (see git log) |
+| `3f00e1e` | (see git log) |
 
 ### Testing
 
