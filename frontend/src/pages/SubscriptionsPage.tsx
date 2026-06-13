@@ -134,7 +134,7 @@ export default function SubscriptionsPage() {
       </div>
 
       <div className="flex gap-4">
-        <Select value={filterCategory || undefined} onValueChange={(v) => setFilterCategory(v === "__all__" ? "" : (v ?? ""))}>
+        <Select value={filterCategory || null} onValueChange={(v) => setFilterCategory(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
             <SelectValue label={filterCategory || undefined} placeholder={t("subscriptions.allCategories")} />
           </SelectTrigger>
@@ -148,7 +148,7 @@ export default function SubscriptionsPage() {
           </SelectContent>
         </Select>
 
-        <Select value={filterStatus || undefined} onValueChange={(v) => setFilterStatus(v === "__all__" ? "" : (v ?? ""))}>
+        <Select value={filterStatus || null} onValueChange={(v) => setFilterStatus(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
             <SelectValue label={filterStatus ? t(`subscriptions.statuses.${filterStatus}`) : undefined} placeholder={t("subscriptions.allStatuses")} />
           </SelectTrigger>
