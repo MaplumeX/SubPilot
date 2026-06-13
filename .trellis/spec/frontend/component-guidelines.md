@@ -93,7 +93,7 @@ if (theme === 'dark' || ((theme === 'system' || !theme) && window.matchMedia('(p
 For selects with a placeholder (e.g. filter selects with "All X" default):
 
 ```tsx
-<Select value={filterCategory || undefined} onValueChange={...}>
+<Select value={filterCategory || null} onValueChange={...}>
   <SelectTrigger>
     <SelectValue
       label={filterCategory ? t(`subscriptions.categories.${filterCategory}`) : undefined}
@@ -113,10 +113,12 @@ When `label` is `undefined`, `SelectValue` falls back to `SelectPrimitive.Value`
 <Select value={filterX || "__all__"} onValueChange={(v) => setFilterX(v === "__all__" ? "" : (v ?? ""))}>
 ```
 
-**Correct** — use `undefined` for unselected state so placeholder renders:
+**Correct** — use `null` for the controlled unselected state so the placeholder renders:
 ```tsx
-<Select value={filterX || undefined} onValueChange={(v) => setFilterX(v === "__all__" ? "" : v)}>
+<Select value={filterX || null} onValueChange={(v) => setFilterX(v === "__all__" ? "" : (v ?? ""))}>
 ```
+
+Do not pass `undefined` as the empty `value`. Base UI determines whether the Select is controlled on the first render, and `undefined` makes it uncontrolled. Use `null` to keep the Select controlled while representing no selected value.
 
 ### oklch CSS variables in SVG / Recharts
 
