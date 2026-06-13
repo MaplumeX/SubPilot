@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Component patterns, props, styling, i18n conventions for creating SubscriptionCard component"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Where to place new SubscriptionCard component file"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Type patterns for props and interfaces"}
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "Reuse existing Card, Avatar, Badge components"}
