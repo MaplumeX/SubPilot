@@ -4,9 +4,11 @@ from datetime import date, timedelta
 
 from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
+from sqlalchemy import and_, case, func
 from sqlalchemy.orm import Session
 
 from app.deps import get_current_user, get_db
+from app.models.exchange_rate import ExchangeRate
 from app.models.subscription import CycleUnit, Subscription, SubscriptionStatus
 from app.models.user import User
 from app.services.exchange_rate import get_rate
@@ -20,6 +22,16 @@ from app.schemas.subscription import (
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/svg+xml", "image/gif"}
 MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
 LOGOS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "logos")
+
+SORTABLE_FIELDS = {"name", "converted_price", "next_billing_date"}
+
+_CYCLE_MULTIPLIER = case(
+    (Subscription.cycle_unit == CycleUnit.day, Subscription.price * Subscription.cycle_count * 365.0 / 12),
+    (Subscription.cycle_unit == CycleUnit.week, Subscription.price * Subscription.cycle_count * 52.0 / 12),
+    (Subscription.cycle_unit == CycleUnit.month, Subscription.price * Subscription.cycle_count),
+    (Subscription.cycle_unit == CycleUnit.year, Subscription.price * Subscription.cycle_count / 12.0),
+    else_=Subscription.price,
+)
 
 
 router = APIRouter(prefix="/api/v1/subscriptions", tags=["subscriptions"])
@@ -87,14 +99,76 @@ def create_subscription(
 def list_subscriptions(
     category: str | None = Query(None),
     status: SubscriptionStatus | None = Query(None),
+    sort_by: str | None = Query(None),
+    sort_order: str | None = Query(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    if sort_by is not None and sort_by not in SORTABLE_FIELDS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid sort_by. Allowed: {', '.join(sorted(SORTABLE_FIELDS))}",
+        )
+    if sort_order is not None and sort_order not in {"asc", "desc"}:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="sort_order must be 'asc' or 'desc'",
+        )
+
     query = db.query(Subscription).filter(Subscription.user_id == current_user.id)
     if category is not None:
         query = query.filter(Subscription.category == category)
     if status is not None:
         query = query.filter(Subscription.status == status)
+
+    if sort_by == "converted_price":
+        latest_rate_subq = (
+            db.query(
+                ExchangeRate.base_currency,
+                ExchangeRate.target_currency,
+                func.max(ExchangeRate.date).label("max_date"),
+            )
+            .filter(ExchangeRate.target_currency == current_user.base_currency)
+            .group_by(ExchangeRate.base_currency, ExchangeRate.target_currency)
+            .subquery()
+        )
+        rate_subq = (
+            db.query(ExchangeRate)
+            .join(
+                latest_rate_subq,
+                and_(
+                    ExchangeRate.base_currency == latest_rate_subq.c.base_currency,
+                    ExchangeRate.target_currency == latest_rate_subq.c.target_currency,
+                    ExchangeRate.date == latest_rate_subq.c.max_date,
+                ),
+            )
+            .subquery()
+        )
+        query = query.join(
+            rate_subq,
+            Subscription.currency == rate_subq.c.base_currency,
+            isouter=True,
+        )
+        rate_expr = func.coalesce(rate_subq.c.rate, 1.0)
+        order_expr = _CYCLE_MULTIPLIER * rate_expr
+    elif sort_by == "name":
+        order_expr = Subscription.name
+    elif sort_by == "next_billing_date":
+        order_expr = Subscription.next_billing_date
+    else:
+        order_expr = Subscription.created_at
+
+    if sort_order == "desc" or (sort_order is None and sort_by is None):
+        if sort_by == "next_billing_date":
+            query = query.order_by(order_expr.desc().nullslast())
+        else:
+            query = query.order_by(order_expr.desc())
+    else:
+        if sort_by == "next_billing_date":
+            query = query.order_by(order_expr.asc().nullslast())
+        else:
+            query = query.order_by(order_expr.asc())
+
     subs = query.all()
     base = current_user.base_currency
     for sub in subs:

@@ -24,6 +24,21 @@
 
 ---
 
+## Input Validation for Query Params
+
+For enum/whitelist query params (e.g., `sort_by`, `sort_order`), validate manually and return 400 — don't rely solely on FastAPI's 422:
+
+```python
+SORTABLE_FIELDS = {"name", "converted_price", "next_billing_date"}
+
+if sort_by is not None and sort_by not in SORTABLE_FIELDS:
+    raise HTTPException(status_code=400, detail=f"Invalid sort_by field: {sort_by}")
+```
+
+Why: whitelist validation prevents SQL injection through column names (string-to-order_by mapping), and 400 is more appropriate than 422 for domain constraint violations.
+
+---
+
 ## Error Handling Patterns
 
 - Use `HTTPException` directly in routers — no custom exception classes needed for MVP
