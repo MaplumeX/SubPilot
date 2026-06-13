@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 11
+- **Total Sessions**: 12
 - **Last Active**: 2026-06-13
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~378 | Active |
+| `journal-1.md` | ~422 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 12 | 2026-06-13 | Add card view for subscriptions | `e7c1a3f` | `MaplumeX/sub-card-view` |
 | 11 | 2026-06-13 | Add core metric cards to statistics page | `887eba6` | `MaplumeX/more-statistics-data` |
 | 11 | 2026-06-13 | Fix subscription all-filter display | `3f00e1e` | `MaplumeX/kampala` |
 | 10 | 2026-06-12 | Statistics Dashboard UI | `a2840b0` | `main` |

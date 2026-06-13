@@ -387,3 +387,36 @@ Kept category and status Select filters controlled with null empty values so cho
 ### Next Steps
 
 - None - task complete
+
+
+## Session 12: Add card view for subscriptions
+
+**Date**: 2026-06-13
+**Task**: Add card view for subscriptions
+**Branch**: `MaplumeX/sub-card-view`
+
+### Summary
+
+Added SubscriptionCard component and view mode toggle (table/card) to subscriptions page with responsive grid layout and sessionStorage persistence
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `e7c1a3f` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
