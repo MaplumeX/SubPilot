@@ -68,6 +68,11 @@ export interface SubscriptionUpdate {
   logo_url?: string | null;
 }
 
+export interface SubscriptionBrief {
+  name: string;
+  amount: number;
+}
+
 export interface SubscriptionStats {
   total_monthly: number;
   total_yearly: number;
@@ -75,4 +80,8 @@ export interface SubscriptionStats {
   count: number;
   due_soon: Subscription[];
   base_currency: string;
+  avg_monthly: number;
+  most_expensive: SubscriptionBrief | null;
+  cheapest: SubscriptionBrief | null;
+  top3_percentage: number;
 }

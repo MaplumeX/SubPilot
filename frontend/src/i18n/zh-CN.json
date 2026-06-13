@@ -148,6 +148,11 @@
     "noData": "暂无订阅数据",
     "addFirst": "添加第一个订阅以查看统计",
     "month": "月份",
-    "category": "分类"
+    "category": "分类",
+    "avgMonthly": "平均月费",
+    "mostExpensive": "最贵订阅",
+    "cheapest": "最便宜订阅",
+    "top3Percentage": "消费集中度",
+    "top3Subtitle": "Top 3 占比"
   }
 }

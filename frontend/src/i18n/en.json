@@ -148,6 +148,11 @@
     "noData": "No subscription data yet",
     "addFirst": "Add your first subscription to see statistics",
     "month": "Month",
-    "category": "Category"
+    "category": "Category",
+    "avgMonthly": "Avg Monthly Cost",
+    "mostExpensive": "Most Expensive",
+    "cheapest": "Cheapest",
+    "top3Percentage": "Top 3 Share",
+    "top3Subtitle": "Top 3 Share"
   }
 }

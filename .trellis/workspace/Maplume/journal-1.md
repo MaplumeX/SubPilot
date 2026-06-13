@@ -345,6 +345,16 @@ Added /statistics page with category distribution donut chart, monthly spending 
 - None - task complete
 
 
+## Session 11: Add core metric cards to statistics page
+
+**Date**: 2026-06-13
+**Task**: Add core metric cards to statistics page
+**Branch**: `MaplumeX/more-statistics-data`
+
+### Summary
+
+Extended statistics page with 4 core metric cards (avg monthly cost, most expensive, cheapest, top3 concentration). Backend: added SubscriptionBrief schema and 4 new fields to stats endpoint. Frontend: responsive grid cards above existing charts, i18n support.
+
 ## Session 11: Fix subscription all-filter display
 
 **Date**: 2026-06-13
@@ -363,6 +373,7 @@ Kept category and status Select filters controlled with null empty values so cho
 
 | Hash | Message |
 |------|---------|
+| `887eba6` | (see git log) |
 | `3f00e1e` | (see git log) |
 
 ### Testing

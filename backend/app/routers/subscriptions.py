@@ -133,6 +133,7 @@ def get_stats(
 
     total_monthly = 0.0
     by_category: dict[str, float] = {}
+    converted_prices: list[tuple[str, float]] = []
 
     for sub in subscriptions:
         monthly = _normalize_to_monthly(sub.price, sub.cycle_count, sub.cycle_unit)
@@ -141,6 +142,20 @@ def get_stats(
         total_monthly += converted
         cat = sub.category
         by_category[cat] = by_category.get(cat, 0.0) + converted
+        converted_prices.append((sub.name, converted))
+
+    count = len(subscriptions)
+    avg_monthly = round(total_monthly / count, 2) if count else 0.0
+
+    sorted_prices = sorted(converted_prices, key=lambda x: x[1], reverse=True)
+    most_expensive = None
+    cheapest = None
+    if sorted_prices:
+        most_expensive = {"name": sorted_prices[0][0], "amount": round(sorted_prices[0][1], 2)}
+        cheapest = {"name": sorted_prices[-1][0], "amount": round(sorted_prices[-1][1], 2)}
+
+    top3_sum = sum(p for _, p in sorted_prices[:3])
+    top3_percentage = round(top3_sum / total_monthly * 100, 2) if total_monthly else 0.0
 
     today = date.today()
     three_days = today + timedelta(days=3)
@@ -160,9 +175,13 @@ def get_stats(
         total_monthly=round(total_monthly, 2),
         total_yearly=round(total_monthly * 12, 2),
         by_category={k: round(v, 2) for k, v in by_category.items()},
-        count=len(subscriptions),
+        count=count,
         due_soon=due_soon_subs,
         base_currency=base,
+        avg_monthly=avg_monthly,
+        most_expensive=most_expensive,
+        cheapest=cheapest,
+        top3_percentage=top3_percentage,
     )
 
 
