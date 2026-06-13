@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Verify backend changes meet quality standards"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Verify frontend changes meet quality standards"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Verify card components follow project patterns"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Verify TypeScript types are correctly extended"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Verify backend-frontend contract consistency"}
