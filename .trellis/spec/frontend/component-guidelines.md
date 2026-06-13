@@ -187,6 +187,50 @@ Key points:
 
 ---
 
+## Sortable Table Headers
+
+For table columns that support sorting, use a `SortableHeader` component pattern:
+
+```tsx
+function SortableHeader({
+  field,
+  activeSort,
+  sortOrder,
+  onSort,
+  children,
+}: {
+  field: string;
+  activeSort: string;
+  sortOrder: "asc" | "desc";
+  onSort: (field: string) => void;
+  children: React.ReactNode;
+}) {
+  const isActive = activeSort === field;
+  return (
+    <TableHead
+      className="cursor-pointer select-none"
+      aria-sort={isActive ? (sortOrder === "asc" ? "ascending" : "descending") : undefined}
+      onClick={() => onSort(field)}
+    >
+      <div className="flex items-center gap-1">
+        {children}
+        {isActive && (
+          sortOrder === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+        )}
+      </div>
+    </TableHead>
+  );
+}
+```
+
+Key points:
+- Always include `aria-sort` for accessibility (screen readers)
+- Click logic: same column → toggle asc/desc; different column → new sort with asc default
+- Sort state (`sortBy` / `sortOrder`) passed to API call as query params
+- `SortableHeader` must be defined **outside** the page component (not inside render) to avoid ESLint "defining components during render" error
+
+---
+
 ## i18n in Components
 
 - Use `const { t } = useTranslation()` in every component with user-facing strings

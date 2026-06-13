@@ -45,6 +45,44 @@ alembic upgrade head
 
 ---
 
+## Sorting on List Endpoints
+
+When adding sorting to a list endpoint:
+
+- Use `sort_by` + `sort_order` query params with **whitelist validation** (prevent SQL injection)
+- Validate `sort_by` against a set of allowed field names; return 400 on invalid values
+- Validate `sort_order` as `"asc"` or `"desc"`; default to `"asc"` when `sort_by` is provided without `sort_order`
+- Default sort (no params): preserve current behavior (e.g., `created_at.desc()`)
+
+```python
+SORTABLE_FIELDS = {"name", "converted_price", "next_billing_date"}
+
+@router.get("")
+def list_items(
+    sort_by: str | None = Query(None),
+    sort_order: str | None = Query(None),
+    ...
+):
+    if sort_by is not None and sort_by not in SORTABLE_FIELDS:
+        raise HTTPException(status_code=400, detail=f"Invalid sort_by field: {sort_by}")
+    if sort_order is not None and sort_order not in ("asc", "desc"):
+        raise HTTPException(status_code=400, detail="sort_order must be 'asc' or 'desc'")
+```
+
+- For **nullable columns** (e.g., `next_billing_date`), always use `.nullslast()` in both sort directions — nulls at the top confuse users
+
+```python
+col = Subscription.next_billing_date
+if sort_order == "asc":
+    query = query.order_by(col.asc().nullslast())
+else:
+    query = query.order_by(col.desc().nullslast())
+```
+
+- For **computed fields** not in the DB (e.g., `converted_price = price * rate`), build a SQL expression with JOIN + CASE instead of sorting in Python. Use a subquery to get the latest rate per currency pair, then JOIN on the result.
+
+---
+
 ## Common Mistakes
 
 - **Forgetting to import models in `alembic/env.py`** → autogenerate won't detect changes

@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Feature spans backend API + frontend UI — need cross-layer data flow consistency for sort_by/sort_order params"}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Backend sort requires SQLAlchemy order_by with JOIN on exchange_rates for converted_price"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Sortable table headers follow shadcn/ui component patterns"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Sort state (sort_by, sort_order) management pattern in component"}
+{"file": ".trellis/tasks/06-13-add-subscription-sorting/prd.md", "reason": "PRD with requirements, acceptance criteria, and technical approach"}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { RefreshCw, LayoutGrid, List } from "lucide-react";
+import { ArrowDown, ArrowUp, RefreshCw, LayoutGrid, List } from "lucide-react";
 import {
   listSubscriptions,
   deleteSubscription,
@@ -45,6 +45,36 @@ function getInitialViewMode(): ViewMode {
 
 const STATUSES = ["active", "cancelled", "trial"] as const;
 
+function SortableHeader({
+  field,
+  label,
+  activeSort,
+  order,
+  onSort,
+}: {
+  field: string;
+  label: string;
+  activeSort: string;
+  order: string;
+  onSort: (field: string) => void;
+}) {
+  const isActive = activeSort === field;
+  return (
+    <TableHead
+      className="cursor-pointer select-none"
+      aria-sort={isActive ? (order === "asc" ? "ascending" : "descending") : undefined}
+      onClick={() => onSort(field)}
+    >
+      <div className="flex items-center gap-1">
+        {label}
+        {isActive && (
+          order === "asc" ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />
+        )}
+      </div>
+    </TableHead>
+  );
+}
+
 export default function SubscriptionsPage() {
   const { t, i18n } = useTranslation();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
@@ -55,6 +85,8 @@ export default function SubscriptionsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<string>("asc");
   const [viewMode, setViewMode] = useState<ViewMode>(getInitialViewMode);
 
   const handleViewModeChange = useCallback((mode: ViewMode) => {
@@ -84,6 +116,10 @@ export default function SubscriptionsPage() {
       const params: Record<string, string> = {};
       if (filterCategory) params.category = filterCategory;
       if (filterStatus) params.status = filterStatus;
+      if (sortBy) {
+        params.sort_by = sortBy;
+        params.sort_order = sortOrder;
+      }
       const data = await listSubscriptions(params);
       setSubscriptions(data);
       const stats = await getStats();
@@ -93,7 +129,7 @@ export default function SubscriptionsPage() {
     } finally {
       setLoading(false);
     }
-  }, [filterCategory, filterStatus]);
+  }, [filterCategory, filterStatus, sortBy, sortOrder]);
 
   useEffect(() => {
     fetchSubscriptions();
@@ -140,6 +176,15 @@ export default function SubscriptionsPage() {
       return t(`subscriptions.cycle_single.${cycle_unit}`);
     }
     return t(`subscriptions.cycle_multi`, { count: cycle_count, unit: t(`subscriptions.cycle_units.${cycle_unit}`) });
+  };
+
+  const handleSort = (field: string) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortOrder("asc");
+    }
   };
 
   return (
@@ -229,13 +274,13 @@ export default function SubscriptionsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t("subscriptions.name")}</TableHead>
-                <TableHead>{t("subscriptions.price")}</TableHead>
+                <SortableHeader field="name" label={t("subscriptions.name")} activeSort={sortBy} order={sortOrder} onSort={handleSort} />
+                <SortableHeader field="converted_price" label={t("subscriptions.price")} activeSort={sortBy} order={sortOrder} onSort={handleSort} />
                 <TableHead>{t("subscriptions.cycle")}</TableHead>
                 <TableHead>{t("subscriptions.category")}</TableHead>
                 <TableHead>{t("subscriptions.status")}</TableHead>
                 <TableHead>{t("subscriptions.auto_renew")}</TableHead>
-                <TableHead>{t("subscriptions.nextBilling")}</TableHead>
+                <SortableHeader field="next_billing_date" label={t("subscriptions.nextBilling")} activeSort={sortBy} order={sortOrder} onSort={handleSort} />
                 <TableHead className="text-right">{t("subscriptions.actions")}</TableHead>
               </TableRow>
             </TableHeader>
