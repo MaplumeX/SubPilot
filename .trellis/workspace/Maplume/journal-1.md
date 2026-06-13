@@ -343,3 +343,36 @@ Added /statistics page with category distribution donut chart, monthly spending 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 11: Fix subscription all-filter display
+
+**Date**: 2026-06-13
+**Task**: Fix subscription all-filter display
+**Branch**: `MaplumeX/kampala`
+
+### Summary
+
+Kept category and status Select filters controlled with null empty values so choosing all displays translated placeholders instead of __all__; updated the Base UI Select guideline and verified frontend lint and production build.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `3f00e1e` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
