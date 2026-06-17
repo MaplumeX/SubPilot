@@ -93,3 +93,55 @@ else:
 - **Replacing an enum column with multiple columns** → migrate data first (add new cols → UPDATE data → drop old col), and use `batch_alter_table` for cross-dialect compatibility
 - **Missing `server_default` on Boolean columns** — SQLite can't handle Python-side defaults in ALTER TABLE; always use `server_default=text("1")` / `text("0")` for non-nullable Boolean columns
 - **Missing `server_default` on non-nullable String columns** — SQLite ALTER TABLE requires `server_default` for adding NOT NULL columns to existing tables; always provide `server_default=text("...")` (e.g., `server_default=text("CNY")` for currency fields)
+- **Notification channel switches defaulting to `text("1")`** — enabling a channel that sends external messages should default OFF so existing users don't get surprise messages; prefer `server_default=text("0")` and require explicit opt-in.
+
+---
+
+## Acknowledgement-Marker Pattern (vs. Advancing Dates)
+
+When implementing a "mark as done / acknowledged / read" action on a dated entity that already has a separate scheduled job that **advances** that date (e.g., `process_renewals` advances `Subscription.next_billing_date`), do NOT implement "ack" by advancing the same date — write a **separate marker field** instead.
+
+**Problem (double-advance conflict)**: If `acknowledge` sets `next_billing_date = next_billing_date + cycle`, and `process_renewals` later runs on the same due day and advances it again, the same billing period gets advanced twice — data corruption. The business date loses its real meaning.
+
+**Solution**: add a separate marker column storing the date being acknowledged:
+
+```python
+acknowledged_billing_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+
+# ack endpoint — ONLY writes the marker, NEVER touches next_billing_date
+subscription.acknowledged_billing_date = subscription.next_billing_date
+```
+
+Suppression logic is "marker == current business date":
+
+```python
+# scanner skips subs already acknowledged for the current period
+or_(
+    Subscription.acknowledged_billing_date.is_(None),
+    Subscription.acknowledged_billing_date != Subscription.next_billing_date,
+)
+```
+
+**Why this self-resets**: when `next_billing_date` later advances (by the scheduled job or a manual edit), `acknowledged_billing_date != next_billing_date` becomes true again → reminders resume next period automatically. No cleanup job needed.
+
+**When to apply**: any feature that lets a user "dismiss" a dated event where another mechanism mutates that date. If no other writer touched the field, advancing it on ack would be fine — the conflict only arises because two writers target the same field.
+
+---
+
+## Per-User External Credentials: Enable Requires Validation
+
+When storing per-user third-party credentials (SMTP, Telegram bot token, etc.) as nullable columns on `User` alongside an `<channel>_enabled` boolean, enabling the channel is a two-field contract: the switch AND its credentials. Enabling without complete credentials is a 422, not a silent runtime skip:
+
+```python
+def _validate_channel_credentials(user: User) -> None:
+    if user.reminder_email_enabled:
+        if not (user.smtp_host and user.smtp_port and user.smtp_user and user.smtp_password):
+            raise HTTPException(status_code=422, detail="Email channel enabled but SMTP credentials incomplete")
+    # ...same for telegram
+```
+
+**Why two layers**:
+- **At write time (PUT, 422)** — fail loud so the user knows their config is broken before relying on it.
+- **At runtime (scanner, silent skip)** — the scheduled job builds channels from the saved user; `build_channels` catches `ValueError` from incomplete creds and `logger.warning`s + skips, because raising **inside a background job would crash the scheduler**. Background jobs must never raise on bad stored state.
+
+So: validate at the API boundary, defend-in-depth at the job boundary. Credentials stored plaintext on SQLite is accepted for the local/single-machine MVP; revisit encryption only when moving off local SQLite.
