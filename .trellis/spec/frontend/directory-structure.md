@@ -6,7 +6,7 @@
 
 ## Overview
 
-React + Vite + TypeScript + shadcn/ui + Tailwind CSS v4, organized by role (pages, components, api).
+React 19 + Vite + TypeScript + shadcn/ui (base-ui backed) + Tailwind CSS v4, organized by role (pages, components, api). i18n via i18next; charts via Recharts.
 
 ---
 
@@ -16,32 +16,41 @@ React + Vite + TypeScript + shadcn/ui + Tailwind CSS v4, organized by role (page
 frontend/
 ├── src/
 │   ├── api/
-│   │   ├── client.ts          # Axios instance with auth interceptor
-│   │   ├── auth.ts            # Auth API functions
-│   │   ├── subscriptions.ts   # Subscription API functions
-│   │   └── types.ts           # Shared TypeScript types (API boundary)
+│   │   ├── client.ts          # Axios instance with auth request + 401 response interceptors
+│   │   ├── auth.ts            # Auth + user-profile API functions
+│   │   ├── subscriptions.ts   # Subscription + stats + categories + payment-methods + logo API
+│   │   ├── notifications.ts   # Notification settings + test-channel API
+│   │   └── types.ts          # Shared TypeScript types (API boundary)
 │   ├── components/
-│   │   ├── ui/                # shadcn/ui primitives (button, card, dialog, etc.)
-│   │   ├── AppLayout.tsx      # App shell with nav header
-│   │   └── SubscriptionForm.tsx # Feature components
+│   │   ├── ui/                # shadcn/ui primitives (base-ui backed, see below)
+│   │   ├── AppLayout.tsx      # App shell: nav header, routed <main>, global create form
+│   │   ├── SubscriptionForm.tsx  # Create/edit form (Dialog + Comboboxes)
+│   │   ├── SubscriptionCard.tsx  # Card-view row component
+│   │   ├── theme-provider.tsx    # Wraps next-themes provider
+│   │   └── theme-toggle.tsx      # Dropdown theme switcher
 │   ├── pages/
 │   │   ├── LoginPage.tsx
 │   │   ├── RegisterPage.tsx
-│   │   ├── DashboardPage.tsx
-│   │   └── SubscriptionsPage.tsx
+│   │   ├── DashboardPage.tsx     # Stats cards + due-soon list + Recharts trend
+│   │   ├── SubscriptionsPage.tsx # Table + card view, filters, sorting
+│   │   ├── StatisticsPage.tsx
+│   │   └── SettingsPage.tsx      # Language, base currency, notification settings
 │   ├── i18n/
 │   │   ├── index.ts            # i18next config (init + LanguageDetector)
 │   │   ├── en.json             # English translations
 │   │   └── zh-CN.json          # Simplified Chinese translations
-│   ├── auth-context.tsx       # Auth context provider
-│   ├── auth-hook.ts           # useAuth hook
+│   ├── auth-context.tsx       # AuthContext provider (token + user state)
+│   ├── auth-hook.ts           # useAuth hook (context wrapper)
+│   ├── theme-hook.ts          # Re-exports next-themes useTheme
 │   ├── routes.tsx             # ProtectedRoute, GuestRoute wrappers
-│   ├── App.tsx                # Router config
-│   ├── main.tsx               # Entry point (imports i18n before App)
-│   ├── index.css              # Tailwind CSS v4 + shadcn theme
+│   ├── App.tsx                # Router config (BrowserRouter + providers)
+│   ├── main.tsx               # Entry point (imports i18n + index.css before App)
+│   ├── index.css              # Tailwind CSS v4 + oklch theme + @fontsource Geist
 │   └── lib/
 │       └── utils.ts           # cn() utility
-├── vite.config.ts             # Tailwind + path alias + API proxy
+├── components.json           # shadcn config: style "base-nova", base-ui registry
+├── public/                   # Static assets (favicon.svg)
+├── vite.config.ts             # Tailwind + path alias + /api + /static proxy
 ├── tsconfig.app.json          # Path alias (@/* → ./src/*)
 └── eslint.config.js
 ```
@@ -50,10 +59,10 @@ frontend/
 
 ## Module Organization
 
-- **api/** — one file per domain (auth, subscriptions), shared types in `types.ts`
-- **i18n/** — i18next config + JSON translation files (one per locale)
-- **components/ui/** — shadcn/ui primitives only, no business logic
-- **components/** — feature-level reusable components
+- **api/** — one file per domain (auth, subscriptions, notifications), shared types in `types.ts`
+- **i18n/** — i18next config + JSON translation files (one per locale). Top-level namespaces: `auth, dashboard, subscriptions, subscriptionForm, layout, settings, notifications, errors, statistics`
+- **components/ui/** — shadcn/ui primitives only, no business logic. Built on `@base-ui/react` (NOT Radix); `components.json` style is `base-nova`.
+- **components/** — feature-level reusable components (incl. `theme-provider.tsx`, `theme-toggle.tsx` at this level, not under `ui/`)
 - **pages/** — route-level page components
 
 ---
@@ -62,7 +71,8 @@ frontend/
 
 - Page files: `<Name>Page.tsx` (PascalCase + Page suffix)
 - Component files: `<Name>.tsx` or `<Name>Form.tsx`
-- API files: domain name lowercase (`auth.ts`, `subscriptions.ts`)
+- API files: domain name lowercase (`auth.ts`, `subscriptions.ts`, `notifications.ts`)
+- Hook/context files: flat under `src/`, kebab-case (`auth-hook.ts`, `theme-hook.ts`, `auth-context.tsx`)
 - CSS: Tailwind utility classes only, no separate CSS files except `index.css`
 
 ---
@@ -70,7 +80,7 @@ frontend/
 ## Adding a New Page
 
 1. Create `src/pages/<Name>Page.tsx`
-2. Add route in `App.tsx` (within AppLayout for authenticated pages)
+2. Add a `<Route>` inside `AppLayout`'s `<Routes>` (authenticated pages live inside `AppLayout`, which is itself wrapped by `ProtectedRoute` in `App.tsx`)
 3. Add nav link in `AppLayout.tsx` if needed
 
 ---
@@ -80,4 +90,4 @@ frontend/
 1. Create `src/i18n/<locale>.json` with all translation keys
 2. Import and register in `src/i18n/index.ts` under `resources`
 3. Add locale to the `PATCH /me/locale` allowlist in `backend/app/routers/auth.py`
-4. Add `SelectItem` in `src/pages/SettingsPage.tsx`
+4. Add the locale's `SelectItem` in `src/pages/SettingsPage.tsx` (and its trigger `label` — see Select guidelines)

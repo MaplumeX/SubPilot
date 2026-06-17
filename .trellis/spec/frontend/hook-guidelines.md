@@ -6,7 +6,7 @@
 
 ## Overview
 
-Custom hooks are minimal in this project. The primary pattern is `useAuth()` — a thin context wrapper. Data fetching is done via direct Axios calls inside `useEffect` or event handlers; there is no React Query / SWR integration.
+Custom hooks are minimal in this project. The patterns in use: `useAuth()` — a thin context wrapper over `AuthContext`; `useTheme` — re-exported from `next-themes` via `src/theme-hook.ts`. Data fetching is done via direct Axios calls inside `useEffect` or event handlers; there is no React Query / SWR integration.
 
 ---
 
@@ -36,11 +36,13 @@ export function useAuth() {
 
 ## Data Fetching
 
-Current pattern: direct Axios calls, no caching layer.
+Current pattern: direct Axios calls via `src/api/*` functions, no caching layer.
 
-- **On mount**: call API in `useEffect(() => { fetch() }, [])`, store result in `useState`.
-- **On mutation**: call API in event handler, then manually re-fetch or update local state.
-- **Error handling**: narrow Axios errors with `((err as { response?: { data?: { detail?: string } } })?.response?.data?.detail) ?? "Default message"`.
+- **On mount**: call API in `useCallback`-wrapped `fetchX` inside `useEffect(() => { fetchX(); }, [fetchX])`, store result in `useState`. Set `loading=false` in `.finally`. See `DashboardPage.fetchStats`, `SubscriptionsPage.fetchSubscriptions`.
+- **On mutation**: call API in an event handler, then manually re-fetch or update local state. `SubscriptionsPage.handleAcknowledge` optimistically patches local state from the response instead of refetching.
+- **Unmanageable dependencies**: when a fetch depends on filter/sort state, put those values in the `useCallback` dependency array so the effect re-runs on change (`fetchSubscriptions` depends on `[filterCategory, filterStatus, sortBy, sortOrder]`).
+- **Error handling**: the Axios response interceptor (`api/client.ts`) handles 401 globally (clears tokens, redirects to `/login`). Per-call errors are caught silently with `// 401 handled by interceptor` comments — only show local error UI for user-actionable failures (e.g. form submit, settings save).
+- **Stale-effect guard**: for fetch-on-mount with async state, guard with an `active` flag in the effect cleanup so a slow response after unmount doesn't call `setState` on an unmounted component (see `SettingsPage.NotificationsCard` `useEffect`).
 
 When a hook wraps data fetching, follow this shape:
 

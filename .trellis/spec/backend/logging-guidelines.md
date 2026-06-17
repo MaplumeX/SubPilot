@@ -6,7 +6,9 @@
 
 ## Overview
 
-This project uses Python's standard `logging` module. There is no application-level logger configured yet — only Alembic configures logging via `fileConfig` in `alembic/env.py`. When adding logging, use the stdlib `logging` module directly; do not introduce additional logging libraries unless a structured logging need arises.
+This project uses Python's standard `logging` module via `logging.getLogger(__name__)` per module. Active log sites today: `main.py` (scheduler job results + exceptions), `services/exchange_rate.py` (fetch upsert/failure), `services/notifications/scanner.py` + `channels.py` (send failures, incomplete-credential skips). There is no root logger configuration in the app; only Alembic configures logging via `fileConfig` in `alembic/env.py`. Use the stdlib `logging` module directly; do not introduce additional libraries unless a structured-logging need arises.
+
+**Background-job discipline (critical)**: scheduled jobs (`_run_renewals`, `_run_reminders`, `_run_exchange_rates` in `main.py`) wrap their body in `try/except` and call `logger.exception(...)`. A raised exception in a job body crashes the scheduler for all users — log and continue, never re-raise.
 
 ---
 
@@ -15,8 +17,8 @@ This project uses Python's standard `logging` module. There is no application-le
 | Level | When to use |
 |-------|-------------|
 | `DEBUG` | Detailed diagnostic info (query parameters, function args). Dev-only. |
-| `INFO` | Normal operational events (server start, user signup, subscription created). |
-| `WARNING` | Recoverable issues (deprecated API usage, rate limit接近). |
+| `INFO` | Normal operational events. Used as `logger.info("Auto-renewed %d subscription(s)", count)` etc. in `main.py`, and `"Sent %d reminder message(s)"` in `scanner.py`. |
+| `WARNING` | Recoverable issues — exchange-rate fetch failure (`exchange_rate.py`), missing rate pair fallback, user enabled a channel with incomplete creds (`channels.build_channels` skips + warns). |
 | `ERROR` | Failed operations (unhandled exceptions, database connection lost). |
 
 ---

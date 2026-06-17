@@ -6,7 +6,7 @@
 
 ## Overview
 
-This directory contains guidelines for backend development. Fill in each file with your project's specific conventions.
+The backend is a FastAPI + SQLAlchemy (sync) + Alembic + APScheduler app. Code is organized by domain (models, schemas, services, routers). Notification settings endpoints are mounted under the auth router, and reminder sending runs as a subpackage-based scheduled service.
 
 ---
 
@@ -14,24 +14,17 @@ This directory contains guidelines for backend development. Fill in each file wi
 
 | Guide | Description | Status |
 |-------|-------------|--------|
-| [Directory Structure](./directory-structure.md) | Module organization and file layout | To fill |
-| [Database Guidelines](./database-guidelines.md) | ORM patterns, queries, migrations, ack-marker pattern, per-user creds | To fill |
-| [Error Handling](./error-handling.md) | Error types, handling strategies | To fill |
-| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | To fill |
-| [Logging Guidelines](./logging-guidelines.md) | Structured logging, log levels, what not to log | To fill |
+| [Directory Structure](./directory-structure.md) | Module organization, file layout, services subpackage | Filled |
+| [Database Guidelines](./database-guidelines.md) | ORM patterns, queries, migrations, ack-marker pattern, per-user creds | Filled |
+| [Error Handling](./error-handling.md) | Error types, handling strategies | Filled |
+| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | Filled |
+| [Logging Guidelines](./logging-guidelines.md) | Structured logging, log levels, what not to log | Filled |
 
 ---
 
-## How to Fill These Guidelines
+## How to Use These Guidelines
 
-For each guideline file:
-
-1. Document your project's **actual conventions** (not ideals)
-2. Include **code examples** from your codebase
-3. List **forbidden patterns** and why
-4. Add **common mistakes** your team has made
-
-The goal is to help AI assistants and new team members understand how YOUR project works.
+These docs describe how THIS backend works: actual conventions, real source files (paths cited inline), and the specific migration/ownership/ack-marker gotchas that have come up. Skim the relevant file before coding in an area.
 
 ---
 

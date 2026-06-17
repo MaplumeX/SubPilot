@@ -6,9 +6,20 @@
 
 ## Overview
 
-- UI primitives: shadcn/ui (Radix-based, Tailwind-styled)
-- Feature components: custom components in `src/components/`
-- Page components: route-level in `src/pages/`
+- UI primitives: shadcn/ui backed by **`@base-ui/react`** (NOT Radix). `components.json` sets style `base-nova`. Repository: `@base-ui/react`, `cmdk`, `lucide-react`.
+- shadcn ui components live in `src/components/ui/`, generated via the shadcn CLI (config in `components.json`).
+- Feature components: custom components in `src/components/` (e.g. `SubscriptionForm.tsx`, `SubscriptionCard.tsx`, `theme-provider.tsx`, `theme-toggle.tsx`).
+- Page components: route-level in `src/pages/`.
+
+### base-ui vs Radix — composition prop is `render`, not `asChild`
+
+Base-ui composes host elements with the **`render` prop** (or the `useRender` hook, used inside `badge.tsx`). Several Radix idioms do not apply:
+
+- Radix's `<PopoverTrigger asChild>` → here `<PopoverTrigger render={<Button ... />}>`. The element passed to `render` becomes the trigger host; the PopoverTrigger's children render inside it.
+- Same swap for `SelectPrimitive.Icon`, `SelectPrimitive.ItemIndicator`, `DialogPrimitive.Close` (`render={<Button variant="ghost" ... />}`) — see `select.tsx`, `dialog.tsx`.
+- A bare label/trigger text is passed as children of the rendered element, e.g. `<PopoverTrigger render={<Button .../>}>{value || placeholder}<ChevronsUpDown/></PopoverTrigger>`.
+
+If a shadcn example from outside sources uses `asChild`, translate it to `render` before pasting it in.
 
 ---
 
@@ -57,11 +68,12 @@ if (theme === 'dark' || ((theme === 'system' || !theme) && window.matchMedia('(p
 
 ## Common Mistakes
 
-- **Exporting style variants alongside default** — causes react-refresh warning; extract variant logic inside the component only
-- **Missing `key` on form components** — when reusing a form for create/edit, add `key={editing?.id ?? "create"}` to force remount
-- **Forgetting `useCallback` for context values** — causes consumers to re-render on every provider update
-- **Using `theme` instead of `resolvedTheme` for icon display** — in system mode `theme` is `"system"`, but the icon should reflect the actual resolved value (`"light"` or `"dark"`). Use `resolvedTheme` for UI that reflects what the user sees.
-- **FOUC script missing `system` branch** — if the inline script only checks `theme === 'dark'`, users who selected "System" with a dark OS preference will see a white flash before `.dark` is applied
+- **Exporting style variants alongside default** — causes react-refresh warning; the local `buttonVariants` / `badgeVariants` consts stay module-private, exports are just the component.
+- **Using `asChild` instead of `render`** — Radix-only. base-ui components accept a `render` prop (or `useRender`) for host composition; `asChild` does nothing here.
+- **Missing `key` on form components** — when reusing a form for create/edit, add `key={editing?.id ?? "create"}` to force remount (see `SubscriptionForm` usage in `SubscriptionsPage.tsx` and `AppLayout.tsx`).
+- **Forgetting `useCallback` for context values** — causes consumers to re-render on every provider update.
+- **Using `theme` instead of `resolvedTheme` for icon display** — in system mode `theme` is `"system"`, but the icon should reflect the actual resolved value (`"light"` or `"dark"`). Use `resolvedTheme` for UI that reflects what the user sees (see `theme-toggle.tsx`).
+- **FOUC script missing `system` branch** — if the inline script in `index.html` only checks `theme === 'dark'`, users who selected "System" with a dark OS preference will see a white flash before `.dark` is applied.
 - **Wrapping oklch CSS vars with `hsl()`** — theme variables are defined in oklch format; `hsl(var(--primary))` produces invalid CSS like `hsl(oklch(0.205 0 0))`. Always use bare `var(--primary)` for SVG attributes (Recharts stroke/fill, etc.)
 
 ---
@@ -146,34 +158,37 @@ Do not pass `undefined` as the empty `value`. Base UI determines whether the Sel
 
 ## Combobox Pattern (Command + Popover)
 
-For fields where users need to **select from existing values OR type new ones** (e.g., custom categories), use the shadcn Combobox pattern built from `Command` + `Popover` components.
+For fields where users need to **select from existing values OR type new ones** (e.g., custom categories, payment methods), use the shadcn Combobox pattern built from `Command` + `Popover` components. This project's ui primitives are **base-ui** backed, so the trigger uses the `render` prop (not Radix's `asChild`).
+
+Reference implementation: `src/components/SubscriptionForm.tsx` (category + payment_method comboboxes).
 
 ```tsx
 <Popover open={open} onOpenChange={setOpen}>
-  <PopoverTrigger asChild>
-    <Button variant="outline" className="w-full justify-between">
-      {value || <span className="text-muted-foreground">{placeholder}</span>}
-      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-    </Button>
+  <PopoverTrigger render={<Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between font-normal" />}>
+    {value || <span className="text-muted-foreground">{placeholder}</span>}
+    <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
   </PopoverTrigger>
-  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+  <PopoverContent className="p-0" align="start" sideOffset={4}>
     <Command shouldFilter={false}>
       <CommandInput
-        value={inputValue}
-        onValueChange={(v) => { setInputValue(v); setValue(v); }}
-        placeholder={searchPlaceholder}
+        placeholder={placeholder}
+        value={value}
+        onValueChange={setValue}
       />
       <CommandList>
         <CommandEmpty>{emptyMessage}</CommandEmpty>
-        {options.map((opt) => (
-          <CommandItem
-            key={opt}
-            value={opt}
-            onSelect={() => { setValue(opt); setOpen(false); }}
-          >
-            {opt}
-          </CommandItem>
-        ))}
+        <CommandGroup>
+          {options.map((opt) => (
+            <CommandItem
+              key={opt}
+              value={opt}
+              onSelect={() => { setValue(opt); setOpen(false); }}
+            >
+              <CheckIcon className={cn("mr-2 size-4", value === opt ? "opacity-100" : "opacity-0")} />
+              {opt}
+            </CommandItem>
+          ))}
+        </CommandGroup>
       </CommandList>
     </Command>
   </PopoverContent>
@@ -181,9 +196,10 @@ For fields where users need to **select from existing values OR type new ones** 
 ```
 
 Key points:
-- `shouldFilter={false}` when the input directly controls the state value (typing IS the value, not just a search filter)
-- `w-[--radix-popover-trigger-width]` ensures the popover matches the trigger width
-- For filter-only dropdowns (no free-text creation), keep using regular `<Select>` with dynamically fetched options
+- **`render={<Button ... />}`** on the trigger — base-ui swaps the host element this way; do NOT use `asChild` (Radix-only). The trigger's children (label text + chevron) are passed as the Button's children.
+- `shouldFilter={false}` when the input directly controls the state value (typing IS the value, not just a search filter).
+- PopoverContent gets `align="start" sideOffset={4}` and `className="p-0"`; the inner `Command`/`CommandList` handle padding.
+- For filter-only dropdowns (no free-text creation), keep a regular `<Select>` with dynamically fetched options instead.
 
 ### Required vs optional combobox variant
 
@@ -194,7 +210,7 @@ The same Combobox pattern above serves two field semantics — pick the variant 
 
 > **Warning**: Don't copy the `category` combobox verbatim into a required field — its `__none__` clear option lets the user submit an empty value, bypassing the required constraint.
 
-The history-options source differs per field: each free-text field has its own distinct-list endpoint (e.g. `GET /subscriptions/payment-methods` mirrors `GET /subscriptions/categories`: current-user `distinct` + `order_by`, filter empty strings for non-nullable fields).
+The history-options source differs per field: each free-text field has its own distinct-list endpoint (`GET /subscriptions/payment-methods` mirrors `GET /subscriptions/categories`: current-user `distinct` + `order_by`, filter empty strings for non-nullable fields). Both are fetched on form mount in `SubscriptionForm`'s `useEffect`.
 
 ---
 
@@ -246,7 +262,7 @@ Key points:
 
 - Use `const { t } = useTranslation()` in every component with user-facing strings
 - Replace all hardcoded strings with `t('namespace.key')`
-- Translation keys are organized by page/component namespace (auth, dashboard, subscriptions, subscriptionForm, layout, settings, errors)
+- Translation keys are organized by page/component namespace: `auth, dashboard, subscriptions, subscriptionForm, layout, settings, notifications, errors, statistics`
 - For dynamic keys (e.g., status/cycle names), use `t(\`subscriptions.statuses.\${status}\`)` pattern — ensure all dynamic values exist as keys in both language files. **Exception**: user-created free-form values (e.g., custom categories) should be displayed as raw text, not i18n-translated, since users may type anything
 - Date/currency formatting: use `i18n.language` as locale for `toLocaleDateString()` and `Intl.NumberFormat`
 - Backend error messages: map `err?.response?.data?.detail` through a local `ERROR_KEY_MAP` object to translate via `t('errors.xxx')`

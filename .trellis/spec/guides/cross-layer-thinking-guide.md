@@ -98,73 +98,22 @@ When a date filter or window (e.g., "subscriptions due within N days") is needed
 
 **Real-world example (this repo)**: `Stats.due_soon` hardcoded a 3-day window; the frontend `isDueSoon` also hardcoded 3. When reminders became user-configurable (`reminder_days`), the frontend badge had to switch to reading `reminder_days` too — otherwise it would show "due soon" for a 7-day user on a sub 5 days out, whose backend would indeed remind at 7 days, but the badge's 3-day gate hides the real window from the user.
 
----
-
-## Cross-Platform Template Consistency
-
-In Trellis, command templates (e.g., `record-session.md`) exist in **multiple platforms** with identical or near-identical content. This is a cross-layer boundary.
-
-### Checklist: After Modifying Any Command Template
-
-- [ ] Find all platforms with the same command: `find src/templates/*/commands/trellis/ -name "<command>.*"`
-- [ ] Update all platform copies (Markdown `.md` and TOML `.toml`)
-- [ ] For Gemini TOML: adapt line continuations (`\\` vs `\`) and triple-quoted strings
-- [ ] Run `/trellis:check-cross-layer` to verify nothing was missed
-
-**Real-world example**: Updated `record-session.md` in Claude to use `--mode record`, but forgot iFlow, Kilo, OpenCode, and Gemini — caught by cross-layer check.
+> Note: `Stats.due_soon` in `routers/subscriptions.py` still hardcodes `timedelta(days=3)` for the dashboard "due soon" list, while the **reminder scanner** (`services/notifications/scanner.py`) uses the user's `reminder_days`. These are intentionally two different windows (dashboard preview vs. reminder send), but if you change one, confirm the other still makes sense — see the checklist above.
 
 ---
 
-## Generated Runtime Template Upgrade Consistency
+## Notification Settings: Two-Layer Credential Contract
 
-Some generated files are both documentation and runtime input. In Trellis,
-`.trellis/workflow.md` is parsed by `get_context.py`, `workflow_phase.py`,
-SessionStart filters, and per-turn hooks. Template changes must be validated
-against both fresh init and upgrade paths.
+Reminder channels (email/Telegram) are a cross-layer feature: settings written via `PUT /auth/me/notifications`, credentials validated and used by the scheduled scanner, messages rendered from locale templates and sent via channel clients. The contract spans API → DB → background job → external service.
 
-### Checklist: After Modifying A Runtime-Parsed Template
+### Checklist: When touching notification/reminder settings
 
-- [ ] Identify every runtime parser that reads the template, not just the file
-  writer that installs it
-- [ ] Check whether relevant syntax lives outside obvious managed regions
-  such as tag blocks
-- [ ] Verify fresh `init` output and a versioned `update` scenario that writes
-  the older `.trellis/.version`
-- [ ] Add an upgrade regression using an older pristine template fixture, then
-  assert the installed file reaches the current packaged shape
-- [ ] Update the backend spec that owns the runtime contract
+- [ ] Enabling a channel is a **two-field contract** (the `<channel>_enabled` switch AND its credentials). The API validates completeness at write time (`_validate_channel_credentials` → 422); the scanner defends in depth at runtime (`build_channels` catches `ValueError`, warns, skips — never raises inside the job).
+- [ ] Blank strings must normalize to `None` before storage so the "incomplete creds" check works — see `_blank_to_none` field validator in `schemas/notification.py`.
+- [ ] Render locale via `user.locale or "en"` (English fallback), and any new locale needs matching template keys in `services/notifications/templates.py`.
+- [ ] Never log credentials — log channel name + ids only (see [Logging Guidelines](../backend/logging-guidelines.md)).
 
-**Real-world example**: Codex inline mode changed workflow platform markers from
-`[Codex]` / `[Kilo, Antigravity, Windsurf]` to `[codex-sub-agent]` /
-`[codex-inline, Kilo, Antigravity, Windsurf]`. Fresh init was correct, but
-`trellis update` only merged `[workflow-state:*]` blocks and preserved stale
-markers outside those blocks. Result: upgraded projects got new hook scripts
-but old workflow routing, so `get_context.py --mode phase --platform codex`
-could return empty Phase 2.1 detail.
-
----
-
-## Mode-Detection Probe Checklist
-
-When a CLI auto-detects a mode by probing a remote resource (e.g., checking if `index.json` exists to decide marketplace vs direct download):
-
-### Before implementing:
-- [ ] Probe runs in **ALL** code paths that use the result (interactive, `-y`, `--flag` combos)
-- [ ] 404 vs transient error are distinguished — don't treat both as "not found"
-- [ ] Transient errors **abort or retry**, never silently switch modes
-- [ ] Shared state (caches, prefetched data) is **reset** when context changes (e.g., user switches source)
-- [ ] **Shortcut paths** (e.g., `--template` skipping picker) must have the same error-handling quality as the probed path — check that downstream functions don't call catch-all wrappers
-
-### After implementing:
-- [ ] Trace every path from probe result to the mode-decision branch — no fallthrough
-- [ ] External format contracts (giget URI, raw URLs) are tested or at least documented as comments
-- [ ] Metadata reads consume a complete response or use a streaming parser — never parse a fixed-size prefix as full JSON
-- [ ] When reconstructing a composite identifier from parsed parts, verify **all** fields are included and in the **correct position** (e.g., `provider:repo/path#ref` not `provider:repo#ref/path`)
-- [ ] Verify that **action functions** called after a shortcut don't internally use the old catch-all fetch — they must use the probe-quality variant when error distinction matters
-
-**Real-world example**: Custom registry flow had 8 bugs across 3 review rounds: (1) probe only ran in interactive mode, (2) transient errors fell through to wrong mode, (3) giget URI had `#ref` in wrong position, (4) prefetched templates leaked across source switches, (5) `--template` shortcut bypassed probe but `downloadTemplateById` internally used catch-all `fetchTemplateIndex`, turning timeouts into "Template not found".
-
-**Real-world example**: Agent-session update hints fetched npm `latest` metadata with `response.read(4096)` and then parsed it as complete JSON. The `@mindfoldhq/trellis` package metadata exceeded 4 KB, so the JSON was truncated, parse failed silently, and the first session injection showed no update hint. Fix: read the complete response before parsing, and add a regression where `version` is followed by an 8 KB metadata tail.
+Reference files: `backend/app/routers/auth.py`, `backend/app/schemas/notification.py`, `backend/app/services/notifications/{scanner,channels,templates}.py`, `frontend/src/pages/SettingsPage.tsx`.
 
 ---
 
