@@ -185,6 +185,17 @@ Key points:
 - `w-[--radix-popover-trigger-width]` ensures the popover matches the trigger width
 - For filter-only dropdowns (no free-text creation), keep using regular `<Select>` with dynamically fetched options
 
+### Required vs optional combobox variant
+
+The same Combobox pattern above serves two field semantics — pick the variant by whether the field is required:
+
+- **Optional** (e.g. `category`): include a conditional `__none__` `CommandItem` to let the user clear the value; allow empty string; no submit-time validation.
+- **Required** (e.g. `payment_method`): **omit** the `__none__` clear item; add an explicit required check (`if (!value.trim()) setError(...)`) before building the payload; `trim()` then write `value.trim()` into the payload so pure-whitespace input is rejected.
+
+> **Warning**: Don't copy the `category` combobox verbatim into a required field — its `__none__` clear option lets the user submit an empty value, bypassing the required constraint.
+
+The history-options source differs per field: each free-text field has its own distinct-list endpoint (e.g. `GET /subscriptions/payment-methods` mirrors `GET /subscriptions/categories`: current-user `distinct` + `order_by`, filter empty strings for non-nullable fields).
+
 ---
 
 ## Sortable Table Headers

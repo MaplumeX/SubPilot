@@ -12,6 +12,7 @@ class SubscriptionCreate(BaseModel):
     cycle_count: int = Field(ge=1)
     cycle_unit: CycleUnit
     category: str | None = None
+    payment_method: str = Field(min_length=1)
     status: SubscriptionStatus = SubscriptionStatus.active
     start_date: date
     auto_renew: bool = True
@@ -26,6 +27,7 @@ class SubscriptionUpdate(BaseModel):
     cycle_count: int | None = Field(default=None, ge=1)
     cycle_unit: CycleUnit | None = None
     category: str | None = None
+    payment_method: str | None = Field(default=None, min_length=1)
     status: SubscriptionStatus | None = None
     start_date: date | None = None
     auto_renew: bool | None = None
@@ -42,6 +44,7 @@ class SubscriptionResponse(BaseModel):
     cycle_count: int
     cycle_unit: CycleUnit
     category: str | None
+    payment_method: str
     status: SubscriptionStatus
     start_date: date
     next_billing_date: date | None

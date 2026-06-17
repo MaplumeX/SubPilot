@@ -278,6 +278,7 @@ export default function SubscriptionsPage() {
                 <SortableHeader field="converted_price" label={t("subscriptions.price")} activeSort={sortBy} order={sortOrder} onSort={handleSort} />
                 <TableHead>{t("subscriptions.cycle")}</TableHead>
                 <TableHead>{t("subscriptions.category")}</TableHead>
+                <TableHead>{t("subscriptions.paymentMethod")}</TableHead>
                 <TableHead>{t("subscriptions.status")}</TableHead>
                 <TableHead>{t("subscriptions.auto_renew")}</TableHead>
                 <SortableHeader field="next_billing_date" label={t("subscriptions.nextBilling")} activeSort={sortBy} order={sortOrder} onSort={handleSort} />
@@ -312,6 +313,9 @@ export default function SubscriptionsPage() {
                   <TableCell>{formatCycle(sub.cycle_count, sub.cycle_unit)}</TableCell>
                   <TableCell>
                     {sub.category || "-"}
+                  </TableCell>
+                  <TableCell>
+                    {sub.payment_method || "-"}
                   </TableCell>
                   <TableCell>
                     <Badge
