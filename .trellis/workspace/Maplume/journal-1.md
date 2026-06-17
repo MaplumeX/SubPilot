@@ -431,3 +431,37 @@ Added SubscriptionCard component and view mode toggle (table/card) to subscripti
 ### Next Steps
 
 - None - task complete
+
+
+## Session 13: Subscription due-date reminders
+
+**Date**: 2026-06-17
+**Task**: Subscription due-date reminders
+**Branch**: `MaplumeX/lumeX/due-date-reminders`
+
+### Summary
+
+Added daily due-date reminders (email via per-user SMTP + Telegram via per-user bot) with window [today, today+reminder_days], an acknowledged_billing_date marker that stops per-period reminders without advancing next_billing_date (avoids double-advance vs process_renewals), reminder settings UI, acknowledge button in subscription list/card views, and spec updates for ack-marker + per-user credential patterns.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9f25d0e` | (see git log) |
+| `cdb7882` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

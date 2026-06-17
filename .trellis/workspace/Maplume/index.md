@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 12
-- **Last Active**: 2026-06-13
+- **Total Sessions**: 13
+- **Last Active**: 2026-06-17
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~422 | Active |
+| `journal-1.md` | ~467 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 13 | 2026-06-17 | Subscription due-date reminders | `9f25d0e`, `cdb7882` | `MaplumeX/lumeX/due-date-reminders` |
 | 12 | 2026-06-13 | Add subscription sorting | `9bda160` | `MaplumeX/subscription-sorting` |
 | 12 | 2026-06-13 | Add card view for subscriptions | `e7c1a3f` | `MaplumeX/sub-card-view` |
 | 11 | 2026-06-13 | Add core metric cards to statistics page | `887eba6` | `MaplumeX/more-statistics-data` |
