@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, CheckCircle2 } from "lucide-react";
 import type { Subscription, CycleUnit } from "@/api/types";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -12,6 +12,7 @@ interface SubscriptionCardProps {
   locale: string;
   onEdit: (sub: Subscription) => void;
   onDelete: (id: number) => void | Promise<void>;
+  onAcknowledge?: (id: number) => void | Promise<void>;
   isDueSoon: (sub: Subscription) => boolean;
   formatCycle: (count: number, unit: CycleUnit) => string;
 }
@@ -22,10 +23,17 @@ export default function SubscriptionCard({
   locale,
   onEdit,
   onDelete,
+  onAcknowledge,
   isDueSoon,
   formatCycle,
 }: SubscriptionCardProps) {
   const { t } = useTranslation();
+
+  const dueSoon = isDueSoon(sub);
+  const acknowledged =
+    sub.acknowledged_billing_date != null &&
+    sub.acknowledged_billing_date === sub.next_billing_date;
+  const canAcknowledge = dueSoon && !acknowledged;
 
   return (
     <Card>
@@ -40,7 +48,9 @@ export default function SubscriptionCard({
           </div>
           <div className="flex shrink-0 gap-1">
             {isDueSoon(sub) && (
-              <Badge variant="destructive">{t("dashboard.dueSoon")}</Badge>
+              <Badge variant={acknowledged ? "secondary" : "destructive"}>
+                {acknowledged ? t("subscriptions.acknowledged") : t("dashboard.dueSoon")}
+              </Badge>
             )}
             <Badge
               variant={
@@ -89,6 +99,17 @@ export default function SubscriptionCard({
         <Button variant="destructive" size="sm" className="flex-1" onClick={() => onDelete(sub.id)}>
           {t("subscriptions.delete")}
         </Button>
+        {canAcknowledge && onAcknowledge && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={() => onAcknowledge(sub.id)}
+          >
+            <CheckCircle2 className="size-4" />
+            {t("subscriptions.acknowledge")}
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

@@ -59,3 +59,4 @@ def create_subscription(data: SubscriptionCreate, db: Session = Depends(get_db),
 - **JWT tokens** — do not log access_token or refresh_token values
 - **Full request bodies** on retry/failure — may contain PII
 - **Database connection strings** — the DATABASE_URL may contain credentials
+- **Third-party credentials** — SMTP passwords, Telegram bot tokens, API keys stored on users. When a send fails, log the channel name and ids (`channel.name`, `sub.id`, `user.id`) — never the credential. `logger.exception("Failed sending %s reminder for subscription %s to user %s", channel.name, sub.id, user.id)` is the right shape.

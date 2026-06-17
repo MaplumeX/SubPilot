@@ -48,6 +48,7 @@ class SubscriptionResponse(BaseModel):
     status: SubscriptionStatus
     start_date: date
     next_billing_date: date | None
+    acknowledged_billing_date: date | None = None
     auto_renew: bool
     notes: str | None
     logo_url: str | None

@@ -33,6 +33,7 @@ export interface Subscription {
   status: SubscriptionStatus;
   start_date: string;
   next_billing_date: string | null;
+  acknowledged_billing_date: string | null;
   auto_renew: boolean;
   notes: string | null;
   logo_url: string | null;
@@ -88,3 +89,18 @@ export interface SubscriptionStats {
   cheapest: SubscriptionBrief | null;
   top3_percentage: number;
 }
+
+export interface NotificationSettings {
+  reminders_enabled: boolean;
+  reminder_days: number;
+  reminder_email_enabled: boolean;
+  reminder_telegram_enabled: boolean;
+  telegram_chat_id: string | null;
+  telegram_bot_token: string | null;
+  smtp_host: string | null;
+  smtp_port: number | null;
+  smtp_user: string | null;
+  smtp_password: string | null;
+}
+
+export type NotificationSettingsUpdate = Partial<NotificationSettings>;

@@ -43,6 +43,11 @@ export async function deleteSubscription(id: number): Promise<void> {
   await api.delete(`/subscriptions/${id}`);
 }
 
+export async function acknowledgeSubscription(id: number): Promise<Subscription> {
+  const { data } = await api.post<Subscription>(`/subscriptions/${id}/acknowledge`);
+  return data;
+}
+
 export async function uploadLogo(file: File): Promise<{ logo_url: string }> {
   const formData = new FormData();
   formData.append("file", file);

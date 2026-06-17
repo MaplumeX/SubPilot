@@ -26,6 +26,26 @@ class User(Base):
         DateTime, onupdate=_utcnow
     )
 
+    # Reminder settings
+    reminders_enabled: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default=text("1"), nullable=False
+    )
+    reminder_days: Mapped[int] = mapped_column(
+        Integer, default=3, server_default=text("3"), nullable=False
+    )
+    reminder_email_enabled: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("0"), nullable=False
+    )
+    reminder_telegram_enabled: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("0"), nullable=False
+    )
+    telegram_chat_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    telegram_bot_token: Mapped[str | None] = mapped_column(String(256), nullable=True)
+    smtp_host: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    smtp_port: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    smtp_user: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    smtp_password: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
     subscriptions: Mapped[list["Subscription"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )

@@ -46,6 +46,7 @@ class Subscription(Base):
     )
     start_date: Mapped[date] = mapped_column(Date, nullable=False)
     next_billing_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    acknowledged_billing_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     auto_renew: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=text("1"), nullable=False
     )

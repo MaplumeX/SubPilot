@@ -85,6 +85,21 @@ After implementation:
 
 ---
 
+## Duplicated Date/Range Logic: One Semantics, Two Implementations
+
+When a date filter or window (e.g., "subscriptions due within N days") is needed both **backend** (a scheduled scanner) and **frontend** (a "due soon" badge/button gate), the logic gets written twice. The trap is letting them drift: badge shows "due soon" but the backend never sends a reminder (or vice-versa), because one side hardcoded `3` while the other reads `user.reminder_days`.
+
+### Checklist: Before shipping a dual-implemented range
+
+- [ ] Both sides use the **same source of truth** for the threshold — if it's user-configurable, both fetch it; do not hardcode `3` on one side as a "default".
+- [ ] Both sides use the **same window semantics** — `[today, today+N]` inclusive vs exclusive at the boundaries matters on the exact due day.
+- [ ] Both sides normalize `today` the same way (date-only, no time-of-day) — `new Date()` includes time; a `next_billing_date` at midnight can fail `next >= now` on the frontend while the backend's `date.today()` includes it.
+- [ ] Field names match exactly across the response schema and the TS type (e.g., `acknowledged_billing_date`) — a typo on one side makes the suppression check silently no-op.
+
+**Real-world example (this repo)**: `Stats.due_soon` hardcoded a 3-day window; the frontend `isDueSoon` also hardcoded 3. When reminders became user-configurable (`reminder_days`), the frontend badge had to switch to reading `reminder_days` too — otherwise it would show "due soon" for a 7-day user on a sub 5 days out, whose backend would indeed remind at 7 days, but the badge's 3-day gate hides the real window from the user.
+
+---
+
 ## Cross-Platform Template Consistency
 
 In Trellis, command templates (e.g., `record-session.md`) exist in **multiple platforms** with identical or near-identical content. This is a cross-layer boundary.
