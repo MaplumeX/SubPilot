@@ -4,11 +4,13 @@ import { ArrowDown, ArrowUp, RefreshCw, LayoutGrid, List } from "lucide-react";
 import {
   listSubscriptions,
   deleteSubscription,
+  acknowledgeSubscription,
   createSubscription,
   updateSubscription,
   listCategories,
   getStats,
 } from "@/api/subscriptions";
+import { getNotificationSettings } from "@/api/notifications";
 import type { Subscription, SubscriptionCreate, SubscriptionUpdate, CycleUnit } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -88,6 +90,7 @@ export default function SubscriptionsPage() {
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("asc");
   const [viewMode, setViewMode] = useState<ViewMode>(getInitialViewMode);
+  const [reminderDays, setReminderDays] = useState<number>(3);
 
   const handleViewModeChange = useCallback((mode: ViewMode) => {
     setViewMode(mode);
@@ -109,6 +112,11 @@ export default function SubscriptionsPage() {
 
   useEffect(() => {
     fetchCategories();
+    getNotificationSettings()
+      .then((s) => setReminderDays(s.reminder_days))
+      .catch(() => {
+        // 401 handled by interceptor; default reminderDays stays at 3
+      });
   }, [fetchCategories]);
 
   const fetchSubscriptions = useCallback(async () => {
@@ -162,13 +170,26 @@ export default function SubscriptionsPage() {
     reload();
   };
 
+  const handleAcknowledge = async (id: number) => {
+    try {
+      const updated = await acknowledgeSubscription(id);
+      setSubscriptions((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, acknowledged_billing_date: updated.acknowledged_billing_date } : s))
+      );
+    } catch {
+      // 401 handled by interceptor
+    }
+  };
+
   const isDueSoon = (sub: Subscription) => {
     if (!sub.next_billing_date) return false;
     const next = new Date(sub.next_billing_date);
     const now = new Date();
-    const threeDays = new Date();
-    threeDays.setDate(now.getDate() + 3);
-    return next >= now && next <= threeDays;
+    now.setHours(0, 0, 0, 0);
+    const deadline = new Date();
+    deadline.setDate(now.getDate() + reminderDays);
+    deadline.setHours(0, 0, 0, 0);
+    return next >= now && next <= deadline;
   };
 
   const formatCycle = (cycle_count: number, cycle_unit: CycleUnit) => {
@@ -264,6 +285,7 @@ export default function SubscriptionsPage() {
               locale={i18n.language}
               onEdit={(s) => { setEditing(s); setFormOpen(true); }}
               onDelete={handleDelete}
+              onAcknowledge={handleAcknowledge}
               isDueSoon={isDueSoon}
               formatCycle={formatCycle}
             />
@@ -349,6 +371,16 @@ export default function SubscriptionsPage() {
                       >
                         {t("subscriptions.edit")}
                       </Button>
+                      {isDueSoon(sub) &&
+                        !(sub.acknowledged_billing_date != null && sub.acknowledged_billing_date === sub.next_billing_date) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleAcknowledge(sub.id)}
+                          >
+                            {t("subscriptions.acknowledge")}
+                          </Button>
+                        )}
                       <Button
                         variant="destructive"
                         size="sm"

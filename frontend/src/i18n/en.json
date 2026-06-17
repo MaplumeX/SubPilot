@@ -73,7 +73,9 @@
     "auto_renew_enabled": "Auto renewal enabled",
     "auto_renew_disabled": "Auto renewal disabled",
     "viewTable": "Table view",
-    "viewCard": "Card view"
+    "viewCard": "Card view",
+    "acknowledge": "Mark renewed",
+    "acknowledged": "Acknowledged"
   },
   "subscriptionForm": {
     "editTitle": "Edit Subscription",
@@ -134,6 +136,29 @@
     "chinese": "简体中文",
     "baseCurrency": "Base Currency",
     "baseCurrencyDescription": "All spending amounts will be converted to this currency"
+  },
+  "notifications": {
+    "title": "Reminders",
+    "description": "Get notified before subscriptions are due via your preferred channels.",
+    "loading": "Loading...",
+    "masterSwitch": "Enable reminders",
+    "masterSwitchDescription": "Turn off to stop all reminders.",
+    "reminderDays": "Days before due",
+    "daysAhead": "{{count}} day(s) ahead",
+    "emailChannel": "Email",
+    "smtpHost": "SMTP Host",
+    "smtpPort": "SMTP Port",
+    "smtpUser": "SMTP User",
+    "smtpPassword": "SMTP Password",
+    "telegramChannel": "Telegram",
+    "telegramBotToken": "Bot Token",
+    "telegramChatId": "Chat ID",
+    "sendTest": "Send test",
+    "testing": "Sending...",
+    "save": "Save",
+    "saving": "Saving...",
+    "saveFailed": "Failed to save reminder settings",
+    "testFailed": "Test message failed"
   },
   "errors": {
     "emailRegistered": "Email already registered",

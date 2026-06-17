@@ -294,6 +294,29 @@ def upload_logo(
     return {"logo_url": f"/static/logos/{filename}"}
 
 
+@router.post("/{subscription_id}/acknowledge", response_model=SubscriptionResponse)
+def acknowledge_subscription(
+    subscription_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Mark a subscription's current billing date as acknowledged.
+
+    Sets acknowledged_billing_date = next_billing_date so reminders stop until the
+    next billing cycle. Does NOT modify next_billing_date.
+    """
+    subscription = db.query(Subscription).filter(Subscription.id == subscription_id).first()
+    _check_ownership(subscription, current_user.id)
+    subscription.acknowledged_billing_date = subscription.next_billing_date
+    db.commit()
+    db.refresh(subscription)
+    base = current_user.base_currency
+    monthly = _normalize_to_monthly(subscription.price, subscription.cycle_count, subscription.cycle_unit)
+    rate = get_rate(db, subscription.currency, base)
+    subscription.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
+    return subscription
+
+
 @router.get("/{subscription_id}", response_model=SubscriptionResponse)
 def get_subscription(
     subscription_id: int,

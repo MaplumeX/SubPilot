@@ -15,6 +15,12 @@ from app.schemas.auth import (
     UserCreate,
     UserResponse,
 )
+from app.schemas.notification import (
+    NotificationSettingsResponse,
+    NotificationSettingsUpdate,
+    TestChannelRequest,
+)
+from app.services.notifications.channels import build_channel_for_test
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
@@ -129,3 +135,55 @@ def update_base_currency(currency: str = Query(...), current_user: User = Depend
     db.commit()
     db.refresh(current_user)
     return current_user
+
+
+@router.get("/me/notifications", response_model=NotificationSettingsResponse)
+def get_notification_settings(current_user: User = Depends(get_current_user)):
+    return current_user
+
+
+def _validate_channel_credentials(user: User) -> None:
+    """Reject saving an enabled channel without complete credentials."""
+    if user.reminder_email_enabled:
+        if not (user.smtp_host and user.smtp_port and user.smtp_user and user.smtp_password):
+            raise HTTPException(
+                status_code=422,
+                detail="Email channel enabled but SMTP credentials incomplete",
+            )
+    if user.reminder_telegram_enabled:
+        if not (user.telegram_bot_token and user.telegram_chat_id):
+            raise HTTPException(
+                status_code=422,
+                detail="Telegram channel enabled but bot token / chat id incomplete",
+            )
+
+
+@router.put("/me/notifications", response_model=NotificationSettingsResponse)
+def update_notification_settings(
+    data: NotificationSettingsUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    update_data = data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(current_user, field, value)
+    _validate_channel_credentials(current_user)
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+
+@router.post("/me/notifications/test")
+def test_notification_channel(
+    data: TestChannelRequest,
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        channel = build_channel_for_test(current_user, data.channel)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    try:
+        channel.test()
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Test message failed: {exc}")
+    return {"ok": True}
