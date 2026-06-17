@@ -6,21 +6,20 @@
 
 ## Overview
 
-- HTTP exceptions via `fastapi.HTTPException`
-- JWT auth errors: 401 with `detail="Could not validate credentials"`
-- Ownership violations: 403 with `detail="Not authorized"`
-- Not found: 404 with `detail="<Resource> not found"`
-- Validation errors: FastAPI auto-returns 422 with field-level details
+- HTTP exceptions via `fastapi.HTTPException` raised directly in routers.
+- JWT auth errors: 401 with `detail="Could not validate credentials"` (see `deps.get_current_user` / `auth.refresh`).
+- **Ownership violations return 404** with `detail="Subscription not found"` (NOT 403) — see `_check_ownership` in `routers/subscriptions.py`. This avoids leaking whether a resource exists.
+- Not found: 404 with `detail="<Resource> not found"`.
+- Validation errors: FastAPI auto-returns 422 with field-level details.
 
 ---
 
 ## Error Types
 
-- `401 Unauthorized` — missing/invalid/expired JWT, wrong password
-- `403 Forbidden` — accessing another user's resource
-- `404 Not Found` — resource doesn't exist or belongs to another user
-- `400 Bad Request` — duplicate email, invalid input, unsupported locale/currency
-- `422 Validation Error` — Pydantic schema validation (auto)
+- `401 Unauthorized` — missing/invalid/expired JWT, wrong password, invalid refresh token, user not found on refresh
+- `404 Not Found` — resource doesn't exist OR belongs to another user (ownership check collapses both into 404)
+- `400 Bad Request` — duplicate email (`register`), invalid `sort_by`/`sort_order`, invalid upload file type / size, unsupported locale/currency, notification test send failure
+- `422 Validation Error` — Pydantic schema validation (auto); also raised manually for "channel enabled but credentials incomplete" in `auth._validate_channel_credentials`
 
 ---
 
@@ -41,16 +40,12 @@ Why: whitelist validation prevents SQL injection through column names (string-to
 
 ## Error Handling Patterns
 
-- Use `HTTPException` directly in routers — no custom exception classes needed for MVP
-- For ownership checks: query with `user_id` filter, return 404 if not found (prevents IDOR)
+- Use `HTTPException` directly in routers — no custom exception classes.
+- Two-step ownership pattern: fetch by id, then call `_check_ownership(sub, current_user.id)` which raises 404 for both missing and wrong-owner (`routers/subscriptions.py`). Centralizing this keeps the IDOR-protective 404 consistent across endpoints.
 
 ```python
-subscription = db.query(Subscription).filter(
-    Subscription.id == sub_id,
-    Subscription.user_id == current_user.id
-).first()
-if not subscription:
-    raise HTTPException(status_code=404, detail="Subscription not found")
+subscription = db.query(Subscription).filter(Subscription.id == sub_id).first()
+_check_ownership(subscription, current_user.id)  # 404 if None or wrong owner
 ```
 
 ---
@@ -75,16 +70,28 @@ For 422 validation errors, FastAPI returns the standard schema with field-level 
 
 ## i18n Error Messages
 
-Backend error messages remain in English. Frontend maps them to localized strings via an `ERROR_KEY_MAP`:
+Backend error messages remain in English. Frontend maps them to localized strings via an `ERROR_KEY_MAP` (defined per component that surfaces errors; `SubscriptionForm.tsx` is the reference). The map keys are exact backend `detail` strings:
 
 ```typescript
 const ERROR_KEY_MAP: Record<string, string> = {
-  "Email already registered": "errors.emailRegistered",
   "Invalid credentials": "errors.invalidCredentials",
-  "Invalid refresh token": "errors.invalidRefreshToken",
-  "User not found": "errors.userNotFound",
+  "Email already registered": "errors.emailRegistered",
   "Subscription not found": "errors.subscriptionNotFound",
+  "Invalid file type. Allowed: JPG, PNG, SVG, GIF": "subscriptionForm.invalidFileType",
+  "File size exceeds 2MB limit": "subscriptionForm.fileTooLarge",
 };
 ```
 
-When adding new backend error messages, add the `detail` string to this map and both translation files.
+Fallback is a generic message when the `detail` is not in the map:
+
+```typescript
+const key = ERROR_KEY_MAP[detail];
+setError(key ? t(key) : t("subscriptionForm.saveFailed"));
+```
+
+Note some flows surface the **raw** `detail` instead of mapping it (e.g. `SettingsPage` notification save/test shows the untranslated backend string as `error`). That is an accepted current-state shortcut, not a pattern to copy for new user-facing errors — prefer mapping.
+
+When adding a new backend error message that should be shown to end users:
+1. Add the exact `detail` string → `errors.<key>` (or `subscriptionForm.<key>`) entry to every `ERROR_KEY_MAP` that surfaces it.
+2. Add `<key>` to both `frontend/src/i18n/en.json` and `zh-CN.json`.
+3. Keep `status` codes consistent with the [Error Types](#error-types) table above.

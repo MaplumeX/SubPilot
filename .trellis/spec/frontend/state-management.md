@@ -17,13 +17,13 @@
 
 | Category | Storage | Example |
 |----------|---------|---------|
-| Auth tokens | localStorage + Context | access_token, refresh_token |
-| Current user | AuthContext | user object |
-| User locale | Backend (user.locale) + i18next | "en", "zh-CN" |
-| Theme preference | localStorage + next-themes | light/dark/system mode |
-| Page data | Component state | subscription list, stats |
-| Form inputs | Component state | email, password, form fields |
-| UI toggles | Component state | dialog open/close, loading flags |
+| Auth tokens | localStorage (`access_token`, `refresh_token`) + AuthContext | access_token, refresh_token |
+| Current user | AuthContext (`auth-context.tsx`) | user object (fetched via `getMe` on token set / app init) |
+| User locale | Backend (`user.locale`) + i18next runtime | "en", "zh-CN" |
+| Theme preference | localStorage (`vite-ui-theme`) + next-themes | light/dark/system mode |
+| Page data | Component state | subscription list, stats, notification settings |
+| Form inputs | Component state (one `useState` per field) | email, password, subscription form fields |
+| UI toggles | Component state | dialog open/close, loading flags, view mode (persisted to `sessionStorage`) |
 
 ---
 
@@ -40,10 +40,9 @@ Everything else stays in component state. No premature abstraction.
 
 ## Server State
 
-- Fetch on mount or user action
-- No caching layer — refetch when needed
-- Auth token injected via Axios interceptor in `api/client.ts`
-- 401 responses trigger redirect to `/login`
+- Fetch on mount or user action via `src/api/*` functions (no caching layer — refetch when needed).
+- Auth token injected via Axios request interceptor in `api/client.ts`; 401 responses clear tokens and redirect to `/login` via the response interceptor.
+- Subscription list mutation handlers call `reload()` (re-fetch list + categories) — see `SubscriptionsPage`. `acknowledge` is the exception: it patches local state from the response instead of refetching.
 
 ---
 
