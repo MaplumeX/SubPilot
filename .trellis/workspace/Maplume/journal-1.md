@@ -433,6 +433,16 @@ Added SubscriptionCard component and view mode toggle (table/card) to subscripti
 - None - task complete
 
 
+## Session 13: Add payment method field to subscriptions
+
+**Date**: 2026-06-17
+**Task**: Add payment method field to subscriptions
+**Branch**: `MaplumeX/subscription-payment-method`
+
+### Summary
+
+Added a required payment_method field to subscriptions as a free-text combobox with history (mirrors the category field). DB migration uses server_default='' sentinel so it passes on existing rows; required/non-empty constraint enforced at Pydantic schema (min_length=1) and frontend trim check. Added GET /payment-methods distinct-list endpoint, table/card display, zh-CN/en i18n. Captured two specs: backend required-but-nullable-by-default pattern, frontend required-vs-optional combobox variant.
+
 ## Session 13: Subscription due-date reminders
 
 **Date**: 2026-06-17
@@ -453,6 +463,7 @@ Added daily due-date reminders (email via per-user SMTP + Telegram via per-user 
 |------|---------|
 | `9f25d0e` | (see git log) |
 | `cdb7882` | (see git log) |
+| `da8fe12` | (see git log) |
 
 ### Testing
 

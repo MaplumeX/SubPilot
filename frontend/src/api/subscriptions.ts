@@ -67,3 +67,8 @@ export async function listCategories(): Promise<string[]> {
   const { data } = await api.get<string[]>("/subscriptions/categories");
   return data;
 }
+
+export async function listPaymentMethods(): Promise<string[]> {
+  const { data } = await api.get<string[]>("/subscriptions/payment-methods");
+  return data;
+}

@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 13 | 2026-06-17 | Add payment method field to subscriptions | `da8fe12` | `MaplumeX/subscription-payment-method` |
 | 13 | 2026-06-17 | Subscription due-date reminders | `9f25d0e`, `cdb7882` | `MaplumeX/lumeX/due-date-reminders` |
 | 12 | 2026-06-13 | Add subscription sorting | `9bda160` | `MaplumeX/subscription-sorting` |
 | 12 | 2026-06-13 | Add card view for subscriptions | `e7c1a3f` | `MaplumeX/sub-card-view` |

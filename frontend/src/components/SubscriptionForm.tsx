@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import type { Subscription, SubscriptionCreate, CycleUnit, SubscriptionStatus } from "@/api/types";
-import { uploadLogo, listCategories } from "@/api/subscriptions";
+import { uploadLogo, listCategories, listPaymentMethods } from "@/api/subscriptions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -100,6 +100,7 @@ export default function SubscriptionForm({
     subscription?.cycle_unit ?? "month"
   );
   const [category, setCategory] = useState(subscription?.category ?? "");
+  const [paymentMethod, setPaymentMethod] = useState(subscription?.payment_method ?? "");
   const [subStatus, setSubStatus] = useState<SubscriptionStatus>(
     subscription?.status ?? "active"
   );
@@ -115,9 +116,12 @@ export default function SubscriptionForm({
   const [submitting, setSubmitting] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [existingCategories, setExistingCategories] = useState<string[]>([]);
+  const [paymentMethodOpen, setPaymentMethodOpen] = useState(false);
+  const [existingPaymentMethods, setExistingPaymentMethods] = useState<string[]>([]);
 
   useEffect(() => {
     listCategories().then(setExistingCategories).catch(() => {});
+    listPaymentMethods().then(setExistingPaymentMethods).catch(() => {});
   }, []);
 
   const previewUrl = logoUrl || null;
@@ -199,6 +203,10 @@ export default function SubscriptionForm({
       setError(t("subscriptionForm.startDateRequired"));
       return;
     }
+    if (!paymentMethod.trim()) {
+      setError(t("subscriptionForm.paymentMethodRequired"));
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -209,6 +217,7 @@ export default function SubscriptionForm({
         cycle_count: countNum,
         cycle_unit: cycleUnit,
         category: category || null,
+        payment_method: paymentMethod.trim(),
         status: subStatus,
         start_date: startDate,
         auto_renew: autoRenew,
@@ -442,6 +451,40 @@ export default function SubscriptionForm({
                 </PopoverContent>
               </Popover>
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label>{t("subscriptionForm.paymentMethod")}</Label>
+            <Popover open={paymentMethodOpen} onOpenChange={setPaymentMethodOpen}>
+              <PopoverTrigger render={<Button variant="outline" role="combobox" aria-expanded={paymentMethodOpen} className="w-full justify-between font-normal" />}>
+                {paymentMethod || t("subscriptionForm.selectPaymentMethod")}
+                <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
+              </PopoverTrigger>
+              <PopoverContent className="p-0" align="start" sideOffset={4}>
+                <Command shouldFilter={false}>
+                  <CommandInput
+                    placeholder={t("subscriptionForm.selectPaymentMethod")}
+                    value={paymentMethod}
+                    onValueChange={setPaymentMethod}
+                  />
+                  <CommandList>
+                    <CommandEmpty>{t("subscriptionForm.selectPaymentMethod")}</CommandEmpty>
+                    <CommandGroup>
+                      {existingPaymentMethods.map((pm) => (
+                        <CommandItem
+                          key={pm}
+                          value={pm}
+                          onSelect={() => { setPaymentMethod(pm); setPaymentMethodOpen(false); }}
+                        >
+                          <CheckIcon className={cn("mr-2 size-4", paymentMethod === pm ? "opacity-100" : "opacity-0")} />
+                          {pm}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="flex flex-col gap-2">

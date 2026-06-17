@@ -40,6 +40,7 @@ class Subscription(Base):
         Enum(CycleUnit), nullable=False
     )
     category: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    payment_method: Mapped[str] = mapped_column(String(100), nullable=False, server_default="")
     status: Mapped[SubscriptionStatus] = mapped_column(
         Enum(SubscriptionStatus), default=SubscriptionStatus.active
     )

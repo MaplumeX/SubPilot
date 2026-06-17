@@ -29,6 +29,7 @@ export interface Subscription {
   cycle_count: number;
   cycle_unit: CycleUnit;
   category: string | null;
+  payment_method: string;
   status: SubscriptionStatus;
   start_date: string;
   next_billing_date: string | null;
@@ -48,6 +49,7 @@ export interface SubscriptionCreate {
   cycle_count: number;
   cycle_unit: CycleUnit;
   category?: string | null;
+  payment_method: string;
   status?: SubscriptionStatus;
   start_date: string;
   auto_renew?: boolean;
@@ -62,6 +64,7 @@ export interface SubscriptionUpdate {
   cycle_count?: number;
   cycle_unit?: CycleUnit;
   category?: string | null;
+  payment_method?: string;
   status?: SubscriptionStatus;
   start_date?: string;
   auto_renew?: boolean;

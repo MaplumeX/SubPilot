@@ -145,3 +145,38 @@ def _validate_channel_credentials(user: User) -> None:
 - **At runtime (scanner, silent skip)** — the scheduled job builds channels from the saved user; `build_channels` catches `ValueError` from incomplete creds and `logger.warning`s + skips, because raising **inside a background job would crash the scheduler**. Background jobs must never raise on bad stored state.
 
 So: validate at the API boundary, defend-in-depth at the job boundary. Credentials stored plaintext on SQLite is accepted for the local/single-machine MVP; revisit encryption only when moving off local SQLite.
+
+---
+
+## Required-but-nullable-by-default Schema Pattern
+
+When adding a new **required** field to an existing table that already has data, you cannot enforce NOT NULL with a real value (existing rows have no value). Use a two-layer approach:
+
+- **DB layer**: column is `nullable=False` with a sentinel `server_default=""` (or another empty sentinel). This lets the migration add the column to existing rows without a backfill error.
+- **Schema/API layer**: Pydantic field is **required with `min_length=1`**, so new creates/edits reject empty strings (`422`). Existing rows keep the empty sentinel until edited.
+
+```python
+# Model: non-nullable with empty-string default (migration-safe on existing data)
+payment_method: Mapped[str] = mapped_column(String(100), nullable=False, server_default="")
+
+# Create schema: required + non-empty (the actual enforcement lives here)
+payment_method: str = Field(min_length=1)
+
+# Update schema: optional when omitted, but non-empty when provided
+payment_method: str | None = Field(default=None, min_length=1)
+
+# Response schema: always present (may be "" for legacy rows)
+payment_method: str
+```
+
+Frontend mirrors the same distinction: a required combobox `trim()`s and validates non-empty **before** submit (see Frontend Component Guidelines: Required vs optional combobox variant). Pure-whitespace input (`"  "`) passes `min_length=1` at the API layer but is rejected by the frontend `trim()` check.
+
+**Contrast with optional free-text fields** (e.g. `category`): the column is `nullable=True` with no sentinel, the schema field is `str | None = None`, and the list endpoint filters `isnot(None)`. For the empty-sentinel pattern, filter non-null **and** `!= ""` instead.
+
+```python
+# nullable field (category)
+.filter(Subscription.category.isnot(None))
+
+# empty-sentinel required field (payment_method)
+.filter(Subscription.payment_method != "")
+```
