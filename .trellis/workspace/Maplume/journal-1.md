@@ -476,3 +476,36 @@ Added daily due-date reminders (email via per-user SMTP + Telegram via per-user 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 14: 修复订阅路由顺序导致支付方式 422
+
+**Date**: 2026-06-26
+**Task**: 修复订阅路由顺序导致支付方式 422
+**Branch**: `emdash/two-socks-laugh-d4a3h`
+
+### Summary
+
+修复 backend/app/routers/subscriptions.py 中 GET /payment-methods 被动态路由 /{subscription_id} 抢先匹配导致 422、前端支付方式下拉无法加载的问题。将 list_payment_methods 路由声明上移至所有静态子路径位于 /{subscription_id} 之前（纯位置调整，函数实现/URL/语义不变）。并在 .trellis/spec/backend/quality-guidelines.md 补充 FastAPI 路由顺序约定与 review checklist 检查项以防止回归。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `3323156` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
