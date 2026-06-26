@@ -294,6 +294,24 @@ def upload_logo(
     return {"logo_url": f"/static/logos/{filename}"}
 
 
+@router.get("/payment-methods", response_model=list[str])
+def list_payment_methods(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    rows = (
+        db.query(Subscription.payment_method)
+        .filter(
+            Subscription.user_id == current_user.id,
+            Subscription.payment_method != "",
+        )
+        .distinct()
+        .order_by(Subscription.payment_method)
+        .all()
+    )
+    return [row[0] for row in rows]
+
+
 @router.post("/{subscription_id}/acknowledge", response_model=SubscriptionResponse)
 def acknowledge_subscription(
     subscription_id: int,
@@ -315,24 +333,6 @@ def acknowledge_subscription(
     rate = get_rate(db, subscription.currency, base)
     subscription.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
     return subscription
-
-
-@router.get("/payment-methods", response_model=list[str])
-def list_payment_methods(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    rows = (
-        db.query(Subscription.payment_method)
-        .filter(
-            Subscription.user_id == current_user.id,
-            Subscription.payment_method != "",
-        )
-        .distinct()
-        .order_by(Subscription.payment_method)
-        .all()
-    )
-    return [row[0] for row in rows]
 
 
 @router.get("/{subscription_id}", response_model=SubscriptionResponse)
