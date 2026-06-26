@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "路由顺序修复需符合 backend 禁止模式/必需模式与 review checklist"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "确认 router 在分层架构中的位置与风格"}

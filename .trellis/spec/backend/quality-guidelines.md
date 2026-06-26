@@ -24,6 +24,21 @@
 - Password hashing with passlib bcrypt (`pwd_context` in `auth.py`).
 - Ownership checks on every mutation/subscription endpoint via `_check_ownership` (`routers/subscriptions.py`).
 - Import every model in `alembic/env.py` so autogenerate detects changes.
+- **FastAPI route declaration order**: declare every static sub-path route before any dynamic `/{id}` route in the same router. FastAPI matches routes in declaration order; a static path like `/payment-methods` declared after `/{subscription_id}` gets captured as `subscription_id="payment-methods"` and fails `int` parsing → 422. Order all static sub-paths (`/categories`, `/stats`, `/upload-logo`, `/payment-methods`, `/{id}/acknowledge`) ahead of `GET/PUT/DELETE /{subscription_id}` in `routers/subscriptions.py`.
+
+  ```python
+  # Wrong — /payment-methods is shadowed by /{subscription_id}
+  @router.get("/{subscription_id}")
+  def get_subscription(...): ...
+  @router.get("/payment-methods")        # never reached: "payment-methods" → int → 422
+  def list_payment_methods(...): ...
+
+  # Correct — static sub-paths first
+  @router.get("/payment-methods")
+  def list_payment_methods(...): ...
+  @router.get("/{subscription_id}")
+  def get_subscription(...): ...
+  ```
 
 ---
 
@@ -42,5 +57,6 @@
 - [ ] No hardcoded secrets
 - [ ] Cross-layer types match (backend Pydantic ↔ frontend TypeScript in `api/types.ts`)
 - [ ] Alembic env imports all models
+- [ ] Static sub-path routes declared before dynamic `/{id}` routes in every router
 - [ ] Scheduled jobs swallow exceptions (`logger.exception`, no re-raise)
 - [ ] New `detail` strings added to frontend `ERROR_KEY_MAP` + both i18n files when user-facing

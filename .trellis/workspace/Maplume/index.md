@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 13
-- **Last Active**: 2026-06-17
+- **Total Sessions**: 14
+- **Last Active**: 2026-06-26
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~467 | Active |
+| `journal-1.md` | ~511 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 14 | 2026-06-26 | 修复订阅路由顺序导致支付方式 422 | `3323156` | `emdash/two-socks-laugh-d4a3h` |
 | 13 | 2026-06-17 | Add payment method field to subscriptions | `da8fe12` | `MaplumeX/subscription-payment-method` |
 | 13 | 2026-06-17 | Subscription due-date reminders | `9f25d0e`, `cdb7882` | `MaplumeX/lumeX/due-date-reminders` |
 | 12 | 2026-06-13 | Add subscription sorting | `9bda160` | `MaplumeX/subscription-sorting` |
