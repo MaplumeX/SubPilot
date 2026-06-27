@@ -77,8 +77,8 @@ export default function SubscriptionCard({
           )}
         </div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          {sub.category && <span>{sub.category}</span>}
-          {sub.payment_method && <span>{sub.payment_method}</span>}
+          {sub.category && <span>{sub.category.name}</span>}
+          {sub.payment_method && <span>{sub.payment_method.name}</span>}
           <span>{formatCycle(sub.cycle_count, sub.cycle_unit)}</span>
           <span
             title={sub.auto_renew ? t("subscriptions.auto_renew_enabled") : t("subscriptions.auto_renew_disabled")}

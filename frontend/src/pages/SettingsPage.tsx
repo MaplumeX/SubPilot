@@ -1,8 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
 import { updateLocale } from "@/api/auth";
 import { updateBaseCurrency } from "@/api/auth";
+import {
+  listCategories,
+  createCategory,
+  renameCategory,
+  deleteCategory,
+} from "@/api/categories";
+import {
+  listPaymentMethods,
+  createPaymentMethod,
+  renamePaymentMethod,
+  deletePaymentMethod,
+} from "@/api/payment_methods";
+import type { Category, PaymentMethod } from "@/api/types";
+import EntityManagerCard from "@/components/EntityManagerCard";
 import {
   Card,
   CardContent,
@@ -122,7 +136,100 @@ export default function SettingsPage() {
       </Card>
 
       <NotificationsCard reminderDaysOptions={REMINDER_DAYS_OPTIONS} />
+
+      <CategoryManagerCard />
+      <PaymentMethodManagerCard />
     </div>
+  );
+}
+
+function CategoryManagerCard() {
+  const { t } = useTranslation();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const reload = useCallback(() => {
+    listCategories()
+      .then(setCategories)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    reload();
+  }, [reload]);
+
+  return (
+    <EntityManagerCard
+      title={t("settings.categories")}
+      description={t("settings.categoryDescription")}
+      entities={categories}
+      loading={loading}
+      i18n={{
+        add: t("settings.addCategory"),
+        rename: t("settings.rename"),
+        delete: t("settings.delete"),
+        emptyHint: t("settings.emptyHint"),
+        namePlaceholder: t("settings.categoryNamePlaceholder"),
+      }}
+      onCreate={async (name) => {
+        await createCategory(name);
+        reload();
+      }}
+      onRename={async (id, name) => {
+        await renameCategory(id, name);
+        reload();
+      }}
+      onDelete={async (id) => {
+        await deleteCategory(id);
+        reload();
+      }}
+    />
+  );
+}
+
+function PaymentMethodManagerCard() {
+  const { t } = useTranslation();
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const reload = useCallback(() => {
+    listPaymentMethods()
+      .then(setPaymentMethods)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    reload();
+  }, [reload]);
+
+  return (
+    <EntityManagerCard
+      title={t("settings.paymentMethods")}
+      description={t("settings.paymentMethodDescription")}
+      entities={paymentMethods}
+      loading={loading}
+      i18n={{
+        add: t("settings.addPaymentMethod"),
+        rename: t("settings.rename"),
+        delete: t("settings.delete"),
+        emptyHint: t("settings.emptyHint"),
+        namePlaceholder: t("settings.paymentMethodNamePlaceholder"),
+      }}
+      onCreate={async (name) => {
+        await createPaymentMethod(name);
+        reload();
+      }}
+      onRename={async (id, name) => {
+        await renamePaymentMethod(id, name);
+        reload();
+      }}
+      onDelete={async (id) => {
+        await deletePaymentMethod(id);
+        reload();
+      }}
+    />
   );
 }
 

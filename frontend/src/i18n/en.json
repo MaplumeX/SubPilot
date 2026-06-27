@@ -97,6 +97,8 @@
     "paymentMethod": "Payment Method",
     "selectPaymentMethod": "Select or enter payment method",
     "paymentMethodRequired": "Payment method is required",
+    "emptyPaymentMethodHint": "No payment method yet — add one in Settings.",
+    "emptyCategoryHint": "No category yet — add one in Settings.",
     "nameRequired": "Name is required",
     "pricePositive": "Price must be greater than 0",
     "startDateRequired": "Start date is required",
@@ -139,7 +141,20 @@
     "english": "English",
     "chinese": "简体中文",
     "baseCurrency": "Base Currency",
-    "baseCurrencyDescription": "All spending amounts will be converted to this currency"
+    "baseCurrencyDescription": "All spending amounts will be converted to this currency",
+    "categories": "Category Management",
+    "categoryDescription": "Manage the categories available for your subscriptions.",
+    "categoryNamePlaceholder": "Category name",
+    "paymentMethods": "Payment Method Management",
+    "paymentMethodDescription": "Manage the payment methods available for your subscriptions.",
+    "paymentMethodNamePlaceholder": "Payment method name",
+    "addCategory": "Add",
+    "addPaymentMethod": "Add",
+    "rename": "Rename",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleteBlockedInUse": "In use by {{count}} subscription(s), cannot delete",
+    "emptyHint": "No items yet. Add one below."
   },
   "notifications": {
     "title": "Reminders",
@@ -169,7 +184,8 @@
     "invalidCredentials": "Invalid credentials",
     "invalidRefreshToken": "Invalid refresh token",
     "userNotFound": "User not found",
-    "subscriptionNotFound": "Subscription not found"
+    "subscriptionNotFound": "Subscription not found",
+    "entityNameExists": "Name already exists"
   },
   "statistics": {
     "title": "Statistics",

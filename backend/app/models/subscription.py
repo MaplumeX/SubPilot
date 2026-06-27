@@ -1,11 +1,17 @@
 import enum
 from datetime import date, datetime, timezone
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, Date, DateTime, Enum, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import text
 
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.models.category import Category
+    from app.models.payment_method import PaymentMethod
+    from app.models.user import User
 
 
 class CycleUnit(str, enum.Enum):
@@ -39,8 +45,12 @@ class Subscription(Base):
     cycle_unit: Mapped[CycleUnit] = mapped_column(
         Enum(CycleUnit), nullable=False
     )
-    category: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    payment_method: Mapped[str] = mapped_column(String(100), nullable=False, server_default="")
+    category_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("categories.id", ondelete="RESTRICT"), nullable=True
+    )
+    payment_method_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("payment_methods.id", ondelete="RESTRICT"), nullable=False
+    )
     status: Mapped[SubscriptionStatus] = mapped_column(
         Enum(SubscriptionStatus), default=SubscriptionStatus.active
     )
@@ -56,3 +66,5 @@ class Subscription(Base):
     updated_at: Mapped[datetime | None] = mapped_column(DateTime, onupdate=_utcnow)
 
     user: Mapped["User"] = relationship(back_populates="subscriptions")
+    category: Mapped["Category | None"] = relationship("Category")
+    payment_method: Mapped["PaymentMethod"] = relationship("PaymentMethod")
