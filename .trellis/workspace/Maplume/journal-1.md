@@ -509,3 +509,38 @@ Added daily due-date reminders (email via per-user SMTP + Telegram via per-user 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 15: Redesign category & payment method as managed entities
+
+**Date**: 2026-06-27
+**Task**: Redesign category & payment method as managed entities
+**Branch**: `emdash/forty-knives-rest-gl5he`
+
+### Summary
+
+Planned (brainstorm 6 questions: minimal field set, block-delete-on-reference, dev-stage FK swap, select-only form, rename support, no seed for new users) and implemented Category/PaymentMethod as per-user managed entities with CRUD routers, subscription FK swap, alembic migration with per-user dedup backfill, SettingsPage EntityManagerCard, SubscriptionForm Combobox->Select rewrite. All 21 AC met; ruff/lint/build/alembic upgrade head verified.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `b3bba65` | (see git log) |
+| `6d3eea4` | (see git log) |
+| `ee07031` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
