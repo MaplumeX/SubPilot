@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Code standards / forbidden patterns to check against new models, schemas, routers, migration."}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Verify FK constraints (RESTRICT/CASCADE), UniqueConstraint(user_id,name), migration correctness, ownership pattern usage."}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Verify 409 (name collision + reference count), 404 (not owned), 400 conventions are followed consistently."}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend code standards / forbidden patterns for EntityManagerCard and SubscriptionForm rewrite."}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Verify Select usage (replacing Popover+Command) follows base-ui/shadcn conventions; oklch and combobox rules."}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Verify Subscription type ripple (category/payment_method nesting) is type-safe across all consumers."}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Cross-layer data flow: API contract (nested {id,name}) must match between backend SubscriptionResponse and frontend types."}
