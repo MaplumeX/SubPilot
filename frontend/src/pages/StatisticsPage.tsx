@@ -125,52 +125,53 @@ export default function StatisticsPage() {
 
   return (
     <div className="space-y-6 [&_.recharts-text]:fill-muted-foreground [&_.recharts-cartesian-grid-horizontal_line]:stroke-border/50 [&_.recharts-cartesian-grid-vertical_line]:stroke-border/50 [&_.recharts-pie-label-text]:fill-foreground">
-      <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">{t("statistics.title")}</h2>
+      <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">{t("statistics.title")}</h2>
+      <p className="mt-1 text-sm text-muted-foreground">{t("statistics.subtitle")}</p>
 
       {/* Summary Metric Cards */}
       {stats && stats.count > 0 && (
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <Card>
+          <Card className="transition-shadow hover:shadow-ambient-low">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {t("statistics.avgMonthly")}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold font-variant-numeric tabular-nums">{fmt(stats.avg_monthly)}</p>
+              <p className="text-3xl font-bold font-variant-numeric tabular-nums tracking-[-0.02em]">{fmt(stats.avg_monthly)}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="transition-shadow hover:shadow-ambient-low">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {t("statistics.mostExpensive")}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold font-variant-numeric tabular-nums">{fmt(stats.most_expensive?.amount ?? 0)}</p>
-              <p className="text-sm text-muted-foreground">{stats.most_expensive?.name}</p>
+              <p className="text-2xl font-bold font-variant-numeric tabular-nums tracking-[-0.02em]">{fmt(stats.most_expensive?.amount ?? 0)}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{stats.most_expensive?.name}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="transition-shadow hover:shadow-ambient-low">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {t("statistics.cheapest")}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold font-variant-numeric tabular-nums">{fmt(stats.cheapest?.amount ?? 0)}</p>
-              <p className="text-sm text-muted-foreground">{stats.cheapest?.name}</p>
+              <p className="text-2xl font-bold font-variant-numeric tabular-nums tracking-[-0.02em]">{fmt(stats.cheapest?.amount ?? 0)}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{stats.cheapest?.name}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="transition-shadow hover:shadow-ambient-low">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {t("statistics.top3Percentage")}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold font-variant-numeric tabular-nums">{stats.top3_percentage.toFixed(1)}%</p>
-              <p className="text-sm text-muted-foreground">{t("statistics.top3Subtitle")}</p>
+              <p className="text-3xl font-bold font-variant-numeric tabular-nums tracking-[-0.02em]">{stats.top3_percentage.toFixed(1)}%</p>
+              <p className="mt-1 text-sm text-muted-foreground">{t("statistics.top3Subtitle")}</p>
             </CardContent>
           </Card>
         </div>
@@ -178,7 +179,7 @@ export default function StatisticsPage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Category Distribution */}
-        <Card>
+        <Card className="transition-shadow hover:shadow-ambient-low">
           <CardHeader>
             <CardTitle>{t("statistics.categoryDistribution")}</CardTitle>
           </CardHeader>
@@ -253,7 +254,7 @@ export default function StatisticsPage() {
         </Card>
 
         {/* Top 5 Subscriptions */}
-        <Card>
+        <Card className="transition-shadow hover:shadow-ambient-low">
           <CardHeader>
             <CardTitle>{t("statistics.topSubscriptions")}</CardTitle>
           </CardHeader>
@@ -263,7 +264,7 @@ export default function StatisticsPage() {
                 {topSubs.map((sub, i) => (
                   <div
                     key={sub.name}
-                    className="flex items-center justify-between rounded-lg border p-3"
+                    className="flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted/30 hover:shadow-ambient-low"
                   >
                     <div className="flex items-center gap-3">
                       <span className="flex size-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
@@ -271,7 +272,7 @@ export default function StatisticsPage() {
                       </span>
                       <span className="font-medium">{sub.name}</span>
                     </div>
-                    <span className="font-semibold">{fmt(sub.cost)}</span>
+                    <span className="font-variant-numeric tabular-nums font-semibold">{fmt(sub.cost)}</span>
                   </div>
                 ))}
               </div>
@@ -285,7 +286,7 @@ export default function StatisticsPage() {
       </div>
 
       {/* Monthly Trend */}
-      <Card>
+      <Card className="transition-shadow hover:shadow-ambient-low">
         <CardHeader>
           <CardTitle>{t("statistics.monthlyTrend")}</CardTitle>
           <p className="text-sm text-muted-foreground">{t("statistics.monthlyTrendSubtitle")}</p>

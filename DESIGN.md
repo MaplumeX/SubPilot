@@ -201,10 +201,10 @@ _本项目无二级/三级品牌色。_ 中性灰阶承担所有非首要角色�
 
 Elevation 策略允许在以下状态引入极克制的 ambient shadow：hover/focus 的卡片轻微提升、dialog/popover 的浮层。但静止态永远保持 flat + edge —— 提升是状态的响应，不是默认。
 
-### Shadow Vocabulary (pending)
-当前无定义的 shadow token。补齐时建议：
-- **ambient-low** (`box-shadow: 0 1px 2px rgba(0,0,0,0.04)`): 卡片 hover 态的轻微提升。模糊大、偏移小、不透明度极低 —— 是“呼吸”不是“浮起”。
-- **ambient-md** (`box-shadow: 0 4px 16px rgba(0,0,0,0.08)`): dialog/popover 浮层。足够把浮层从背景分离，但不到“戏剧性”。
+### Shadow Vocabulary
+- **ambient-low** (`box-shadow: 0 1px 2px rgba(0,0,0,0.04)`): 卡片 hover 态的轻微提升。模糊大、偏移小、不透明度极低 —— 是“呼吸”不是“浮起”。暗色模式提极不透明度至 `rgba(0,0,0,0.3)`。
+- **ambient-md** (`box-shadow: 0 4px 16px rgba(0,0,0,0.08)`): dialog/popover 浮层。足够把浮层从背景分离，但不到“戏剧性”。暗色模式提至 `rgba(0,0,0,0.4)`。
+- 实现：`.shadow-ambient-low` / `.shadow-ambient-md` 工具类，定义在 `index.css` 的 `@layer utilities`。
 
 ### Named Rules
 **The Flat-By-Default Rule.** 静止态表面是 flat 的，靠 ring 边缘定义层次。阴影只作为状态响应出现（hover、浮层），不是默认。如果一个卡片静止态就有阴影，它太努力了。

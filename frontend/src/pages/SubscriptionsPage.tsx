@@ -14,6 +14,7 @@ import { getNotificationSettings } from "@/api/notifications";
 import type { Category, Subscription, SubscriptionCreate, SubscriptionUpdate, CycleUnit } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Table,
@@ -206,8 +207,11 @@ export default function SubscriptionsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">{t("subscriptions.title")}</h2>
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">{t("subscriptions.title")}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{t("subscriptions.subtitle")}</p>
+        </div>
         <Button
           onClick={() => {
             setEditing(null);
@@ -268,9 +272,29 @@ export default function SubscriptionsPage() {
       </div>
 
       {loading ? (
-        <p className="text-muted-foreground">{t("subscriptions.loading")}</p>
+        <div className="space-y-2" role="status" aria-live="polite">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-12 rounded-md bg-muted/40 animate-pulse" />
+          ))}
+        </div>
       ) : subscriptions.length === 0 ? (
-        <p className="text-muted-foreground">{t("subscriptions.noSubscriptions")}</p>
+        <Card className="ring-foreground/10">
+          <CardContent className="flex flex-col items-center gap-3 py-16 text-center">
+            <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+              <LayoutGrid className="size-6 text-muted-foreground" aria-hidden="true" />
+            </div>
+            <p className="font-medium">{t("subscriptions.noSubscriptions")}</p>
+            <p className="text-sm text-muted-foreground">{t("subscriptions.noSubscriptionsHint")}</p>
+            <Button
+              onClick={() => {
+                setEditing(null);
+                setFormOpen(true);
+              }}
+            >
+              {t("subscriptions.addSubscription")}
+            </Button>
+          </CardContent>
+        </Card>
       ) : viewMode === "card" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {subscriptions.map((sub) => (
@@ -288,10 +312,10 @@ export default function SubscriptionsPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-md border overflow-x-auto">
+        <div className="overflow-x-auto rounded-md border">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-muted/30 hover:bg-muted/30">
                 <SortableHeader field="name" label={t("subscriptions.name")} activeSort={sortBy} order={sortOrder} onSort={handleSort} />
                 <SortableHeader field="converted_price" label={t("subscriptions.price")} activeSort={sortBy} order={sortOrder} onSort={handleSort} />
                 <TableHead>{t("subscriptions.cycle")}</TableHead>
@@ -305,7 +329,7 @@ export default function SubscriptionsPage() {
             </TableHeader>
             <TableBody>
               {subscriptions.map((sub) => (
-                <TableRow key={sub.id}>
+                <TableRow key={sub.id} className="transition-colors hover:bg-muted/30">
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
                       <Avatar className="size-7">
@@ -376,6 +400,7 @@ export default function SubscriptionsPage() {
                           <Button
                             variant="outline"
                             size="sm"
+                            className="border-pending/30 text-pending hover:bg-pending/10 hover:text-pending"
                             onClick={() => handleAcknowledge(sub.id)}
                           >
                             <CheckCircle2 className="size-4 text-pending" />

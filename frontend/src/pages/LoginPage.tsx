@@ -6,13 +6,7 @@ import { login } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { ShieldCheck } from "lucide-react";
 
 const ERROR_KEY_MAP: Record<string, string> = {
   "Invalid credentials": "errors.invalidCredentials",
@@ -47,18 +41,42 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>{t("auth.signIn")}</CardTitle>
-          <CardDescription>
+    <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
+      {/* Brand panel — calm, reliable voice. No theatrics, just the promise. */}
+      <aside className="relative hidden flex-col justify-between bg-primary p-10 text-primary-foreground lg:flex">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="size-6 text-pending" aria-hidden="true" />
+          <span className="font-heading text-lg font-semibold">
+            {t("layout.appName")}
+          </span>
+        </div>
+        <div className="max-w-sm">
+          <h2 className="font-heading text-3xl font-bold leading-tight tracking-[-0.01em]">
+            {t("auth.brandHeadline")}
+          </h2>
+          <p className="mt-3 text-sm text-primary-foreground/70">
+            {t("auth.brandBody")}
+          </p>
+        </div>
+        <p className="text-xs text-primary-foreground/50">
+          {t("auth.brandFooter")}
+        </p>
+      </aside>
+
+      {/* Form panel */}
+      <div className="flex items-center justify-center p-6">
+        <div className="w-full max-w-sm">
+          <h1 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">
+            {t("auth.signIn")}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {t("auth.signInSubtitle")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          </p>
+          <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
             {error && (
-              <p className="text-sm text-destructive">{error}</p>
+              <p className="text-sm text-destructive" role="alert">
+                {error}
+              </p>
             )}
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">{t("auth.email")}</Label>
@@ -83,13 +101,13 @@ export default function LoginPage() {
             <Button type="submit">{t("auth.signInButton")}</Button>
             <p className="text-center text-sm text-muted-foreground">
               {t("auth.noAccount")}{" "}
-              <Link to="/register" className="text-primary underline">
+              <Link to="/register" className="text-pending underline underline-offset-4">
                 {t("auth.register")}
               </Link>
             </p>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

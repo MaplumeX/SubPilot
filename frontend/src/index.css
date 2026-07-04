@@ -142,6 +142,23 @@
   }
 }
 
+@layer utilities {
+  /* Ambient shadow tokens — documented in DESIGN.md Elevation.
+     Used only as state responses (hover/floating), never at rest. */
+  .shadow-ambient-low {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+  .shadow-ambient-md {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+  .dark .shadow-ambient-low {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  .dark .shadow-ambient-md {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

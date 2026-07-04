@@ -11,6 +11,7 @@ import StatisticsPage from "@/pages/StatisticsPage";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import ThemeToggle from "@/components/theme-toggle";
 import { Toaster } from "@/components/ui/toaster";
+import { ShieldCheck } from "lucide-react";
 import { createSubscription } from "@/api/subscriptions";
 import type { SubscriptionCreate } from "@/api/types";
 
@@ -68,10 +69,15 @@ export default function AppLayout() {
       >
         {t("layout.skipToContent")}
       </a>
-      <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b px-4 py-3 sm:px-6">
+      <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b bg-background/80 px-4 py-3 backdrop-blur-sm sm:px-6 sticky top-0 z-50">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-          <h1 className="text-lg font-semibold">{t("layout.appName")}</h1>
-          <nav className="flex flex-wrap items-center gap-x-4 gap-y-1" aria-label="Primary">
+          <h1 className="flex items-center gap-2 text-lg font-semibold">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground" aria-hidden="true">
+              <ShieldCheck className="size-4 text-pending" />
+            </span>
+            {t("layout.appName")}
+          </h1>
+          <nav className="flex flex-wrap items-center gap-x-1 gap-y-1" aria-label="Primary">
             {NAV_ITEMS.map(({ to, labelKey, match }) => {
               const active = match(location.pathname);
               return (
@@ -80,10 +86,10 @@ export default function AppLayout() {
                   to={to}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "text-sm transition-colors",
+                    "rounded-md px-3 py-1 text-sm transition-colors",
                     active
-                      ? "text-foreground font-medium"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "font-medium bg-muted text-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   )}
                 >
                   {t(labelKey)}
@@ -104,7 +110,7 @@ export default function AppLayout() {
         </div>
       </header>
 
-      <main id={mainId} className="flex-1 p-4 sm:p-6" tabIndex={-1}>
+      <main id={mainId} className="mx-auto w-full max-w-6xl flex-1 p-4 sm:p-6 lg:p-8" tabIndex={-1}>
         <Routes>
           <Route
             path="/"

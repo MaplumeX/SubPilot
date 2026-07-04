@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { getStats, listSubscriptions, acknowledgeSubscription } from "@/api/subscriptions";
 import type { SubscriptionStats, Subscription } from "@/api/types";
@@ -6,13 +6,69 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { ShieldCheck, BellRing } from "lucide-react";
+import { ShieldCheck, BellRing, CheckCircle2 } from "lucide-react";
 import { toast } from "@/components/ui/toaster";
 import { formatDueLabel } from "@/lib/due";
+import { cn } from "@/lib/utils";
 
 interface DashboardPageProps {
   onAddSubscription: () => void;
   reminderDays: number;
+}
+
+/** Count-up a number toward `target` over ~600ms, reduced-motion aware. */
+function useCountUp(target: number) {
+  const [value, setValue] = useState(0);
+  const frame = useRef<number | null>(null);
+  const reduce = useRef(false);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      reduce.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+  }, []);
+  useEffect(() => {
+    if (reduce.current) {
+      setValue(target);
+      return;
+    }
+    const start = performance.now();
+    const from = 0;
+    const dur = 600;
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - start) / dur);
+      // ease-out-quart
+      const eased = 1 - Math.pow(1 - p, 4);
+      setValue(from + (target - from) * eased);
+      if (p < 1) frame.current = requestAnimationFrame(tick);
+    };
+    frame.current = requestAnimationFrame(tick);
+    return () => {
+      if (frame.current) cancelAnimationFrame(frame.current);
+    };
+  }, [target]);
+  return value;
+}
+
+function HeroNumber({
+  value,
+  fmt,
+  className,
+}: {
+  value: number;
+  fmt: (n: number) => string;
+  className?: string;
+}) {
+  const animated = useCountUp(value);
+  return (
+    <p
+      className={cn(
+        "font-bold font-variant-numeric tabular-nums tracking-[-0.02em]",
+        className
+      )}
+    >
+      {fmt(animated)}
+    </p>
+  );
 }
 
 export default function DashboardPage({
@@ -49,6 +105,7 @@ export default function DashboardPage({
     new Intl.NumberFormat(locale, {
       style: "currency",
       currency: baseCurrency,
+      maximumFractionDigits: value < 100 ? 2 : 0,
     }).format(value);
 
   const handleAcknowledge = async (sub: Subscription) => {
@@ -75,37 +132,53 @@ export default function DashboardPage({
 
   const dueSoon = stats?.due_soon ?? [];
   const isAllClear = !loading && dueSoon.length === 0;
+  const monthlySpend = stats?.total_monthly ?? 0;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">
-          {t("dashboard.title")}
-        </h2>
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">
+            {t("dashboard.title")}
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {!loading &&
+              (dueSoon.length > 0
+                ? t("dashboard.subtitleDue", { count: dueSoon.length })
+                : t("dashboard.subtitleClear", { days: reminderDays }))}
+          </p>
+        </div>
         <Button onClick={onAddSubscription}>{t("dashboard.addSubscription")}</Button>
       </div>
 
       {loading ? (
-        <p className="text-muted-foreground" role="status" aria-live="polite">
-          {t("dashboard.loading")}
-        </p>
+        <div className="space-y-6" role="status" aria-live="polite">
+          <div className="h-32 rounded-xl bg-muted/40 animate-pulse" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-24 rounded-xl bg-muted/40 animate-pulse" />
+            ))}
+          </div>
+        </div>
       ) : (
         <>
-          {/* Due Soon — first visual focus (PRODUCT.md principle 1) */}
+          {/* Due Soon — first visual focus (PRODUCT.md principle 1).
+              ring-pending/30 (up from /20) + bg-pending/[0.03] tint gives it
+              real visual priority over the stat cards without raising volume. */}
           {dueSoon.length > 0 ? (
-            <Card className="ring-pending/20">
+            <Card className="ring-2 ring-pending/30 bg-pending/[0.03] transition-shadow hover:shadow-ambient-low">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BellRing className="size-4 text-pending" />
+                <CardTitle className="flex items-center gap-2 text-pending">
+                  <BellRing className="size-4" />
                   {t("dashboard.dueSoon")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col gap-2">
+                <ul className="flex flex-col gap-2" role="list">
                   {dueSoon.map((sub) => (
-                    <div
+                    <li
                       key={sub.id}
-                      className="flex items-center justify-between gap-3 rounded-lg border p-3"
+                      className="flex items-center justify-between gap-3 rounded-lg border border-pending/10 bg-background/60 p-3 transition-colors hover:border-pending/20"
                     >
                       <div className="flex min-w-0 items-center gap-3">
                         <Avatar className="size-7 shrink-0">
@@ -124,25 +197,29 @@ export default function DashboardPage({
                           {formatDueLabel(sub.next_billing_date, t)}
                         </Badge>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
+                          className="border-pending/30 text-pending hover:bg-pending/10 hover:text-pending"
                           onClick={() => void handleAcknowledge(sub)}
                         >
+                          <CheckCircle2 className="size-4 text-pending" />
                           {t("subscriptions.acknowledge")}
                         </Button>
                       </div>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </CardContent>
             </Card>
           ) : (
             isAllClear && (
-              <Card className="ring-foreground/10">
-                <CardContent className="flex items-center gap-4 py-8">
-                  <ShieldCheck className="size-10 shrink-0 text-muted-foreground" />
-                  <div>
-                    <p className="font-heading text-lg font-semibold">
+              <Card className="ring-foreground/10 transition-shadow hover:shadow-ambient-low">
+                <CardContent className="flex items-center gap-5 py-10">
+                  <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-pending/10">
+                    <ShieldCheck className="size-7 text-pending" aria-hidden="true" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-heading text-xl font-semibold">
                       {t("dashboard.allClear")}
                     </p>
                     <p className="mt-1 text-sm text-muted-foreground">
@@ -154,51 +231,57 @@ export default function DashboardPage({
             )
           )}
 
-          {/* Monthly / Yearly / Active — secondary, below the primary focus */}
+          {/* Monthly Spend hero — one dominant number, breaking the 3-equal-card grid.
+              Yearly + Active become secondary supports. */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Card>
+            <Card className="transition-shadow hover:shadow-ambient-low">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {t("dashboard.monthlySpend")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold font-variant-numeric tabular-nums">
-                  {fmt(stats?.total_monthly ?? 0)}
+                <HeroNumber value={monthlySpend} fmt={fmt} className="text-4xl" />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t("dashboard.yearlySpend")}: {fmt(stats?.total_yearly ?? 0)}
                 </p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {t("dashboard.yearlySpend")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold font-variant-numeric tabular-nums">
-                  {fmt(stats?.total_yearly ?? 0)}
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
+            <Card className="transition-shadow hover:shadow-ambient-low">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {t("dashboard.activeSubscriptions")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold font-variant-numeric tabular-nums">
-                  {stats?.count ?? 0}
+                <HeroNumber
+                  value={stats?.count ?? 0}
+                  fmt={(n) => String(Math.round(n))}
+                  className="text-3xl"
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t("dashboard.activeSubscriptionsHint")}
                 </p>
+              </CardContent>
+            </Card>
+            <Card className="transition-shadow hover:shadow-ambient-low">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {t("dashboard.yearlySpend")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <HeroNumber
+                  value={stats?.total_yearly ?? 0}
+                  fmt={fmt}
+                  className="text-3xl"
+                />
               </CardContent>
             </Card>
           </div>
 
           {/* Next-month projection — replaces fake trend chart (distill) */}
-          <NextMonthProjection
-            subscriptions={subscriptions}
-            fmt={fmt}
-          />
+          <NextMonthProjection subscriptions={subscriptions} fmt={fmt} />
         </>
       )}
     </div>
@@ -244,16 +327,14 @@ function NextMonthProjection({
   if (projection == null) return null;
 
   return (
-    <Card>
+    <Card className="transition-shadow hover:shadow-ambient-low">
       <CardHeader>
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {t("dashboard.nextMonthProjection")}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-2xl font-bold font-variant-numeric tabular-nums">
-          {fmt(projection)}
-        </p>
+        <HeroNumber value={projection} fmt={fmt} className="text-3xl" />
         <p className="mt-1 text-sm text-muted-foreground">
           {t("dashboard.nextMonthProjectionSubtitle")}
         </p>

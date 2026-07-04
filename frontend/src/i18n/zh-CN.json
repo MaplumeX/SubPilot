@@ -15,7 +15,10 @@
     "hasAccount": "已有账号？",
     "passwordMismatch": "两次密码不一致",
     "passwordTooShort": "密码至少需要 8 个字符",
-    "registrationFailed": "注册失败"
+    "registrationFailed": "注册失败",
+    "brandHeadline": "不再错过任何一次续费。",
+    "brandBody": "SubPilot 静默跟踪你的每一笔订阅，在下次扣费前温柔提醒——让付费这件小事保持从容，不再慌乱。",
+    "brandFooter": "冷静 · 可靠 · 清晰"
   },
   "dashboard": {
     "title": "仪表盘",
@@ -35,7 +38,10 @@
     "acknowledgedTitle": "已确认续费",
     "acknowledgedMessage": "好的，已记下。下次将在 {{date}} 提醒你。",
     "nextMonthProjection": "下月预计支出",
-    "nextMonthProjectionSubtitle": "根据活跃订阅的下次扣费日期估算"
+    "nextMonthProjectionSubtitle": "根据活跃订阅的下次扣费日期估算",
+    "subtitleDue": "有 {{count}} 笔订阅即将到期，请在续费前确认。",
+    "subtitleClear": "未来 {{days}} 天内无到期订阅，无需担忧。",
+    "activeSubscriptionsHint": "当前在跟踪中"
   },
   "subscriptions": {
     "title": "订阅管理",
@@ -44,6 +50,8 @@
     "allStatuses": "全部状态",
     "loading": "加载中...",
     "noSubscriptions": "暂无订阅",
+    "noSubscriptionsHint": "添加第一笔订阅，开始跟踪续费。",
+    "subtitle": "跟踪与管理你的所有定期订阅。",
     "name": "名称",
     "price": "价格",
     "cycle": "周期",
@@ -156,6 +164,7 @@
   },
   "settings": {
     "title": "设置",
+    "subtitle": "管理你的偏好、货币与通知渠道。",
     "language": "语言",
     "languageDescription": "选择您偏好的语言",
     "english": "English",
@@ -229,6 +238,7 @@
     "mostExpensive": "最贵订阅",
     "cheapest": "最便宜订阅",
     "top3Percentage": "消费集中度",
-    "top3Subtitle": "占月度总支出"
+    "top3Subtitle": "占月度总支出",
+    "subtitle": "了解你的钱都花在了哪里。"
   }
 }

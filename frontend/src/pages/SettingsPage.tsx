@@ -82,7 +82,8 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">{t("settings.title")}</h2>
+      <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">{t("settings.title")}</h2>
+      <p className="text-sm text-muted-foreground">{t("settings.subtitle")}</p>
 
       <Card className="max-w-md">
         <CardHeader>

@@ -15,7 +15,10 @@
     "hasAccount": "Already have an account?",
     "passwordMismatch": "Passwords do not match",
     "passwordTooShort": "Password must be at least 8 characters",
-    "registrationFailed": "Registration failed"
+    "registrationFailed": "Registration failed",
+    "brandHeadline": "Never miss a renewal.",
+    "brandBody": "SubPilot quietly tracks every subscription and nudges you before the next charge — so paying for things feels calm, not chaotic.",
+    "brandFooter": "Calm. Reliable. Clear."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -35,7 +38,10 @@
     "acknowledgedTitle": "Marked as renewed",
     "acknowledgedMessage": "Got it. We'll remind you about the next billing on {{date}}.",
     "nextMonthProjection": "Next month projection",
-    "nextMonthProjectionSubtitle": "Based on your active subscriptions' next billing dates"
+    "nextMonthProjectionSubtitle": "Based on your active subscriptions' next billing dates",
+    "subtitleDue": "{{count}} subscription(s) due soon — review before they renew.",
+    "subtitleClear": "Nothing due in the next {{days}} days. You're covered.",
+    "activeSubscriptionsHint": "Currently being tracked"
   },
   "subscriptions": {
     "title": "Subscriptions",
@@ -44,6 +50,8 @@
     "allStatuses": "All statuses",
     "loading": "Loading...",
     "noSubscriptions": "No subscriptions found",
+    "noSubscriptionsHint": "Add your first subscription to start tracking renewals.",
+    "subtitle": "Track and manage all your recurring subscriptions.",
     "name": "Name",
     "price": "Price",
     "cycle": "Cycle",
@@ -156,6 +164,7 @@
   },
   "settings": {
     "title": "Settings",
+    "subtitle": "Manage your preferences, currency, and notification channels.",
     "language": "Language",
     "languageDescription": "Choose your preferred language",
     "english": "English",
@@ -229,6 +238,7 @@
     "mostExpensive": "Most Expensive",
     "cheapest": "Cheapest",
     "top3Percentage": "Top 3 Share",
-    "top3Subtitle": "of total monthly spend"
+    "top3Subtitle": "of total monthly spend",
+    "subtitle": "Insights into where your money goes."
   }
 }

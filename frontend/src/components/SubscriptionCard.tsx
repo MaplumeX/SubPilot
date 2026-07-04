@@ -37,7 +37,7 @@ export default function SubscriptionCard({
   const canAcknowledge = dueSoon && !acknowledged;
 
   return (
-    <Card>
+    <Card className="transition-shadow hover:shadow-ambient-low">
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
