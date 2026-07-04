@@ -7,11 +7,11 @@ import {
   acknowledgeSubscription,
   createSubscription,
   updateSubscription,
-  listCategories,
   getStats,
 } from "@/api/subscriptions";
+import { listCategories as listCategoryEntities } from "@/api/categories";
 import { getNotificationSettings } from "@/api/notifications";
-import type { Subscription, SubscriptionCreate, SubscriptionUpdate, CycleUnit } from "@/api/types";
+import type { Category, Subscription, SubscriptionCreate, SubscriptionUpdate, CycleUnit } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -81,12 +81,12 @@ export default function SubscriptionsPage() {
   const { t, i18n } = useTranslation();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterCategory, setFilterCategory] = useState<string>("");
+  const [filterCategory, setFilterCategory] = useState<number | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [baseCurrency, setBaseCurrency] = useState<string>("CNY");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | null>(null);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("asc");
   const [viewMode, setViewMode] = useState<ViewMode>(getInitialViewMode);
@@ -103,7 +103,7 @@ export default function SubscriptionsPage() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const data = await listCategories();
+      const data = await listCategoryEntities();
       setCategories(data);
     } catch {
       // ignore
@@ -121,8 +121,8 @@ export default function SubscriptionsPage() {
 
   const fetchSubscriptions = useCallback(async () => {
     try {
-      const params: Record<string, string> = {};
-      if (filterCategory) params.category = filterCategory;
+      const params: Record<string, string | number> = {};
+      if (filterCategory != null) params.category = filterCategory;
       if (filterStatus) params.status = filterStatus;
       if (sortBy) {
         params.sort_by = sortBy;
@@ -223,15 +223,15 @@ export default function SubscriptionsPage() {
       </div>
 
       <div className="flex items-center gap-4">
-        <Select value={filterCategory || null} onValueChange={(v) => setFilterCategory(v === "__all__" ? "" : (v ?? ""))}>
+        <Select value={filterCategory != null ? String(filterCategory) : "__all__"} onValueChange={(v) => setFilterCategory(v === "__all__" ? null : Number(v))}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue label={filterCategory || undefined} placeholder={t("subscriptions.allCategories")} />
+            <SelectValue label={filterCategory != null ? categories.find((c) => c.id === filterCategory)?.name : undefined} placeholder={t("subscriptions.allCategories")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">{t("subscriptions.allCategories")}</SelectItem>
             {categories.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
+              <SelectItem key={cat.id} value={String(cat.id)}>
+                {cat.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -334,10 +334,10 @@ export default function SubscriptionsPage() {
                   </TableCell>
                   <TableCell>{formatCycle(sub.cycle_count, sub.cycle_unit)}</TableCell>
                   <TableCell>
-                    {sub.category || "-"}
+                    {sub.category?.name ?? "-"}
                   </TableCell>
                   <TableCell>
-                    {sub.payment_method || "-"}
+                    {sub.payment_method?.name ?? "-"}
                   </TableCell>
                   <TableCell>
                     <Badge

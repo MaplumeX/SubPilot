@@ -58,6 +58,29 @@ _check_ownership(subscription, current_user.id)  # 404 if None or wrong owner
 
 For 422 validation errors, FastAPI returns the standard schema with field-level details.
 
+### Reference-count delete: 409 with top-level `count`
+
+When a DELETE endpoint must refuse an entity that is still referenced (e.g. a `Category` / `PaymentMethod` used by `subscriptions`), return **409** with the reference count as a **top-level** field, not nested under `detail`:
+
+```python
+from fastapi.responses import JSONResponse
+
+count = db.query(func.count(Subscription.id)).filter(
+    Subscription.category_id == entity_id, Subscription.user_id == current_user.id
+).scalar() or 0
+if count > 0:
+    return JSONResponse(
+        status_code=status.HTTP_409_CONFLICT,
+        content={"detail": "Category is in use", "count": count},
+    )
+```
+
+**Contract**: body shape is `{"detail": str, "count": int}` at the top level. Frontend reads `err.response.data.count` (NOT `err.response.data.detail.count`) to render "被 N 条订阅使用,无法删除". Keep the field name `count` and keep it top-level.
+
+**Why a pre-check instead of relying on the FK `ondelete=RESTRICT` constraint**: the DB constraint guarantees integrity as a backstop, but its IntegrityError surfaces as a generic 500 with no actionable count. The explicit pre-check returns a localized, actionable 409. Belt-and-suspenders: RESTRICT at the DB layer + count-check at the API layer.
+
+**Also**: name-collision on create/rename (per-user `UNIQUE(user_id, name)`) returns 409 with the standard `{"detail": "..."}` shape (no count) — catch `IntegrityError` and raise `HTTPException(409, ...)`.
+
 ---
 
 ## Common Mistakes

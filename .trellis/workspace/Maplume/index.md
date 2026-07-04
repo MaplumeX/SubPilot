@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 14
-- **Last Active**: 2026-06-26
+- **Total Sessions**: 15
+- **Last Active**: 2026-06-27
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~511 | Active |
+| `journal-1.md` | ~546 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 15 | 2026-06-27 | Redesign category & payment method as managed entities | `b3bba65`, `6d3eea4`, `ee07031` | `emdash/forty-knives-rest-gl5he` |
 | 14 | 2026-06-26 | 修复订阅路由顺序导致支付方式 422 | `3323156` | `emdash/two-socks-laugh-d4a3h` |
 | 13 | 2026-06-17 | Add payment method field to subscriptions | `da8fe12` | `MaplumeX/subscription-payment-method` |
 | 13 | 2026-06-17 | Subscription due-date reminders | `9f25d0e`, `cdb7882` | `MaplumeX/lumeX/due-date-reminders` |

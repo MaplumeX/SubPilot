@@ -20,6 +20,30 @@ export interface AuthError {
 export type CycleUnit = "day" | "week" | "month" | "year";
 export type SubscriptionStatus = "active" | "cancelled" | "trial";
 
+export interface Category {
+  id: number;
+  user_id: number;
+  name: string;
+  created_at: string;
+}
+
+export interface PaymentMethod {
+  id: number;
+  user_id: number;
+  name: string;
+  created_at: string;
+}
+
+export interface CategoryBrief {
+  id: number;
+  name: string;
+}
+
+export interface PaymentMethodBrief {
+  id: number;
+  name: string;
+}
+
 export interface Subscription {
   id: number;
   user_id: number;
@@ -28,8 +52,8 @@ export interface Subscription {
   currency: string;
   cycle_count: number;
   cycle_unit: CycleUnit;
-  category: string | null;
-  payment_method: string;
+  category: CategoryBrief | null;
+  payment_method: PaymentMethodBrief;
   status: SubscriptionStatus;
   start_date: string;
   next_billing_date: string | null;
@@ -48,8 +72,8 @@ export interface SubscriptionCreate {
   currency?: string;
   cycle_count: number;
   cycle_unit: CycleUnit;
-  category?: string | null;
-  payment_method: string;
+  category_id?: number | null;
+  payment_method_id: number;
   status?: SubscriptionStatus;
   start_date: string;
   auto_renew?: boolean;
@@ -63,8 +87,8 @@ export interface SubscriptionUpdate {
   currency?: string;
   cycle_count?: number;
   cycle_unit?: CycleUnit;
-  category?: string | null;
-  payment_method?: string;
+  category_id?: number | null;
+  payment_method_id?: number;
   status?: SubscriptionStatus;
   start_date?: string;
   auto_renew?: boolean;

@@ -1,0 +1,9 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend entry point: domain layout, routers/services/models convention — needed before adding new models/routers/categories+payment_methods."}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "ORM patterns, FK/ownership, migration gotchas — governs the new Category/PaymentMethod models, subscription FK swap, and alembic migration."}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Where new models/schemas/routers files go; confirms module organization for categories.py/payment_methods.py."}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "HTTPException/409/404 conventions for CRUD create-rename-delete and reference-count block."}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend entry: React 19 + shadcn/base-ui conventions — governs EntityManagerCard, SubscriptionForm Select rewrite."}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Select/Combobox/oklch rules; EntityManagerCard composition and SubscriptionForm Popover→Select migration must follow these."}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Direct Axios server-state pattern; how SettingsPage list/create/rename/delete should fetch and update local state."}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Subscription type shape change (category/payment_method nesting) — governing ripple through consumers."}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "This task spans backend models/routers + frontend api/components/pages; cross-layer consistency rules apply."}

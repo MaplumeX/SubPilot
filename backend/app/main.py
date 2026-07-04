@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import Base, SessionLocal, engine
-from app.routers import auth, subscriptions
+from app.routers import auth, categories, subscriptions, payment_methods
 from app.services.exchange_rate import fetch_exchange_rates
 from app.services.notifications import process_reminders
 from app.services.renewal import process_renewals
@@ -78,5 +78,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(subscriptions.router)
+app.include_router(categories.router)
+app.include_router(payment_methods.router)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")

@@ -14,7 +14,7 @@ export async function createSubscription(
 }
 
 export async function listSubscriptions(params?: {
-  category?: string;
+  category?: number;
   status?: string;
   sort_by?: string;
   sort_order?: string;
@@ -60,15 +60,5 @@ export async function uploadLogo(file: File): Promise<{ logo_url: string }> {
 
 export async function getStats(): Promise<SubscriptionStats> {
   const { data } = await api.get<SubscriptionStats>("/subscriptions/stats");
-  return data;
-}
-
-export async function listCategories(): Promise<string[]> {
-  const { data } = await api.get<string[]>("/subscriptions/categories");
-  return data;
-}
-
-export async function listPaymentMethods(): Promise<string[]> {
-  const { data } = await api.get<string[]>("/subscriptions/payment-methods");
   return data;
 }

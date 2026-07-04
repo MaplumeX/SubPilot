@@ -3,6 +3,8 @@ from datetime import date, datetime
 from pydantic import BaseModel, Field
 
 from app.models.subscription import CycleUnit, SubscriptionStatus
+from app.schemas.category import CategoryBrief
+from app.schemas.payment_method import PaymentMethodBrief
 
 
 class SubscriptionCreate(BaseModel):
@@ -11,8 +13,8 @@ class SubscriptionCreate(BaseModel):
     currency: str = "CNY"
     cycle_count: int = Field(ge=1)
     cycle_unit: CycleUnit
-    category: str | None = None
-    payment_method: str = Field(min_length=1)
+    category_id: int | None = None
+    payment_method_id: int
     status: SubscriptionStatus = SubscriptionStatus.active
     start_date: date
     auto_renew: bool = True
@@ -26,8 +28,8 @@ class SubscriptionUpdate(BaseModel):
     currency: str | None = None
     cycle_count: int | None = Field(default=None, ge=1)
     cycle_unit: CycleUnit | None = None
-    category: str | None = None
-    payment_method: str | None = Field(default=None, min_length=1)
+    category_id: int | None = None
+    payment_method_id: int | None = Field(default=None)
     status: SubscriptionStatus | None = None
     start_date: date | None = None
     auto_renew: bool | None = None
@@ -43,8 +45,8 @@ class SubscriptionResponse(BaseModel):
     currency: str
     cycle_count: int
     cycle_unit: CycleUnit
-    category: str | None
-    payment_method: str
+    category: CategoryBrief | None
+    payment_method: PaymentMethodBrief
     status: SubscriptionStatus
     start_date: date
     next_billing_date: date | None

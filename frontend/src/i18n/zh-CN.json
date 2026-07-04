@@ -97,6 +97,8 @@
     "paymentMethod": "支付方式",
     "selectPaymentMethod": "选择或输入支付方式",
     "paymentMethodRequired": "支付方式为必填项",
+    "emptyPaymentMethodHint": "暂无支付方式，请先在设置页添加。",
+    "emptyCategoryHint": "暂无分类，请先在设置页添加。",
     "nameRequired": "名称为必填项",
     "pricePositive": "价格必须大于 0",
     "startDateRequired": "开始日期为必填项",
@@ -139,7 +141,20 @@
     "english": "English",
     "chinese": "简体中文",
     "baseCurrency": "基准货币",
-    "baseCurrencyDescription": "所有支出金额将转换为该货币显示"
+    "baseCurrencyDescription": "所有支出金额将转换为该货币显示",
+    "categories": "分类管理",
+    "categoryDescription": "管理可用于订阅的分类。",
+    "categoryNamePlaceholder": "分类名称",
+    "paymentMethods": "支付方式管理",
+    "paymentMethodDescription": "管理可用于订阅的支付方式。",
+    "paymentMethodNamePlaceholder": "支付方式名称",
+    "addCategory": "添加",
+    "addPaymentMethod": "添加",
+    "rename": "重命名",
+    "cancel": "取消",
+    "delete": "删除",
+    "deleteBlockedInUse": "被 {{count}} 条订阅使用，无法删除",
+    "emptyHint": "暂无，请在下方添加。"
   },
   "notifications": {
     "title": "到期提醒",
@@ -169,7 +184,8 @@
     "invalidCredentials": "用户名或密码错误",
     "invalidRefreshToken": "无效的刷新令牌",
     "userNotFound": "用户未找到",
-    "subscriptionNotFound": "订阅未找到"
+    "subscriptionNotFound": "订阅未找到",
+    "entityNameExists": "名称已存在"
   },
   "statistics": {
     "title": "统计",

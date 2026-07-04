@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import type { Subscription, SubscriptionCreate, CycleUnit, SubscriptionStatus } from "@/api/types";
-import { uploadLogo, listCategories, listPaymentMethods } from "@/api/subscriptions";
+import { uploadLogo } from "@/api/subscriptions";
+import { listCategories } from "@/api/categories";
+import { listPaymentMethods } from "@/api/payment_methods";
+import type { Category, PaymentMethod } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,21 +29,6 @@ import {
   AvatarFallback,
 } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { CheckIcon, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface SubscriptionFormProps {
   key?: React.Key;
@@ -99,8 +87,8 @@ export default function SubscriptionForm({
   const [cycleUnit, setCycleUnit] = useState<CycleUnit>(
     subscription?.cycle_unit ?? "month"
   );
-  const [category, setCategory] = useState(subscription?.category ?? "");
-  const [paymentMethod, setPaymentMethod] = useState(subscription?.payment_method ?? "");
+  const [category, setCategory] = useState<number | null>(subscription?.category?.id ?? null);
+  const [paymentMethod, setPaymentMethod] = useState<number | null>(subscription?.payment_method?.id ?? null);
   const [subStatus, setSubStatus] = useState<SubscriptionStatus>(
     subscription?.status ?? "active"
   );
@@ -114,10 +102,8 @@ export default function SubscriptionForm({
   const [autoRenew, setAutoRenew] = useState(subscription?.auto_renew ?? true);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [categoryOpen, setCategoryOpen] = useState(false);
-  const [existingCategories, setExistingCategories] = useState<string[]>([]);
-  const [paymentMethodOpen, setPaymentMethodOpen] = useState(false);
-  const [existingPaymentMethods, setExistingPaymentMethods] = useState<string[]>([]);
+  const [existingCategories, setExistingCategories] = useState<Category[]>([]);
+  const [existingPaymentMethods, setExistingPaymentMethods] = useState<PaymentMethod[]>([]);
 
   useEffect(() => {
     listCategories().then(setExistingCategories).catch(() => {});
@@ -203,7 +189,11 @@ export default function SubscriptionForm({
       setError(t("subscriptionForm.startDateRequired"));
       return;
     }
-    if (!paymentMethod.trim()) {
+    if (!paymentMethod) {
+      if (existingPaymentMethods.length === 0) {
+        setError(t("subscriptionForm.emptyPaymentMethodHint"));
+        return;
+      }
       setError(t("subscriptionForm.paymentMethodRequired"));
       return;
     }
@@ -216,8 +206,8 @@ export default function SubscriptionForm({
         currency,
         cycle_count: countNum,
         cycle_unit: cycleUnit,
-        category: category || null,
-        payment_method: paymentMethod.trim(),
+        category_id: category,
+        payment_method_id: paymentMethod,
         status: subStatus,
         start_date: startDate,
         auto_renew: autoRenew,
@@ -412,79 +402,44 @@ export default function SubscriptionForm({
             </div>
             <div className="flex flex-col gap-2">
               <Label>{t("subscriptionForm.category")}</Label>
-              <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
-                <PopoverTrigger render={<Button variant="outline" role="combobox" aria-expanded={categoryOpen} className="w-full justify-between font-normal" />}>
-                  {category || t("subscriptionForm.selectCategory")}
-                  <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
-                </PopoverTrigger>
-                <PopoverContent className="p-0" align="start" sideOffset={4}>
-                  <Command shouldFilter={false}>
-                    <CommandInput
-                      placeholder={t("subscriptionForm.selectCategory")}
-                      value={category}
-                      onValueChange={setCategory}
-                    />
-                    <CommandList>
-                      <CommandEmpty>{t("subscriptionForm.selectCategory")}</CommandEmpty>
-                      <CommandGroup>
-                        {category && (
-                          <CommandItem
-                            value="__none__"
-                            onSelect={() => { setCategory(""); setCategoryOpen(false); }}
-                          >
-                            {t("subscriptionForm.none")}
-                          </CommandItem>
-                        )}
-                        {existingCategories.map((cat) => (
-                          <CommandItem
-                            key={cat}
-                            value={cat}
-                            onSelect={() => { setCategory(cat); setCategoryOpen(false); }}
-                          >
-                            <CheckIcon className={cn("mr-2 size-4", category === cat ? "opacity-100" : "opacity-0")} />
-                            {cat}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+              {existingCategories.length === 0 ? (
+                <p className="text-sm text-muted-foreground">{t("subscriptionForm.emptyCategoryHint")}</p>
+              ) : (
+                <Select value={category != null ? String(category) : "__none__"} onValueChange={(v) => setCategory(v === "__none__" ? null : Number(v))}>
+                  <SelectTrigger>
+                    <SelectValue label={category != null ? existingCategories.find((c) => c.id === category)?.name : t("subscriptionForm.none")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">{t("subscriptionForm.none")}</SelectItem>
+                    {existingCategories.map((cat) => (
+                      <SelectItem key={cat.id} value={String(cat.id)}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
             <Label>{t("subscriptionForm.paymentMethod")}</Label>
-            <Popover open={paymentMethodOpen} onOpenChange={setPaymentMethodOpen}>
-              <PopoverTrigger render={<Button variant="outline" role="combobox" aria-expanded={paymentMethodOpen} className="w-full justify-between font-normal" />}>
-                {paymentMethod || t("subscriptionForm.selectPaymentMethod")}
-                <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
-              </PopoverTrigger>
-              <PopoverContent className="p-0" align="start" sideOffset={4}>
-                <Command shouldFilter={false}>
-                  <CommandInput
-                    placeholder={t("subscriptionForm.selectPaymentMethod")}
-                    value={paymentMethod}
-                    onValueChange={setPaymentMethod}
-                  />
-                  <CommandList>
-                    <CommandEmpty>{t("subscriptionForm.selectPaymentMethod")}</CommandEmpty>
-                    <CommandGroup>
-                      {existingPaymentMethods.map((pm) => (
-                        <CommandItem
-                          key={pm}
-                          value={pm}
-                          onSelect={() => { setPaymentMethod(pm); setPaymentMethodOpen(false); }}
-                        >
-                          <CheckIcon className={cn("mr-2 size-4", paymentMethod === pm ? "opacity-100" : "opacity-0")} />
-                          {pm}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+            {existingPaymentMethods.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t("subscriptionForm.emptyPaymentMethodHint")}</p>
+            ) : (
+              <Select value={paymentMethod != null ? String(paymentMethod) : null} onValueChange={(v) => setPaymentMethod(v != null ? Number(v) : null)}>
+                <SelectTrigger>
+                  <SelectValue label={paymentMethod != null ? existingPaymentMethods.find((p) => p.id === paymentMethod)?.name : undefined} placeholder={t("subscriptionForm.selectPaymentMethod")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {existingPaymentMethods.map((pm) => (
+                    <SelectItem key={pm.id} value={String(pm.id)}>
+                      {pm.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">

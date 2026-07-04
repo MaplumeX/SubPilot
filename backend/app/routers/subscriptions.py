@@ -5,10 +5,12 @@ from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
 from sqlalchemy import and_, case, func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.deps import get_current_user, get_db
+from app.models.category import Category
 from app.models.exchange_rate import ExchangeRate
+from app.models.payment_method import PaymentMethod
 from app.models.subscription import CycleUnit, Subscription, SubscriptionStatus
 from app.models.user import User
 from app.services.exchange_rate import get_rate
@@ -74,12 +76,48 @@ def _check_ownership(subscription: Subscription | None, user_id: int) -> None:
         )
 
 
+def _validate_category_ownership(db: Session, category_id: int | None, user_id: int) -> None:
+    if category_id is None:
+        return
+    exists = (
+        db.query(Category)
+        .filter(Category.id == category_id, Category.user_id == user_id)
+        .first()
+    )
+    if exists is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Category not found",
+        )
+
+
+def _validate_payment_method_ownership(db: Session, payment_method_id: int | None, user_id: int) -> None:
+    if payment_method_id is None:
+        return
+    exists = (
+        db.query(PaymentMethod)
+        .filter(PaymentMethod.id == payment_method_id, PaymentMethod.user_id == user_id)
+        .first()
+    )
+    if exists is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Payment method not found",
+        )
+
+
+def _eager_load(query):
+    return query.options(joinedload(Subscription.category), joinedload(Subscription.payment_method))
+
+
 @router.post("", response_model=SubscriptionResponse, status_code=status.HTTP_201_CREATED)
 def create_subscription(
     data: SubscriptionCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    _validate_category_ownership(db, data.category_id, current_user.id)
+    _validate_payment_method_ownership(db, data.payment_method_id, current_user.id)
     dump = data.model_dump()
     dump["next_billing_date"] = _compute_next_billing_date(
         data.start_date, data.cycle_count, data.cycle_unit
@@ -97,7 +135,7 @@ def create_subscription(
 
 @router.get("", response_model=list[SubscriptionResponse])
 def list_subscriptions(
-    category: str | None = Query(None),
+    category: int | None = Query(None),
     status: SubscriptionStatus | None = Query(None),
     sort_by: str | None = Query(None),
     sort_order: str | None = Query(None),
@@ -117,9 +155,10 @@ def list_subscriptions(
 
     query = db.query(Subscription).filter(Subscription.user_id == current_user.id)
     if category is not None:
-        query = query.filter(Subscription.category == category)
+        query = query.filter(Subscription.category_id == category)
     if status is not None:
         query = query.filter(Subscription.status == status)
+    query = query.options(joinedload(Subscription.category), joinedload(Subscription.payment_method))
 
     if sort_by == "converted_price":
         latest_rate_subq = (
@@ -178,21 +217,6 @@ def list_subscriptions(
     return subs
 
 
-@router.get("/categories", response_model=list[str])
-def list_categories(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    rows = (
-        db.query(Subscription.category)
-        .filter(Subscription.user_id == current_user.id, Subscription.category.isnot(None))
-        .distinct()
-        .order_by(Subscription.category)
-        .all()
-    )
-    return [row[0] for row in rows]
-
-
 @router.get("/stats", response_model=SubscriptionStats)
 def get_stats(
     db: Session = Depends(get_db),
@@ -214,7 +238,7 @@ def get_stats(
         rate = get_rate(db, sub.currency, base)
         converted = monthly * rate
         total_monthly += converted
-        cat = sub.category
+        cat = sub.category.name if sub.category else None
         by_category[cat] = by_category.get(cat, 0.0) + converted
         converted_prices.append((sub.name, converted))
 
@@ -294,24 +318,6 @@ def upload_logo(
     return {"logo_url": f"/static/logos/{filename}"}
 
 
-@router.get("/payment-methods", response_model=list[str])
-def list_payment_methods(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    rows = (
-        db.query(Subscription.payment_method)
-        .filter(
-            Subscription.user_id == current_user.id,
-            Subscription.payment_method != "",
-        )
-        .distinct()
-        .order_by(Subscription.payment_method)
-        .all()
-    )
-    return [row[0] for row in rows]
-
-
 @router.post("/{subscription_id}/acknowledge", response_model=SubscriptionResponse)
 def acknowledge_subscription(
     subscription_id: int,
@@ -323,7 +329,12 @@ def acknowledge_subscription(
     Sets acknowledged_billing_date = next_billing_date so reminders stop until the
     next billing cycle. Does NOT modify next_billing_date.
     """
-    subscription = db.query(Subscription).filter(Subscription.id == subscription_id).first()
+    subscription = (
+        db.query(Subscription)
+        .options(joinedload(Subscription.category), joinedload(Subscription.payment_method))
+        .filter(Subscription.id == subscription_id)
+        .first()
+    )
     _check_ownership(subscription, current_user.id)
     subscription.acknowledged_billing_date = subscription.next_billing_date
     db.commit()
@@ -341,7 +352,12 @@ def get_subscription(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    subscription = db.query(Subscription).filter(Subscription.id == subscription_id).first()
+    subscription = (
+        db.query(Subscription)
+        .options(joinedload(Subscription.category), joinedload(Subscription.payment_method))
+        .filter(Subscription.id == subscription_id)
+        .first()
+    )
     _check_ownership(subscription, current_user.id)
     base = current_user.base_currency
     monthly = _normalize_to_monthly(subscription.price, subscription.cycle_count, subscription.cycle_unit)
@@ -357,10 +373,19 @@ def update_subscription(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    subscription = db.query(Subscription).filter(Subscription.id == subscription_id).first()
+    subscription = (
+        db.query(Subscription)
+        .options(joinedload(Subscription.category), joinedload(Subscription.payment_method))
+        .filter(Subscription.id == subscription_id)
+        .first()
+    )
     _check_ownership(subscription, current_user.id)
 
     update_data = data.model_dump(exclude_unset=True)
+    if "category_id" in update_data:
+        _validate_category_ownership(db, update_data["category_id"], current_user.id)
+    if "payment_method_id" in update_data:
+        _validate_payment_method_ownership(db, update_data["payment_method_id"], current_user.id)
     for field, value in update_data.items():
         setattr(subscription, field, value)
 
