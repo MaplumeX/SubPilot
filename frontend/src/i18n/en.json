@@ -178,7 +178,10 @@
     "confirmDeleteTitle": "Delete item",
     "confirmDeleteMessage": "Delete \"{{name}}\"? This can't be undone.",
     "confirmDeleteConfirm": "Delete",
-    "confirmDeleteCancel": "Keep item"
+    "confirmDeleteCancel": "Keep item",
+    "createdToast": "Added \"{{name}}\"",
+    "renamedToast": "Renamed to \"{{name}}\"",
+    "deletedToast": "Deleted \"{{name}}\""
   },
   "notifications": {
     "title": "Reminders",
@@ -218,6 +221,7 @@
     "monthlyTrendSubtitle": "Projected spend based on each active subscription's next billing date",
     "topSubscriptions": "Top Subscriptions",
     "noData": "No subscription data yet",
+    "loading": "Loading statistics...",
     "addFirst": "Add your first subscription to see statistics",
     "month": "Month",
     "category": "Category",
@@ -225,6 +229,6 @@
     "mostExpensive": "Most Expensive",
     "cheapest": "Cheapest",
     "top3Percentage": "Top 3 Share",
-    "top3Subtitle": "Top 3 Share"
+    "top3Subtitle": "of total monthly spend"
   }
 }

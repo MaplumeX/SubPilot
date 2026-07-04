@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowUp, RefreshCw, LayoutGrid, List, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, RefreshCw, LayoutGrid, List, Trash2, CheckCircle2 } from "lucide-react";
 import {
   listSubscriptions,
   deleteSubscription,
@@ -378,12 +378,14 @@ export default function SubscriptionsPage() {
                             size="sm"
                             onClick={() => handleAcknowledge(sub.id)}
                           >
+                            <CheckCircle2 className="size-4 text-pending" />
                             {t("subscriptions.acknowledge")}
                           </Button>
                         )}
                       <Button
-                        variant="destructive"
+                        variant="ghost"
                         size="icon-sm"
+                        className="text-muted-foreground hover:text-destructive"
                         onClick={() => setDeleteTarget(sub)}
                         aria-label={t("subscriptions.delete")}
                       >

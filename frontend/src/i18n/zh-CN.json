@@ -178,7 +178,10 @@
     "confirmDeleteTitle": "删除项目",
     "confirmDeleteMessage": "确定删除「{{name}}」吗？此操作无法撤销。",
     "confirmDeleteConfirm": "删除",
-    "confirmDeleteCancel": "保留"
+    "confirmDeleteCancel": "保留",
+    "createdToast": "已添加「{{name}}」",
+    "renamedToast": "已重命名为「{{name}}」",
+    "deletedToast": "已删除「{{name}}」"
   },
   "notifications": {
     "title": "到期提醒",
@@ -218,6 +221,7 @@
     "monthlyTrendSubtitle": "根据各活跃订阅的下次扣费日期估算",
     "topSubscriptions": "订阅排行",
     "noData": "暂无订阅数据",
+    "loading": "加载统计中...",
     "addFirst": "添加第一个订阅以查看统计",
     "month": "月份",
     "category": "分类",
@@ -225,6 +229,6 @@
     "mostExpensive": "最贵订阅",
     "cheapest": "最便宜订阅",
     "top3Percentage": "消费集中度",
-    "top3Subtitle": "Top 3 占比"
+    "top3Subtitle": "占月度总支出"
   }
 }

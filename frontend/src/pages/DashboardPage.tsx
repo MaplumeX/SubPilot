@@ -197,9 +197,7 @@ export default function DashboardPage({
           {/* Next-month projection — replaces fake trend chart (distill) */}
           <NextMonthProjection
             subscriptions={subscriptions}
-            locale={locale}
             fmt={fmt}
-            baseCurrency={baseCurrency}
           />
         </>
       )}
@@ -217,9 +215,7 @@ function NextMonthProjection({
   fmt,
 }: {
   subscriptions: Subscription[];
-  locale: string;
   fmt: (v: number) => string;
-  baseCurrency: string;
 }) {
   const { t } = useTranslation();
 

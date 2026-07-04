@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { toast } from "@/components/ui/toaster";
 import type { Category, PaymentMethod } from "@/api/types";
 
 export type Entity = Category | PaymentMethod;
@@ -82,6 +83,7 @@ export default function EntityManagerCard({
     try {
       await onCreate(name);
       setNewName("");
+      toast({ title: t("settings.createdToast", { name }) });
     } catch (err: unknown) {
       const { detail, count } = extractError(err);
       setError(mapError(detail, count));
@@ -109,16 +111,18 @@ export default function EntityManagerCard({
       await onRename(id, name);
       setEditingId(null);
       setEditName("");
+      toast({ title: t("settings.renamedToast", { name }) });
     } catch (err: unknown) {
       const { detail } = extractError(err);
       setError(mapError(detail));
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: number, name: string) => {
     setError("");
     try {
       await onDelete(id);
+      toast({ title: t("settings.deletedToast", { name }) });
     } catch (err: unknown) {
       const { detail, count } = extractError(err);
       setError(mapError(detail, count));
@@ -238,7 +242,7 @@ export default function EntityManagerCard({
         destructive
         onConfirm={() => {
           if (deleteTarget) {
-            void handleDelete(deleteTarget.id).then(() => setDeleteTarget(null));
+            void handleDelete(deleteTarget.id, deleteTarget.name).then(() => setDeleteTarget(null));
           }
         }}
       />

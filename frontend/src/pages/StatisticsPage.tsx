@@ -103,7 +103,7 @@ export default function StatisticsPage() {
 
   if (loading) {
     return (
-      <p className="text-muted-foreground">{t("dashboard.loading")}</p>
+      <p className="text-muted-foreground" role="status" aria-live="polite">{t("statistics.loading")}</p>
     );
   }
 
