@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-04T00:00:00Z",
+  "title": "Design System: SubPilot",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "primary", "displayName": "Ink", "canonical": "oklch(0.145 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.205 0 0)", "oklch(0.269 0 0)", "oklch(0.371 0 0)", "oklch(0.439 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.985 0 0)"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "oklch(1 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.205 0 0)", "oklch(0.269 0 0)", "oklch(0.371 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.922 0 0)", "oklch(1 0 0)"] },
+      "graphite-900": { "role": "primary", "displayName": "Graphite 900", "canonical": "oklch(0.205 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.205 0 0)", "oklch(0.269 0 0)", "oklch(0.371 0 0)", "oklch(0.439 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.985 0 0)"] },
+      "graphite-700": { "role": "neutral", "displayName": "Graphite 700", "canonical": "oklch(0.371 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.205 0 0)", "oklch(0.269 0 0)", "oklch(0.371 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.922 0 0)", "oklch(1 0 0)"] },
+      "graphite-500": { "role": "neutral", "displayName": "Graphite 500", "canonical": "oklch(0.556 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.205 0 0)", "oklch(0.269 0 0)", "oklch(0.371 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.922 0 0)", "oklch(1 0 0)"] },
+      "graphite-100": { "role": "neutral", "displayName": "Graphite 100", "canonical": "oklch(0.922 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.269 0 0)", "oklch(0.439 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.87 0 0)", "oklch(0.922 0 0)", "oklch(1 0 0)"] },
+      "destructive": { "role": "primary", "displayName": "Signal Red", "canonical": "oklch(0.577 0.245 27.325)", "tonalRamp": ["oklch(0.3 0.245 27)", "oklch(0.4 0.245 27)", "oklch(0.5 0.245 27)", "oklch(0.577 0.245 27.325)", "oklch(0.65 0.22 25)", "oklch(0.75 0.18 24)", "oklch(0.85 0.12 23)", "oklch(0.95 0.05 22)"] },
+      "brand-accent-pending": { "role": "secondary", "displayName": "Brand Accent (Pending)", "canonical": "oklch(0.488 0.243 264.376)", "tonalRamp": ["oklch(0.25 0.243 264)", "oklch(0.35 0.243 264)", "oklch(0.45 0.243 264)", "oklch(0.488 0.243 264.376)", "oklch(0.58 0.22 264)", "oklch(0.7 0.18 264)", "oklch(0.82 0.12 264)", "oklch(0.93 0.05 264)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page-level titles (Dashboard h2). Max 2rem — tool, not magazine." },
+      "headline": { "displayName": "Headline", "purpose": "Card and section titles." },
+      "title": { "displayName": "Title", "purpose": "In-card row titles, form section titles." },
+      "body": { "displayName": "Body", "purpose": "Default body text. 0.875rem / 1.5 line-height." },
+      "label": { "displayName": "Label", "purpose": "Buttons, badges, table headers, form labels. No uppercase eyebrow." }
+    },
+    "shadows": [
+      { "name": "ambient-low", "value": "0 1px 2px rgba(0,0,0,0.04)", "purpose": "Card hover: subtle breath, not lift. Pending adoption." },
+      { "name": "ambient-md", "value": "0 4px 16px rgba(0,0,0,0.08)", "purpose": "Dialog/popover floating layer. Pending adoption." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default state transitions (hover, focus)." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main action button (add subscription, save form). Graphite 900 bg, Graphite 50 text, compact h-8.",
+      "html": "<button class=\"ds-btn-primary\">Add subscription</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 32px; gap: 6px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; background: var(--primary, #171717); color: var(--primary-foreground, #fafafa); font-family: 'Geist Variable', sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1; white-space: nowrap; transition: background 0.15s cubic-bezier(0.4,0,0.2,1); cursor: pointer; } .ds-btn-primary:hover { background: color-mix(in oklch, var(--primary, #171717), transparent 20%); } .ds-btn-primary:focus-visible { outline: none; border-color: var(--ring, #a1a1a1); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, #a1a1a1), transparent 50%); } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action (cancel). Border + paper bg, hover to muted.",
+      "html": "<button class=\"ds-btn-outline\">Cancel</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 32px; gap: 6px; padding: 0 10px; border: 1px solid var(--border, #e5e5e5); border-radius: 10px; background: var(--background, #ffffff); color: var(--foreground, #0a0a0a); font-family: 'Geist Variable', sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1; white-space: nowrap; transition: background 0.15s cubic-bezier(0.4,0,0.2,1); cursor: pointer; } .ds-btn-outline:hover { background: var(--muted, #f5f5f5); } .ds-btn-outline:focus-visible { outline: none; border-color: var(--ring, #a1a1a1); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, #a1a1a1), transparent 50%); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Navigation items, toolbar buttons. Transparent at rest, muted on hover.",
+      "html": "<button class=\"ds-btn-ghost\">Dashboard</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; height: 32px; gap: 6px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--muted-foreground, #737373); font-family: 'Geist Variable', sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1; white-space: nowrap; transition: background 0.15s, color 0.15s; cursor: pointer; } .ds-btn-ghost:hover { background: var(--muted, #f5f5f5); color: var(--foreground, #0a0a0a); } .ds-btn-ghost.is-active { color: var(--foreground, #0a0a0a); font-weight: 600; } .ds-btn-ghost:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, #a1a1a1), transparent 50%); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Content container. Paper bg, ring-1 edge (no shadow), rounded-xl, 16px padding.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-header\"><div class=\"ds-card-title\">Monthly spend</div></div><div class=\"ds-card-body\"><p class=\"ds-card-metric\">\u00a5248.00</p></div></div>",
+      "css": ".ds-card { display: flex; flex-direction: column; gap: 16px; border-radius: 14px; background: var(--card, #ffffff); color: var(--card-foreground, #0a0a0a); box-shadow: 0 0 0 1px color-mix(in oklch, var(--foreground, #0a0a0a), transparent 90%); padding: 16px; font-size: 0.875rem; } .ds-card-header { display: grid; gap: 4px; padding: 0 16px; } .ds-card-title { font-family: 'Geist Variable', sans-serif; font-size: 1rem; font-weight: 500; line-height: 1.5; } .ds-card-body { padding: 0 16px; } .ds-card-metric { font-size: 1.5rem; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; margin: 0; }"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Text field. h-8, rounded-lg, border-input, transparent bg, 3px ring on focus.",
+      "html": "<input class=\"ds-input\" placeholder=\"Subscription name\" />",
+      "css": ".ds-input { height: 32px; width: 100%; min-width: 0; border: 1px solid var(--input, #e5e5e5); border-radius: 10px; background: transparent; color: var(--foreground, #0a0a0a); padding: 4px 10px; font-family: 'Geist Variable', sans-serif; font-size: 0.875rem; line-height: 1.5; outline: none; transition: border-color 0.15s, box-shadow 0.15s; } .ds-input::placeholder { color: var(--muted-foreground, #737373); } .ds-input:focus-visible { border-color: var(--ring, #a1a1a1); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, #a1a1a1), transparent 50%); } .ds-input:disabled { opacity: 0.5; pointer-events: none; }"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Pill-shaped status label. h-5, rounded-full, xs font. Destructive variant for danger only.",
+      "html": "<span class=\"ds-badge ds-badge-destructive\">Overdue</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; justify-content: center; height: 20px; gap: 4px; padding: 0 8px; border: 1px solid transparent; border-radius: 9999px; font-family: 'Geist Variable', sans-serif; font-size: 0.75rem; font-weight: 500; line-height: 1.4; white-space: nowrap; } .ds-badge-secondary { background: var(--secondary, #f5f5f5); color: var(--secondary-foreground, #171717); } .ds-badge-destructive { background: color-mix(in oklch, #e7000b, transparent 90%); color: #e7000b; }"
+    },
+    {
+      "name": "Navigation Bar",
+      "kind": "nav",
+      "refersTo": "button-ghost",
+      "description": "Top header nav. Ghost buttons, active state via font-weight + text-foreground (no bg highlight).",
+      "html": "<nav class=\"ds-nav\"><button class=\"ds-nav-item is-active\">Dashboard</button><button class=\"ds-nav-item\">Subscriptions</button><button class=\"ds-nav-item\">Statistics</button><button class=\"ds-nav-item\">Settings</button></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 16px; } .ds-nav-item { border: none; background: transparent; font-family: 'Geist Variable', sans-serif; font-size: 0.875rem; font-weight: 500; color: var(--muted-foreground, #737373); padding: 0; cursor: pointer; transition: color 0.15s; } .ds-nav-item:hover { color: var(--foreground, #0a0a0a); } .ds-nav-item.is-active { color: var(--foreground, #0a0a0a); font-weight: 600; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Steady Assistant",
+    "overview": "SubPilot's visual system is a calm, precise financial assistant: restrained, accurate, neither ingratiating nor cold. It doesn't flatter with color, fabricate hierarchy with shadows, or show off with motion. It relies on precise numbers, clear layers, and enough breathing room for information to speak. The entire system is built on Neutral Graphite — the only chroma-bearing color is destructive (red), reserved for genuine danger. Renewal urgency is conveyed through position and time labels, never red. A brand accent color is pending; until then the grayscale system is complete and usable.",
+    "keyCharacteristics": [
+      "Neutral grayscale dominant; color is a scarce, semantic resource",
+      "Ring edges replace shadows for hierarchy",
+      "Single Geist font family; hierarchy via weight and size",
+      "Compact controls (h-8); information density over whitespace flourish",
+      "Dark mode is a first-class citizen"
+    ],
+    "rules": [
+      { "name": "The Color-as-Signal Rule", "body": "Color is scarce. Neutral gray is default; color must carry semantics (danger, brand focus, data emphasis), never decoration. No colored category tags, colored icons, colored progress bars.", "section": "colors" },
+      { "name": "The Red-Only-for-Danger Rule", "body": "destructive red is only for delete and irreversible danger. Renewal reminders and time-sensitive info must not use red — they use position and time labels, per PRODUCT.md's 'steady urgency'.", "section": "colors" },
+      { "name": "The Muted-Foreground Contrast Rule", "body": "Graphite 500 (#737373) vs Paper is only 4.0:1, below AA 4.5:1. Use Graphite 700 (#404040, 9.0:1) for secondary text. Graphite 500 only for large text (≥18px or bold ≥14px).", "section": "colors" },
+      { "name": "The One-Family Rule", "body": "Only Geist Variable across the whole system. No serif display, no mono accent, no second sans. Hierarchy via weight and size, not font contrast.", "section": "typography" },
+      { "name": "The No-Eyebrow Rule", "body": "No small uppercase tracked kicker above sections. Section titles speak via Headline weight and size; use normal-case sub-lines when context is needed.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Static surfaces are flat, defined by ring edges. Shadows appear only as state response (hover, floating layers), never as default.", "section": "elevation" },
+      { "name": "The No-Drop-Shadow-on-Text Rule", "body": "Never add text-shadow. Clarity comes from contrast, not projection.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use the neutral grayscale as the default palette; treat color as a scarce resource requiring semantics.",
+      "Do use ring edges (ring-1 ring-foreground/10) instead of shadows for card hierarchy; reserve shadows for hover and floating layers.",
+      "Do use Geist Variable single family; establish hierarchy via weight (400/500/600/700) and size.",
+      "Do convey renewal urgency via position and time labels ('in 3 days' at top of home), not color.",
+      "Do use Graphite 900 (#171717) for primary buttons in light mode, inverted in dark mode.",
+      "Do keep controls compact (h-8 = 32px); information density over whitespace flourish.",
+      "Do render destructive red at 10% opacity background + solid text, taming its intensity.",
+      "Do design dark mode as a first-class citizen, not an afterthought inversion."
+    ],
+    "donts": [
+      "Don't use red for renewal reminders or 'due soon' — red is only for delete/irreversible danger (PRODUCT.md: no anxiety-marketing reminders).",
+      "Don't add colored category tags, colored icons, colored progress bars — color is not decoration (PRODUCT.md: no colorful finance-app).",
+      "Don't stack flashy charts to 'look professional' — charts serve specific questions; the grayscale chart palette is deliberate (PRODUCT.md: no chart-showcase dashboard).",
+      "Don't add small uppercase tracked eyebrow kickers above sections — that's the AI scaffolding reflex.",
+      "Don't use border-left > 1px as a colored side stripe — absolutely forbidden.",
+      "Don't use background-clip: text + gradient for gradient text — use a single solid color; emphasize via weight.",
+      "Don't default to glassmorphism — blur and glass cards only rare and purposeful.",
+      "Don't put shadows on static cards — shadow is a state response, not a default.",
+      "Don't use Graphite 500 (#737373) for ≤14px non-bold body text — only 4.0:1 vs Paper, below AA. Use Graphite 700 (#404040).",
+      "Don't introduce a second font family for 'contrast' — hierarchy via weight and size, not font contrast.",
+      "Don't use big red, exclamation marks, 'Handle now!' popups to manufacture urgency — reminders are information, not pressure (PRODUCT.md: steady urgency)."
+    ]
+  }
+}
