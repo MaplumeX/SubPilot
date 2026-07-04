@@ -16,19 +16,16 @@ import {
   ResponsiveContainer,
   Sector,
 } from "recharts";
-import type { PieSectorShapeProps, PieLabelRenderProps } from "recharts";
+import type { PieSectorShapeProps } from "recharts";
 
 const COLORS = [
-  "#6366f1",
-  "#f43f5e",
-  "#10b981",
-  "#f59e0b",
-  "#3b82f6",
-  "#8b5cf6",
-  "#ec4899",
-  "#14b8a6",
-  "#ef4444",
-  "#84cc16",
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+  "var(--chart-6)",
+  "var(--chart-7)",
 ];
 
 interface CategoryData {
@@ -113,7 +110,7 @@ export default function StatisticsPage() {
   if (!hasData) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">{t("statistics.title")}</h2>
+        <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">{t("statistics.title")}</h2>
         <Card>
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">{t("statistics.noData")}</p>
@@ -126,11 +123,9 @@ export default function StatisticsPage() {
     );
   }
 
-  const totalMonthly = stats?.total_monthly ?? 0;
-
   return (
     <div className="space-y-6 [&_.recharts-text]:fill-muted-foreground [&_.recharts-cartesian-grid-horizontal_line]:stroke-border/50 [&_.recharts-cartesian-grid-vertical_line]:stroke-border/50 [&_.recharts-pie-label-text]:fill-foreground">
-      <h2 className="text-2xl font-bold">{t("statistics.title")}</h2>
+      <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">{t("statistics.title")}</h2>
 
       {/* Summary Metric Cards */}
       {stats && stats.count > 0 && (
@@ -142,7 +137,7 @@ export default function StatisticsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{fmt(stats.avg_monthly)}</p>
+              <p className="text-2xl font-bold font-variant-numeric tabular-nums">{fmt(stats.avg_monthly)}</p>
             </CardContent>
           </Card>
           <Card>
@@ -152,7 +147,7 @@ export default function StatisticsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{fmt(stats.most_expensive?.amount ?? 0)}</p>
+              <p className="text-2xl font-bold font-variant-numeric tabular-nums">{fmt(stats.most_expensive?.amount ?? 0)}</p>
               <p className="text-sm text-muted-foreground">{stats.most_expensive?.name}</p>
             </CardContent>
           </Card>
@@ -163,7 +158,7 @@ export default function StatisticsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{fmt(stats.cheapest?.amount ?? 0)}</p>
+              <p className="text-2xl font-bold font-variant-numeric tabular-nums">{fmt(stats.cheapest?.amount ?? 0)}</p>
               <p className="text-sm text-muted-foreground">{stats.cheapest?.name}</p>
             </CardContent>
           </Card>
@@ -174,7 +169,7 @@ export default function StatisticsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{stats.top3_percentage.toFixed(1)}%</p>
+              <p className="text-2xl font-bold font-variant-numeric tabular-nums">{stats.top3_percentage.toFixed(1)}%</p>
               <p className="text-sm text-muted-foreground">{t("statistics.top3Subtitle")}</p>
             </CardContent>
           </Card>
@@ -199,11 +194,6 @@ export default function StatisticsPage() {
                     outerRadius={110}
                     dataKey="value"
                     nameKey="name"
-                    label={(props: PieLabelRenderProps) => {
-                      const name = (props.name as string) ?? "";
-                      const percent = (props.percent as number) ?? 0;
-                      return `${name} ${(percent * 100).toFixed(0)}%`;
-                    }}
                     shape={(props: PieSectorShapeProps, index: number) => (
                       <Sector
                         {...props}
@@ -216,7 +206,7 @@ export default function StatisticsPage() {
                     contentStyle={{
                       backgroundColor: "var(--popover)",
                       border: "1px solid var(--border)",
-                      borderRadius: "8px",
+                      borderRadius: "var(--radius)",
                       color: "var(--popover-foreground)",
                     }}
                     itemStyle={{
@@ -234,9 +224,30 @@ export default function StatisticsPage() {
               </p>
             )}
             {categoryData.length > 0 && (
-              <p className="mt-2 text-center text-sm text-muted-foreground">
-                {t("dashboard.monthlySpend")}: {fmt(totalMonthly)}
-              </p>
+              <ul className="mt-4 space-y-1.5">
+                {categoryData.map((cat, i) => {
+                  const total = categoryData.reduce((s, c) => s + c.value, 0);
+                  const pct = total > 0 ? (cat.value / total) * 100 : 0;
+                  return (
+                    <li
+                      key={cat.name}
+                      className="flex items-center justify-between text-sm"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span
+                          className="size-2.5 rounded-full"
+                          style={{ backgroundColor: COLORS[i % COLORS.length] }}
+                          aria-hidden="true"
+                        />
+                        <span className="text-foreground">{cat.name}</span>
+                      </span>
+                      <span className="text-muted-foreground font-variant-numeric tabular-nums">
+                        {pct.toFixed(0)}% · {fmt(cat.value)}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
           </CardContent>
         </Card>
@@ -277,6 +288,7 @@ export default function StatisticsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t("statistics.monthlyTrend")}</CardTitle>
+          <p className="text-sm text-muted-foreground">{t("statistics.monthlyTrendSubtitle")}</p>
         </CardHeader>
         <CardContent>
           {monthlyData.length > 0 ? (
@@ -293,7 +305,7 @@ export default function StatisticsPage() {
                   contentStyle={{
                     backgroundColor: "var(--popover)",
                     border: "1px solid var(--border)",
-                    borderRadius: "8px",
+                    borderRadius: "var(--radius)",
                     color: "var(--popover-foreground)",
                   }}
                   itemStyle={{

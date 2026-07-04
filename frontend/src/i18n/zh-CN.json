@@ -26,7 +26,16 @@
     "activeSubscriptions": "活跃订阅",
     "dueSoon": "即将到期",
     "monthlyTrend": "月度支出趋势",
-    "emptyTrend": "添加订阅以查看支出趋势"
+    "emptyTrend": "添加订阅以查看支出趋势",
+    "allClear": "本月暂无到期",
+    "allClearSubtitle": "接下来 {{days}} 天内没有订阅需要续费。",
+    "dueInDays_one": "{{count}} 天后",
+    "dueInDays_other": "{{count}} 天后",
+    "dueToday": "今天到期",
+    "acknowledgedTitle": "已确认续费",
+    "acknowledgedMessage": "好的，已记下。下次将在 {{date}} 提醒你。",
+    "nextMonthProjection": "下月预计支出",
+    "nextMonthProjectionSubtitle": "根据活跃订阅的下次扣费日期估算"
   },
   "subscriptions": {
     "title": "订阅管理",
@@ -44,7 +53,6 @@
     "actions": "操作",
     "edit": "编辑",
     "delete": "删除",
-    "confirmDelete": "确定要删除此订阅吗？",
     "statuses": {
       "active": "活跃",
       "cancelled": "已取消",
@@ -76,7 +84,12 @@
     "viewTable": "表格视图",
     "viewCard": "卡片视图",
     "acknowledge": "确认已续费",
-    "acknowledged": "已确认"
+    "acknowledged": "已确认",
+    "acknowledgedHint": "你已确认此次续费。下次到期我们会再提醒你。",
+    "confirmDeleteTitle": "删除订阅",
+    "confirmDeleteMessage": "确定删除「{{name}}」吗？此操作无法撤销。",
+    "confirmDeleteConfirm": "删除订阅",
+    "confirmDeleteCancel": "保留订阅"
   },
   "subscriptionForm": {
     "editTitle": "编辑订阅",
@@ -132,7 +145,14 @@
     "subscriptions": "订阅管理",
     "statistics": "统计",
     "signOut": "退出登录",
-    "settings": "设置"
+    "settings": "设置",
+    "skipToContent": "跳到主要内容"
+  },
+  "theme": {
+    "light": "浅色",
+    "dark": "深色",
+    "system": "跟随系统",
+    "toggleLabel": "切换主题"
   },
   "settings": {
     "title": "设置",
@@ -154,7 +174,11 @@
     "cancel": "取消",
     "delete": "删除",
     "deleteBlockedInUse": "被 {{count}} 条订阅使用，无法删除",
-    "emptyHint": "暂无，请在下方添加。"
+    "emptyHint": "暂无，请在下方添加。",
+    "confirmDeleteTitle": "删除项目",
+    "confirmDeleteMessage": "确定删除「{{name}}」吗？此操作无法撤销。",
+    "confirmDeleteConfirm": "删除",
+    "confirmDeleteCancel": "保留"
   },
   "notifications": {
     "title": "到期提醒",
@@ -190,7 +214,8 @@
   "statistics": {
     "title": "统计",
     "categoryDistribution": "分类花费分布",
-    "monthlyTrend": "月度花费趋势",
+    "monthlyTrend": "未来 12 月预计支出",
+    "monthlyTrendSubtitle": "根据各活跃订阅的下次扣费日期估算",
     "topSubscriptions": "订阅排行",
     "noData": "暂无订阅数据",
     "addFirst": "添加第一个订阅以查看统计",

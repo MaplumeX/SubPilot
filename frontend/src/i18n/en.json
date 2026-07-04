@@ -26,7 +26,16 @@
     "activeSubscriptions": "Active Subscriptions",
     "dueSoon": "Due Soon",
     "monthlyTrend": "Monthly Spending Trend",
-    "emptyTrend": "Add subscriptions to see spending trends"
+    "emptyTrend": "Add subscriptions to see spending trends",
+    "allClear": "All clear this month",
+    "allClearSubtitle": "No subscriptions are due in the next {{days}} days.",
+    "dueInDays_one": "in {{count}} day",
+    "dueInDays_other": "in {{count}} days",
+    "dueToday": "due today",
+    "acknowledgedTitle": "Marked as renewed",
+    "acknowledgedMessage": "Got it. We'll remind you about the next billing on {{date}}.",
+    "nextMonthProjection": "Next month projection",
+    "nextMonthProjectionSubtitle": "Based on your active subscriptions' next billing dates"
   },
   "subscriptions": {
     "title": "Subscriptions",
@@ -44,7 +53,6 @@
     "actions": "Actions",
     "edit": "Edit",
     "delete": "Delete",
-    "confirmDelete": "Are you sure you want to delete this subscription?",
     "statuses": {
       "active": "Active",
       "cancelled": "Cancelled",
@@ -76,7 +84,12 @@
     "viewTable": "Table view",
     "viewCard": "Card view",
     "acknowledge": "Mark renewed",
-    "acknowledged": "Acknowledged"
+    "acknowledged": "Acknowledged",
+    "acknowledgedHint": "You've confirmed this renewal. We'll remind you about the next one.",
+    "confirmDeleteTitle": "Delete subscription",
+    "confirmDeleteMessage": "Delete \"{{name}}\"? This can't be undone.",
+    "confirmDeleteConfirm": "Delete subscription",
+    "confirmDeleteCancel": "Keep subscription"
   },
   "subscriptionForm": {
     "editTitle": "Edit Subscription",
@@ -132,7 +145,14 @@
     "subscriptions": "Subscriptions",
     "statistics": "Statistics",
     "signOut": "Sign out",
-    "settings": "Settings"
+    "settings": "Settings",
+    "skipToContent": "Skip to content"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggleLabel": "Toggle theme"
   },
   "settings": {
     "title": "Settings",
@@ -154,7 +174,11 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "deleteBlockedInUse": "In use by {{count}} subscription(s), cannot delete",
-    "emptyHint": "No items yet. Add one below."
+    "emptyHint": "No items yet. Add one below.",
+    "confirmDeleteTitle": "Delete item",
+    "confirmDeleteMessage": "Delete \"{{name}}\"? This can't be undone.",
+    "confirmDeleteConfirm": "Delete",
+    "confirmDeleteCancel": "Keep item"
   },
   "notifications": {
     "title": "Reminders",
@@ -190,7 +214,8 @@
   "statistics": {
     "title": "Statistics",
     "categoryDistribution": "Category Distribution",
-    "monthlyTrend": "Monthly Spending Trend",
+    "monthlyTrend": "Next 12 Months Projection",
+    "monthlyTrendSubtitle": "Projected spend based on each active subscription's next billing date",
     "topSubscriptions": "Top Subscriptions",
     "noData": "No subscription data yet",
     "addFirst": "Add your first subscription to see statistics",

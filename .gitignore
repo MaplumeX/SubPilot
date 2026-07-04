@@ -33,3 +33,4 @@ backend/static/logos/*.jpg
 backend/static/logos/*.png
 backend/static/logos/*.svg
 backend/static/logos/*.gif
+.pi-subagents/

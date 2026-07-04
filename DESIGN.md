@@ -15,6 +15,7 @@ colors:
   destructive: "#e7000b"
   destructive-ink-dark: "#ff6467"
   brand-accent-pending: "#1447e6"
+  pending: "#1447e6"
   chart-1: "#d4d4d4"
   chart-2: "#737373"
   chart-3: "#525252"
@@ -166,15 +167,15 @@ _本项目无二级/三级品牌色。_ 中性灰阶承担所有非首要角色�
 ### Chart
 图表色阶全灰：`#d4d4d4` → `#737373` → `#525252` → `#404040` → `#262626`。刻意去色，因为图表服务于"回答问题"而非"看起来专业"。品牌锚点补齐后，主数据线可改用品牌色，其余保持灰阶。
 
-### Pending: Brand Accent
-- **Brand Accent** (`#1447e6` / `oklch(0.488 0.243 264.376)` — 暗色 sidebar-primary 遗留值，**待定**): 当前仅在暗色模式 sidebar-primary 出现，未在浅色模式定义。这是一个占位记录，提示后续 colorize 时应以此为起点或重新选定一个符合"冷静可靠"的克制品牌色。**不要在未确认前大面积使用。**
+### Brand Accent (Confirmed)
+- **Brand Accent** (`#1447e6` / `oklch(0.488 0.243 264.376)`): 品牌锚点色，用于 Due Soon 徽章（`pending` variant）、focus ring、auto-renew 图标、acknowledge 反馈。限定在 ≤10% 屏幕面积，符合 Restrained 策略。暗色模式下提亮为 `oklch(0.621 0.193 264.376)`。**不用于装饰** —— 仅承载“需关注/品牌焦点”语义。
 
 ### Named Rules
 **The Color-as-Signal Rule.** 色彩是稀缺资源。中性灰是默认；颜色出现时必须承载语义（危险、品牌焦点、数据强调），绝不为装饰。这意味着：不加彩色分类标签、不彩色化图标、不彩色化进度条。
 
 **The Red-Only-for-Danger Rule.** `destructive` 红色只用于删除和不可逆危险动作。续费提醒、即将到期、超预算等"时间敏感"信息不得使用红色 —— 它们用位置和时间标注传达紧迫，符合 PRODUCT.md 的"平稳的紧迫感"原则。
 
-**The Muted-Foreground Contrast Rule.** `Graphite 500` (#737373) 对 Paper 仅 4.0:1，不满足 AA 正文标准。用于次要文字时优先改用 `Graphite 700` (#404040，对比度 9.0:1)。Graphite 500 仅用于 ≥18px 或 bold ≥14px 的大字，或纯装饰性次要标签。
+**The Muted-Foreground Contrast Rule.** `--muted-foreground` 已从 Graphite 500 (#737373, 4.0:1) 提升为 Graphite 700 (#404040, oklch(0.371 0 0), 9.0:1)，满足 AA 正文标准。Graphite 500 仅用于 ≥18px 或 bold ≥14px 的大字，或纯装饰性次要标签。
 
 ## 3. Typography
 
@@ -234,7 +235,7 @@ Elevation 策略允许在以下状态引入极克制的 ambient shadow：hover/f
 - **Style:** `h-8`（32px），`rounded-lg`（10px），`border border-input`（Graphite 100），`bg-transparent`（浅色）/ `bg-input/30`（暗色）。`text-base` 移动端、`md:text-sm` 桌面端。
 - **Focus:** `border-ring` + `ring-3 ring-ring/50`。与 button focus 一致。
 - **Error / Disabled:** `aria-invalid` 时 `border-destructive` + `ring-destructive/20`。disabled 时 `opacity-50` + `pointer-events-none`。
-- **Placeholder:** `text-muted-foreground`（Graphite 500）—— **注意对比度**，placeholder 需 4.5:1，Graphite 500 对 Paper 仅 4.0:1。建议提升 placeholder 色 至 Graphite 700 或在 prose 中记录此为待修。
+- **Placeholder:** `text-muted-foreground`（Graphite 700，9.0:1）—— 满足 AA 4.5:1。
 
 ### Badge
 - **Style:** `h-5`（20px），`rounded-4xl`（全圆角 pill），`px-2 py-0.5`，`text-xs font-medium`。
@@ -282,6 +283,6 @@ Elevation 策略允许在以下状态引入极克制的 ambient shadow：hover/f
 - **Don't** 用 `background-clip: text` + gradient 做渐变文字 —— 用单一实色，靠字重强调。
 - **Don't** 把玻璃拟态（glassmorphism）当默认 —— blur 和玻璃卡片仅极罕见且刻意时使用。
 - **Don't** 在静止态卡片上加阴影 —— 阴影是状态响应，不是默认。
-- **Don't** 用 Graphite 500 (#737373) 做 ≤14px 非粗体正文 —— 对 Paper 仅 4.0:1，不达 AA。用 Graphite 700 (#404040)。
+- **Don't** 用 Graphite 500 (#737373) 做 ≤14px 非粗体正文 —— 对 Paper 仅 4.0:1，不达 AA。`--muted-foreground` 已改用 Graphite 700 (#404040)。
 - **Don't** 引入第二个字体家族做"对比" —— 层级靠权重和尺寸，不靠字体对比。
 - **Don't** 用大红色、感叹号、"立即处理！"弹窗制造紧迫感 —— 提醒是信息，不是压力（PRODUCT.md: 平稳的紧迫感）。

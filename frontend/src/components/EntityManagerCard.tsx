@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import type { Category, PaymentMethod } from "@/api/types";
 
 export type Entity = Category | PaymentMethod;
@@ -48,6 +49,7 @@ export default function EntityManagerCard({
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editName, setEditName] = useState("");
   const [error, setError] = useState<string>("");
+  const [deleteTarget, setDeleteTarget] = useState<Entity | null>(null);
 
   const mapError = useCallback(
     (detail: string, count?: number): string => {
@@ -124,7 +126,8 @@ export default function EntityManagerCard({
   };
 
   return (
-    <Card className="max-w-md">
+    <>
+      <Card className="max-w-md">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
@@ -211,7 +214,7 @@ export default function EntityManagerCard({
                       type="button"
                       variant="ghost"
                       size="icon-sm"
-                      onClick={() => handleDelete(entity.id)}
+                      onClick={() => setDeleteTarget(entity)}
                       aria-label={i18n.delete}
                     >
                       <Trash2 className="size-4" />
@@ -224,5 +227,21 @@ export default function EntityManagerCard({
         )}
       </CardContent>
     </Card>
+
+      <ConfirmDialog
+        open={deleteTarget != null}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+        title={t("settings.confirmDeleteTitle")}
+        message={t("settings.confirmDeleteMessage", { name: deleteTarget?.name ?? "" })}
+        confirmLabel={t("settings.confirmDeleteConfirm")}
+        cancelLabel={t("settings.confirmDeleteCancel")}
+        destructive
+        onConfirm={() => {
+          if (deleteTarget) {
+            void handleDelete(deleteTarget.id).then(() => setDeleteTarget(null));
+          }
+        }}
+      />
+    </>
   );
 }

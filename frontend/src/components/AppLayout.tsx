@@ -1,27 +1,56 @@
-import { useState } from "react";
-import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
 import { cn } from "@/lib/utils";
+import { getNotificationSettings } from "@/api/notifications";
 import DashboardPage from "@/pages/DashboardPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
 import SettingsPage from "@/pages/SettingsPage";
 import StatisticsPage from "@/pages/StatisticsPage";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import ThemeToggle from "@/components/theme-toggle";
+import { Toaster } from "@/components/ui/toaster";
 import { createSubscription } from "@/api/subscriptions";
 import type { SubscriptionCreate } from "@/api/types";
+
+const NAV_ITEMS = [
+  { to: "/", labelKey: "layout.dashboard", match: (p: string) => p === "/" },
+  {
+    to: "/subscriptions",
+    labelKey: "layout.subscriptions",
+    match: (p: string) => p.startsWith("/subscriptions"),
+  },
+  {
+    to: "/statistics",
+    labelKey: "layout.statistics",
+    match: (p: string) => p.startsWith("/statistics"),
+  },
+  {
+    to: "/settings",
+    labelKey: "layout.settings",
+    match: (p: string) => p.startsWith("/settings"),
+  },
+] as const;
 
 export default function AppLayout() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const [formOpen, setFormOpen] = useState(false);
+  const [reminderDays, setReminderDays] = useState<number>(3);
+
+  useEffect(() => {
+    getNotificationSettings()
+      .then((s) => setReminderDays(s.reminder_days))
+      .catch(() => {
+        // 401 handled by interceptor; default reminderDays stays at 3
+      });
+  }, []);
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    window.location.assign("/login");
   };
 
   const handleCreate = async (data: SubscriptionCreate) => {
@@ -29,61 +58,43 @@ export default function AppLayout() {
     setFormOpen(false);
   };
 
+  const mainId = "main-content";
+
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="flex items-center justify-between border-b px-6 py-3">
-        <div className="flex items-center gap-6">
+      <a
+        href={`#${mainId}`}
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-popover focus:px-4 focus:py-2 focus:text-sm focus:ring-2 focus:ring-ring"
+      >
+        {t("layout.skipToContent")}
+      </a>
+      <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b px-4 py-3 sm:px-6">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <h1 className="text-lg font-semibold">{t("layout.appName")}</h1>
-          <nav className="flex items-center gap-4">
-            <button
-              onClick={() => navigate("/")}
-              className={cn(
-                "text-sm transition-colors",
-                location.pathname === "/"
-                  ? "text-foreground font-medium"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {t("layout.dashboard")}
-            </button>
-            <button
-              onClick={() => navigate("/subscriptions")}
-              className={cn(
-                "text-sm transition-colors",
-                location.pathname.startsWith("/subscriptions")
-                  ? "text-foreground font-medium"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {t("layout.subscriptions")}
-            </button>
-            <button
-              onClick={() => navigate("/statistics")}
-              className={cn(
-                "text-sm transition-colors",
-                location.pathname.startsWith("/statistics")
-                  ? "text-foreground font-medium"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {t("layout.statistics")}
-            </button>
-            <button
-              onClick={() => navigate("/settings")}
-              className={cn(
-                "text-sm transition-colors",
-                location.pathname.startsWith("/settings")
-                  ? "text-foreground font-medium"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {t("layout.settings")}
-            </button>
+          <nav className="flex flex-wrap items-center gap-x-4 gap-y-1" aria-label="Primary">
+            {NAV_ITEMS.map(({ to, labelKey, match }) => {
+              const active = match(location.pathname);
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "text-sm transition-colors",
+                    active
+                      ? "text-foreground font-medium"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {t(labelKey)}
+                </Link>
+              );
+            })}
           </nav>
         </div>
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <span className="text-sm text-muted-foreground">{user?.email}</span>
+          <span className="hidden text-sm text-muted-foreground sm:inline">{user?.email}</span>
           <button
             onClick={handleLogout}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -93,13 +104,14 @@ export default function AppLayout() {
         </div>
       </header>
 
-      <main className="flex-1 p-6">
+      <main id={mainId} className="flex-1 p-4 sm:p-6" tabIndex={-1}>
         <Routes>
           <Route
             path="/"
             element={
               <DashboardPage
                 onAddSubscription={() => setFormOpen(true)}
+                reminderDays={reminderDays}
               />
             }
           />
@@ -116,6 +128,7 @@ export default function AppLayout() {
         onOpenChange={setFormOpen}
         onSubmit={handleCreate}
       />
+      <Toaster />
     </div>
   );
 }

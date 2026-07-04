@@ -1,34 +1,37 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { getStats } from "@/api/subscriptions";
-import type { SubscriptionStats } from "@/api/types";
+import { getStats, listSubscriptions, acknowledgeSubscription } from "@/api/subscriptions";
+import type { SubscriptionStats, Subscription } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { ShieldCheck, BellRing } from "lucide-react";
+import { toast } from "@/components/ui/toaster";
+import { formatDueLabel } from "@/lib/due";
 
 interface DashboardPageProps {
   onAddSubscription: () => void;
+  reminderDays: number;
 }
 
-export default function DashboardPage({ onAddSubscription }: DashboardPageProps) {
+export default function DashboardPage({
+  onAddSubscription,
+  reminderDays,
+}: DashboardPageProps) {
   const { t, i18n } = useTranslation();
   const [stats, setStats] = useState<SubscriptionStats | null>(null);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchStats = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
-      const data = await getStats();
-      setStats(data);
+      const [statsData, subsData] = await Promise.all([
+        getStats(),
+        listSubscriptions(),
+      ]);
+      setStats(statsData);
+      setSubscriptions(subsData);
     } catch {
       // 401 handled by interceptor
     } finally {
@@ -37,23 +40,121 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
   }, []);
 
   useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
+    fetchData();
+  }, [fetchData]);
 
-  const chartData = generateChartData(stats, i18n.language);
   const locale = i18n.language;
+  const baseCurrency = stats?.base_currency ?? "CNY";
+  const fmt = (value: number) =>
+    new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: baseCurrency,
+    }).format(value);
+
+  const handleAcknowledge = async (sub: Subscription) => {
+    try {
+      const updated = await acknowledgeSubscription(sub.id);
+      setStats((prev) =>
+        prev
+          ? {
+              ...prev,
+              due_soon: prev.due_soon.filter((s) => s.id !== sub.id),
+            }
+          : prev
+      );
+      toast({
+        title: t("dashboard.acknowledgedTitle"),
+        message: t("dashboard.acknowledgedMessage", {
+          date: updated.next_billing_date ?? "-",
+        }),
+      });
+    } catch {
+      // 401 handled by interceptor
+    }
+  };
+
+  const dueSoon = stats?.due_soon ?? [];
+  const isAllClear = !loading && dueSoon.length === 0;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{t("dashboard.title")}</h2>
+        <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">
+          {t("dashboard.title")}
+        </h2>
         <Button onClick={onAddSubscription}>{t("dashboard.addSubscription")}</Button>
       </div>
 
       {loading ? (
-        <p className="text-muted-foreground">{t("dashboard.loading")}</p>
+        <p className="text-muted-foreground" role="status" aria-live="polite">
+          {t("dashboard.loading")}
+        </p>
       ) : (
         <>
+          {/* Due Soon — first visual focus (PRODUCT.md principle 1) */}
+          {dueSoon.length > 0 ? (
+            <Card className="ring-pending/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BellRing className="size-4 text-pending" />
+                  {t("dashboard.dueSoon")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col gap-2">
+                  {dueSoon.map((sub) => (
+                    <div
+                      key={sub.id}
+                      className="flex items-center justify-between gap-3 rounded-lg border p-3"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <Avatar className="size-7 shrink-0">
+                          <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} />
+                          <AvatarFallback>{sub.name.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0">
+                          <p className="truncate font-medium">{sub.name}</p>
+                        </div>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span className="font-variant-numeric tabular-nums font-semibold">
+                          {sub.currency} {sub.price.toFixed(2)}
+                        </span>
+                        <Badge variant="pending">
+                          {formatDueLabel(sub.next_billing_date, t)}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => void handleAcknowledge(sub)}
+                        >
+                          {t("subscriptions.acknowledge")}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            isAllClear && (
+              <Card className="ring-foreground/10">
+                <CardContent className="flex items-center gap-4 py-8">
+                  <ShieldCheck className="size-10 shrink-0 text-muted-foreground" />
+                  <div>
+                    <p className="font-heading text-lg font-semibold">
+                      {t("dashboard.allClear")}
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {t("dashboard.allClearSubtitle", { days: reminderDays })}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          )}
+
+          {/* Monthly / Yearly / Active — secondary, below the primary focus */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Card>
               <CardHeader className="pb-2">
@@ -62,8 +163,8 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">
-                  {new Intl.NumberFormat(locale, { style: "currency", currency: stats?.base_currency ?? "CNY" }).format(stats?.total_monthly ?? 0)}
+                <p className="text-2xl font-bold font-variant-numeric tabular-nums">
+                  {fmt(stats?.total_monthly ?? 0)}
                 </p>
               </CardContent>
             </Card>
@@ -74,8 +175,8 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">
-                  {new Intl.NumberFormat(locale, { style: "currency", currency: stats?.base_currency ?? "CNY" }).format(stats?.total_yearly ?? 0)}
+                <p className="text-2xl font-bold font-variant-numeric tabular-nums">
+                  {fmt(stats?.total_yearly ?? 0)}
                 </p>
               </CardContent>
             </Card>
@@ -86,88 +187,81 @@ export default function DashboardPage({ onAddSubscription }: DashboardPageProps)
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">{stats?.count ?? 0}</p>
+                <p className="text-2xl font-bold font-variant-numeric tabular-nums">
+                  {stats?.count ?? 0}
+                </p>
               </CardContent>
             </Card>
           </div>
 
-          {stats && stats.due_soon.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("dashboard.dueSoon")}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col gap-2">
-                  {stats.due_soon.map((sub) => (
-                    <div
-                      key={sub.id}
-                      className="flex items-center justify-between rounded-lg border p-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Avatar className="size-7">
-                          <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} />
-                          <AvatarFallback>{sub.name.charAt(0).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{sub.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {sub.next_billing_date}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge variant="destructive">{t("dashboard.dueSoon")}</Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("dashboard.monthlyTrend")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {chartData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="amount"
-                      stroke="var(--primary)"
-                      strokeWidth={2}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="text-muted-foreground">
-                  {t("dashboard.emptyTrend")}
-                </p>
-              )}
-            </CardContent>
-          </Card>
+          {/* Next-month projection — replaces fake trend chart (distill) */}
+          <NextMonthProjection
+            subscriptions={subscriptions}
+            locale={locale}
+            fmt={fmt}
+            baseCurrency={baseCurrency}
+          />
         </>
       )}
     </div>
   );
 }
 
-function generateChartData(stats: SubscriptionStats | null, locale: string) {
-  if (!stats || stats.count === 0) return [];
+/**
+ * A single, honest number: projected spend for the next 30 days,
+ * derived from active subscriptions whose next_billing_date falls in that window.
+ * Replaces the misleading 12-month flat-line trend that used total_monthly x12.
+ */
+function NextMonthProjection({
+  subscriptions,
+  fmt,
+}: {
+  subscriptions: Subscription[];
+  locale: string;
+  fmt: (v: number) => string;
+  baseCurrency: string;
+}) {
+  const { t } = useTranslation();
 
-  const months: { month: string; amount: number }[] = [];
-  const today = new Date();
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-    const label = d.toLocaleDateString(locale, {
-      month: "short",
-      year: "2-digit",
-    });
-    months.push({ month: label, amount: stats.total_monthly });
-  }
-  return months;
+  const [projection, setProjection] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (subscriptions.length === 0) {
+      setProjection(null);
+      return;
+    }
+    const now = new Date();
+    const windowEnd = new Date(now);
+    windowEnd.setDate(now.getDate() + 30);
+
+    const total = subscriptions
+      .filter((s) => s.status === "active" && s.converted_price != null && s.next_billing_date)
+      .filter((s) => {
+        const next = new Date(s.next_billing_date! + "T00:00:00");
+        return next >= now && next <= windowEnd;
+      })
+      .reduce((sum, s) => sum + (s.converted_price ?? 0), 0);
+
+    setProjection(total);
+  }, [subscriptions]);
+
+  if (projection == null) return null;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {t("dashboard.nextMonthProjection")}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-2xl font-bold font-variant-numeric tabular-nums">
+          {fmt(projection)}
+        </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {t("dashboard.nextMonthProjectionSubtitle")}
+        </p>
+      </CardContent>
+    </Card>
+  );
 }

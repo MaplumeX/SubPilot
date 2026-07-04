@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowUp, RefreshCw, LayoutGrid, List } from "lucide-react";
+import { ArrowDown, ArrowUp, RefreshCw, LayoutGrid, List, Trash2 } from "lucide-react";
 import {
   listSubscriptions,
   deleteSubscription,
@@ -32,6 +32,9 @@ import {
 } from "@/components/ui/select";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import SubscriptionCard from "@/components/SubscriptionCard";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import { toast } from "@/components/ui/toaster";
+import { formatDueLabel, isDueWithin } from "@/lib/due";
 
 type ViewMode = "table" | "card";
 
@@ -91,6 +94,7 @@ export default function SubscriptionsPage() {
   const [sortOrder, setSortOrder] = useState<string>("asc");
   const [viewMode, setViewMode] = useState<ViewMode>(getInitialViewMode);
   const [reminderDays, setReminderDays] = useState<number>(3);
+  const [deleteTarget, setDeleteTarget] = useState<Subscription | null>(null);
 
   const handleViewModeChange = useCallback((mode: ViewMode) => {
     setViewMode(mode);
@@ -163,9 +167,6 @@ export default function SubscriptionsPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm(t("subscriptions.confirmDelete"))) {
-      return;
-    }
     await deleteSubscription(id);
     reload();
   };
@@ -174,23 +175,18 @@ export default function SubscriptionsPage() {
     try {
       const updated = await acknowledgeSubscription(id);
       setSubscriptions((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, acknowledged_billing_date: updated.acknowledged_billing_date } : s))
+        prev.map((s) => (s.id === id ? { ...s, acknowledged_billing_date: updated.acknowledged_billing_date, next_billing_date: updated.next_billing_date } : s))
       );
+      toast({
+        title: t("dashboard.acknowledgedTitle"),
+        message: t("dashboard.acknowledgedMessage", { date: updated.next_billing_date ?? "-" }),
+      });
     } catch {
       // 401 handled by interceptor
     }
   };
 
-  const isDueSoon = (sub: Subscription) => {
-    if (!sub.next_billing_date) return false;
-    const next = new Date(sub.next_billing_date);
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const deadline = new Date();
-    deadline.setDate(now.getDate() + reminderDays);
-    deadline.setHours(0, 0, 0, 0);
-    return next >= now && next <= deadline;
-  };
+  const isDueSoon = (sub: Subscription) => isDueWithin(sub.next_billing_date, reminderDays);
 
   const formatCycle = (cycle_count: number, cycle_unit: CycleUnit) => {
     if (cycle_count === 1) {
@@ -211,7 +207,7 @@ export default function SubscriptionsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{t("subscriptions.title")}</h2>
+        <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">{t("subscriptions.title")}</h2>
         <Button
           onClick={() => {
             setEditing(null);
@@ -284,7 +280,7 @@ export default function SubscriptionsPage() {
               baseCurrency={baseCurrency}
               locale={i18n.language}
               onEdit={(s) => { setEditing(s); setFormOpen(true); }}
-              onDelete={handleDelete}
+              onDelete={(sub) => setDeleteTarget(sub)}
               onAcknowledge={handleAcknowledge}
               isDueSoon={isDueSoon}
               formatCycle={formatCycle}
@@ -318,8 +314,8 @@ export default function SubscriptionsPage() {
                       </Avatar>
                       <span>{sub.name}</span>
                       {isDueSoon(sub) && (
-                        <Badge variant="destructive" className="ml-2">
-                          {t("dashboard.dueSoon")}
+                        <Badge variant="pending" className="ml-2">
+                          {formatDueLabel(sub.next_billing_date, t)}
                         </Badge>
                       )}
                     </div>
@@ -358,11 +354,11 @@ export default function SubscriptionsPage() {
                       className="inline-flex items-center"
                     >
                       <RefreshCw
-                        className={`size-4 ${sub.auto_renew ? "text-primary" : "text-muted-foreground/40"}`}
+                        className={`size-4 ${sub.auto_renew ? "text-pending" : "text-muted-foreground/40"}`}
                       />
                     </span>
                   </TableCell>
-                  <TableCell>{sub.next_billing_date ?? "-"}</TableCell>
+                  <TableCell>{formatDueLabel(sub.next_billing_date, t)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -387,10 +383,11 @@ export default function SubscriptionsPage() {
                         )}
                       <Button
                         variant="destructive"
-                        size="sm"
-                        onClick={() => handleDelete(sub.id)}
+                        size="icon-sm"
+                        onClick={() => setDeleteTarget(sub)}
+                        aria-label={t("subscriptions.delete")}
                       >
-                        {t("subscriptions.delete")}
+                        <Trash2 className="size-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -410,6 +407,21 @@ export default function SubscriptionsPage() {
         }}
         subscription={editing}
         onSubmit={editing ? handleUpdate : handleCreate}
+      />
+
+      <ConfirmDialog
+        open={deleteTarget != null}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+        title={t("subscriptions.confirmDeleteTitle")}
+        message={t("subscriptions.confirmDeleteMessage", { name: deleteTarget?.name ?? "" })}
+        confirmLabel={t("subscriptions.confirmDeleteConfirm")}
+        cancelLabel={t("subscriptions.confirmDeleteCancel")}
+        destructive
+        onConfirm={() => {
+          if (deleteTarget) {
+            void handleDelete(deleteTarget.id).then(() => setDeleteTarget(null));
+          }
+        }}
       />
     </div>
   );

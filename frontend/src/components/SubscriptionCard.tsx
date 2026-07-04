@@ -1,17 +1,18 @@
 import { useTranslation } from "react-i18next";
-import { RefreshCw, CheckCircle2 } from "lucide-react";
+import { RefreshCw, CheckCircle2, Trash2 } from "lucide-react";
 import type { Subscription, CycleUnit } from "@/api/types";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatDueLabel } from "@/lib/due";
 
 interface SubscriptionCardProps {
   subscription: Subscription;
   baseCurrency: string;
   locale: string;
   onEdit: (sub: Subscription) => void;
-  onDelete: (id: number) => void | Promise<void>;
+  onDelete: (sub: Subscription) => void | Promise<void>;
   onAcknowledge?: (id: number) => void | Promise<void>;
   isDueSoon: (sub: Subscription) => boolean;
   formatCycle: (count: number, unit: CycleUnit) => string;
@@ -47,9 +48,9 @@ export default function SubscriptionCard({
             <CardTitle className="truncate text-sm">{sub.name}</CardTitle>
           </div>
           <div className="flex shrink-0 gap-1">
-            {isDueSoon(sub) && (
-              <Badge variant={acknowledged ? "secondary" : "destructive"}>
-                {acknowledged ? t("subscriptions.acknowledged") : t("dashboard.dueSoon")}
+            {dueSoon && (
+              <Badge variant={acknowledged ? "secondary" : "pending"}>
+                {acknowledged ? t("subscriptions.acknowledged") : formatDueLabel(sub.next_billing_date, t)}
               </Badge>
             )}
             <Badge
@@ -68,7 +69,7 @@ export default function SubscriptionCard({
       </CardHeader>
 
       <CardContent className="space-y-1.5">
-        <div className="text-lg font-semibold">
+        <div className="text-lg font-semibold font-variant-numeric tabular-nums">
           {sub.currency} {sub.price.toFixed(2)}
           {sub.converted_price != null && sub.currency !== baseCurrency && (
             <span className="ml-1 text-xs font-normal text-muted-foreground">
@@ -84,20 +85,17 @@ export default function SubscriptionCard({
             title={sub.auto_renew ? t("subscriptions.auto_renew_enabled") : t("subscriptions.auto_renew_disabled")}
             className="inline-flex items-center"
           >
-            <RefreshCw className={`size-3 ${sub.auto_renew ? "text-primary" : "text-muted-foreground/40"}`} />
+            <RefreshCw className={`size-3 ${sub.auto_renew ? "text-pending" : "text-muted-foreground/40"}`} />
           </span>
         </div>
         <div className="text-xs text-muted-foreground">
-          {sub.next_billing_date ?? "-"}
+          {formatDueLabel(sub.next_billing_date, t)}
         </div>
       </CardContent>
 
       <CardFooter className="gap-2">
         <Button variant="outline" size="sm" className="flex-1" onClick={() => onEdit(sub)}>
           {t("subscriptions.edit")}
-        </Button>
-        <Button variant="destructive" size="sm" className="flex-1" onClick={() => onDelete(sub.id)}>
-          {t("subscriptions.delete")}
         </Button>
         {canAcknowledge && onAcknowledge && (
           <Button
@@ -106,10 +104,13 @@ export default function SubscriptionCard({
             className="flex-1"
             onClick={() => onAcknowledge(sub.id)}
           >
-            <CheckCircle2 className="size-4" />
+            <CheckCircle2 className="size-4 text-pending" />
             {t("subscriptions.acknowledge")}
           </Button>
         )}
+        <Button variant="ghost" size="icon-sm" className="text-muted-foreground hover:text-destructive" onClick={() => onDelete(sub)} aria-label={t("subscriptions.delete")}>
+          <Trash2 className="size-4" />
+        </Button>
       </CardFooter>
     </Card>
   );

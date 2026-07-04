@@ -22,4 +22,10 @@ i18n
     },
   });
 
+// Keep <html lang> in sync so screen readers use correct pronunciation.
+i18n.on("languageChanged", (lng) => {
+  document.documentElement.lang = lng;
+});
+document.documentElement.lang = i18n.language;
+
 export default i18n;

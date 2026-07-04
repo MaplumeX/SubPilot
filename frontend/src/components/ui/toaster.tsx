@@ -1,0 +1,63 @@
+import { useEffect, useState, useCallback } from "react";
+import { CheckCircle2 } from "lucide-react";
+
+type Toast = {
+  id: number;
+  title: string;
+  message?: string;
+};
+
+let listeners: Array<(t: Toast) => void> = [];
+let counter = 0;
+
+/**
+ * Show a transient confirmation toast (aria-live announced).
+ * Use for acknowledge/undo feedback — calm, no urgency.
+ */
+export function toast(t: { title: string; message?: string }) {
+  const item: Toast = { id: ++counter, ...t };
+  listeners.forEach((fn) => fn(item));
+}
+
+export function Toaster() {
+  const [items, setItems] = useState<Toast[]>([]);
+
+  const remove = useCallback((id: number) => {
+    setItems((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  useEffect(() => {
+    const fn = (t: Toast) => {
+      setItems((prev) => [...prev, t]);
+      window.setTimeout(() => remove(t.id), 4000);
+    };
+    listeners.push(fn);
+    return () => {
+      listeners = listeners.filter((l) => l !== fn);
+    };
+  }, [remove]);
+
+  return (
+    <div
+      aria-live="polite"
+      aria-atomic="true"
+      className="pointer-events-none fixed inset-x-0 bottom-4 z-[100] flex flex-col items-center gap-2 px-4"
+    >
+      {items.map((t) => (
+        <div
+          key={t.id}
+          role="status"
+          className="pointer-events-auto flex max-w-sm items-start gap-3 rounded-lg bg-popover px-4 py-3 text-sm text-popover-foreground ring-1 ring-foreground/10 shadow-sm animate-in fade-in-0 slide-in-from-bottom-2 duration-200"
+        >
+          <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-pending" />
+          <div className="min-w-0">
+            <p className="font-medium">{t.title}</p>
+            {t.message && (
+              <p className="mt-0.5 text-muted-foreground">{t.message}</p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
