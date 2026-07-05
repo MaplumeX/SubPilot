@@ -111,8 +111,10 @@ export default function SubscriptionsPage() {
     try {
       const data = await listCategoryEntities();
       setCategories(data);
-    } catch {
-      // ignore
+    } catch (err) {
+      if (isNonAuthError(err)) {
+        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+      }
     }
   }, []);
 
@@ -141,8 +143,11 @@ export default function SubscriptionsPage() {
       setSubscriptions(data);
       const stats = await getStats();
       setBaseCurrency(stats.base_currency);
-    } catch {
-      // 401 handled by interceptor
+    } catch (err) {
+      // 401 handled by interceptor; surface all other failures.
+      if (isNonAuthError(err)) {
+        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+      }
     } finally {
       setLoading(false);
     }
@@ -186,8 +191,11 @@ export default function SubscriptionsPage() {
         title: t("dashboard.acknowledgedTitle"),
         message: t("dashboard.acknowledgedMessage", { date: updated.next_billing_date ?? "-" }),
       });
-    } catch {
-      // 401 handled by interceptor
+    } catch (err) {
+      // 401 handled by interceptor; surface all other failures.
+      if (isNonAuthError(err)) {
+        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+      }
     }
   };
 
