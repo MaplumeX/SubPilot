@@ -1,0 +1,11 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend overview + which guideline docs to consult for this task"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Where to place new services/ssrf.py, services/logo_search.py, and the schema addition"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "HTTPException + 400/404/422 conventions, ownership-404 pattern, detail string contract for new endpoints"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Forbidden patterns (custom exceptions, datetime.utcnow), required route declaration order (static sub-paths before /{id}), new detail string -> ERROR_KEY_MAP + i18n"}
+{"file": ".trellis/spec/backend/logging-guidelines.md", "reason": "Log level conventions for upstream failures (WARNING) and PII-ish query content (debug only)"}
+{"file": ".trellis/tasks/07-05-rewrite-logo-search/research/image-search-providers.md", "reason": "DDG vqd/i.js flow, Brave HTML parsing, SSRF Python equivalents, candidate normalization shape"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend stack (React 19 + Vite + shadcn/base-ui) and guideline pointers"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "API boundary types in api/types.ts, strict mode, no any, Pydantic<->TS match"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Component patterns for the candidate grid in SubscriptionForm search tab"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Local state conventions for searchResults/searching/cachingIndex form state"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend forbidden patterns, FormEvent import gotcha, lint/build gate"}

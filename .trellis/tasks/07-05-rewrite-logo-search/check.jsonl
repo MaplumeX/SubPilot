@@ -1,0 +1,8 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend overview to scope the check pass"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Verify new endpoints follow HTTPException + 400/404 conventions and detail contract"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Check route order (static before /{id}), no custom exceptions, new detail strings mapped to ERROR_KEY_MAP + i18n"}
+{"file": ".trellis/spec/backend/logging-guidelines.md", "reason": "Verify upstream failures logged at WARNING, no PII query content at INFO"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Verify LogoCandidate type matches backend Pydantic shape, no any, strict mode"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Verify tsc --noEmit + eslint + build pass, no forbidden patterns"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Verify the candidate grid follows component composition and shadcn/base-ui conventions"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Cross-layer consistency check (backend Pydantic <-> frontend TS, error key mapping)"}
