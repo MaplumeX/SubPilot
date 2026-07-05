@@ -648,3 +648,37 @@ Added a read-only /calendar month-grid page surfacing next_billing_date events (
 ### Next Steps
 
 - None - task complete
+
+
+## Session 19: Refine calendar grid to minimalist Notion/Linear style
+
+**Date**: 2026-07-05
+**Task**: Refine calendar grid to minimalist Notion/Linear style
+**Branch**: `main`
+
+### Summary
+
+Redesigned CalendarPage month grid as a calm Notion/Linear-style surface: shared divider lines via gap-px bg-border wrapper (no per-cell borders), today highlight via primary ring on the number, compact pending pills for events (name only, max 2 + +N overflow), de-emphasized out-of-month/past days, refined weekday header and month label. Pure visual refactor — no behavior/i18n/data changes. tsc + lint pass.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4588e75` | (see git log) |
+| `5f1c919` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
