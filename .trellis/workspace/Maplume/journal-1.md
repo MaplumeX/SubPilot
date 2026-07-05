@@ -613,3 +613,38 @@ Replaced single-favicon URL hack with backend-proxied image search: new services
 ### Next Steps
 
 - None - task complete
+
+
+## Session 18: Calendar view for upcoming billing
+
+**Date**: 2026-07-05
+**Task**: Calendar view for upcoming billing
+**Branch**: `main`
+
+### Summary
+
+Added a read-only /calendar month-grid page surfacing next_billing_date events (name + localized amount + due label) with prev/next/today nav, in-component month cache, base-ui Popover (first feature use via render prop), locale-aware first-day-of-week via Intl.Locale.weekInfo, ARIA grid semantics, and full en/zh-CN i18n. Frontend-only; lint + tsc clean. Recorded the weekInfo TS cast gotcha in type-safety.md.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `5dbd039` | (see git log) |
+| `0b92f8f` | (see git log) |
+| `a2652aa` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
