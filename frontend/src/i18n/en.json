@@ -228,19 +228,11 @@
   "statistics": {
     "title": "Statistics",
     "categoryDistribution": "Category Distribution",
-    "monthlyTrend": "Next 12 Months Projection",
-    "monthlyTrendSubtitle": "Projected spend based on each active subscription's next billing date",
     "topSubscriptions": "Top Subscriptions",
     "noData": "No subscription data yet",
     "loading": "Loading statistics...",
     "addFirst": "Add your first subscription to see statistics",
-    "month": "Month",
     "category": "Category",
-    "avgMonthly": "Avg Monthly Cost",
-    "mostExpensive": "Most Expensive",
-    "cheapest": "Cheapest",
-    "top3Percentage": "Top 3 Share",
-    "top3Subtitle": "of total monthly spend",
     "subtitle": "Insights into where your money goes."
   }
 }
