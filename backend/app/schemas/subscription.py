@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 
 from app.models.subscription import CycleUnit, SubscriptionStatus
 from app.schemas.category import CategoryBrief
@@ -77,3 +77,7 @@ class SubscriptionStats(BaseModel):
     most_expensive: SubscriptionBrief | None = None
     cheapest: SubscriptionBrief | None = None
     top3_percentage: float = 0.0
+
+
+class CacheLogoRequest(BaseModel):
+    image_url: HttpUrl

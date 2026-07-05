@@ -13,8 +13,10 @@ from app.models.exchange_rate import ExchangeRate
 from app.models.payment_method import PaymentMethod
 from app.models.subscription import CycleUnit, Subscription, SubscriptionStatus
 from app.models.user import User
+from app.services import logo_search, ssrf
 from app.services.exchange_rate import get_rate
 from app.schemas.subscription import (
+    CacheLogoRequest,
     SubscriptionCreate,
     SubscriptionResponse,
     SubscriptionStats,
@@ -24,6 +26,13 @@ from app.schemas.subscription import (
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/svg+xml", "image/gif"}
 MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
 LOGOS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "logos")
+
+EXT_MAP = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/svg+xml": "svg",
+    "image/gif": "gif",
+}
 
 SORTABLE_FIELDS = {"name", "converted_price", "next_billing_date"}
 
@@ -306,19 +315,60 @@ def upload_logo(
 
     os.makedirs(LOGOS_DIR, exist_ok=True)
 
-    ext_map = {
-        "image/jpeg": "jpg",
-        "image/png": "png",
-        "image/svg+xml": "svg",
-        "image/gif": "gif",
-    }
-    ext = ext_map.get(file.content_type, "png") if file.content_type else "png"
+    ext = EXT_MAP.get(file.content_type, "png") if file.content_type else "png"
     filename = f"{uuid.uuid4()}.{ext}"
     filepath = os.path.join(LOGOS_DIR, filename)
 
     with open(filepath, "wb") as f:
         f.write(contents)
 
+    return {"logo_url": f"/static/logos/{filename}"}
+
+
+@router.get("/search-logo")
+def search_logo(
+    query: str = Query(...),
+    current_user: User = Depends(get_current_user),
+):
+    if not query.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Query must not be empty",
+        )
+    results = logo_search.search_logos(f"{query.strip()} logo")
+    return {"results": results}
+
+
+@router.post("/cache-logo")
+def cache_logo(
+    payload: CacheLogoRequest,
+    current_user: User = Depends(get_current_user),
+):
+    image_url = str(payload.image_url)
+    try:
+        resp = ssrf.safe_get(image_url, allowlist=None, follow_redirects=True)
+    except ssrf.SsrfBlockedError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Image URL host is not allowed",
+        )
+    content_type = resp.headers.get("content-type", "").split(";")[0].strip().lower()
+    if content_type not in ALLOWED_CONTENT_TYPES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid file type. Allowed: JPG, PNG, SVG, GIF",
+        )
+    if len(resp.content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File size exceeds 2MB limit",
+        )
+    os.makedirs(LOGOS_DIR, exist_ok=True)
+    ext = EXT_MAP.get(content_type, "png")
+    filename = f"{uuid.uuid4()}.{ext}"
+    filepath = os.path.join(LOGOS_DIR, filename)
+    with open(filepath, "wb") as f:
+        f.write(resp.content)
     return {"logo_url": f"/static/logos/{filename}"}
 
 
