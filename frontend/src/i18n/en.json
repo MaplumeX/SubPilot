@@ -156,10 +156,26 @@
     "appName": "SubPilot",
     "dashboard": "Dashboard",
     "subscriptions": "Subscriptions",
+    "calendar": "Calendar",
     "statistics": "Statistics",
     "signOut": "Sign out",
     "settings": "Settings",
     "skipToContent": "Skip to content"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "subtitle": "Upcoming billing at a glance",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "today": "Today",
+    "noBilling": "No billing this month",
+    "more": "+{{count}} more",
+    "dayEvents_one": "{{date}} — {{count}} event",
+    "dayEvents_other": "{{date}} — {{count}} events",
+    "loading": "Loading...",
+    "loadingLabel": "Loading calendar",
+    "noSubscriptions": "You have no subscriptions yet.",
+    "addFirst": "Add your first subscription"
   },
   "theme": {
     "light": "Light",

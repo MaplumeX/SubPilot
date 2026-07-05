@@ -8,6 +8,7 @@ import DashboardPage from "@/pages/DashboardPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
 import SettingsPage from "@/pages/SettingsPage";
 import StatisticsPage from "@/pages/StatisticsPage";
+import CalendarPage from "@/pages/CalendarPage";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import ThemeToggle from "@/components/theme-toggle";
 import { Toaster, toast } from "@/components/ui/toaster";
@@ -21,6 +22,11 @@ const NAV_ITEMS = [
     to: "/subscriptions",
     labelKey: "layout.subscriptions",
     match: (p: string) => p.startsWith("/subscriptions"),
+  },
+  {
+    to: "/calendar",
+    labelKey: "layout.calendar",
+    match: (p: string) => p.startsWith("/calendar"),
   },
   {
     to: "/statistics",
@@ -125,6 +131,7 @@ export default function AppLayout() {
             }
           />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/statistics" element={<StatisticsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

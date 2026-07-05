@@ -156,10 +156,26 @@
     "appName": "SubPilot",
     "dashboard": "仪表盘",
     "subscriptions": "订阅管理",
+    "calendar": "日历",
     "statistics": "统计",
     "signOut": "退出登录",
     "settings": "设置",
     "skipToContent": "跳到主要内容"
+  },
+  "calendar": {
+    "title": "日历",
+    "subtitle": "一目了然的即将扣款",
+    "prevMonth": "上个月",
+    "nextMonth": "下个月",
+    "today": "今天",
+    "noBilling": "本月无扣款",
+    "more": "还有 {{count}} 项",
+    "dayEvents_one": "{{date}} — {{count}} 项扣款",
+    "dayEvents_other": "{{date}} — {{count}} 项扣款",
+    "loading": "加载中...",
+    "loadingLabel": "加载日历中",
+    "noSubscriptions": "你还没有添加订阅。",
+    "addFirst": "添加第一个订阅"
   },
   "theme": {
     "light": "浅色",
