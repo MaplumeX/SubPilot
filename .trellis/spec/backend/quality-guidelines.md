@@ -24,6 +24,9 @@
 - Password hashing with passlib bcrypt (`pwd_context` in `auth.py`).
 - Ownership checks on every mutation/subscription endpoint via `_check_ownership` (`routers/subscriptions.py`).
 - Import every model in `alembic/env.py` so autogenerate detects changes.
+- **SSRF protection for outbound server-side fetches**: any new backend endpoint that fetches a user-influenced URL (image proxy, webhook, URL preview, etc.) MUST route the request through `app/services/ssrf.py::safe_get`. The helper enforces (a) an optional host allowlist for fixed-target endpoints (e.g. search providers), (b) DNS resolution followed by IP rejection of private/reserved/loopback/link-local/multicast/unspecified ranges, (c) explicit CGNAT `100.64.0.0/10` rejection — Python's `ipaddress.is_private` does **NOT** cover this range, so it must be checked separately. Endpoints that accept arbitrary CDN hosts (e.g. `cache-logo`) pass `allowlist=None` and rely on the IP filter alone; endpoints with a fixed provider set pass a tight allowlist. Internal `SsrfBlockedError` is caught in the router and translated to `HTTPException(400)` — never let it surface as 500.
+
+  **Known limitation (httpx 0.28)**: `httpx.HTTPTransport` has no `resolver=` kwarg, so true DNS pinning (validate-then-connect-to-the-validated-IP) is not available in the sync transport. Current `safe_get` validates the resolved IP then lets httpx re-resolve — a small TOCTOU window remains, and `follow_redirects=True` Location hops are not re-validated. This is an accepted tradeoff documented in `services/ssrf.py`; if a future httpx release restores resolver pinning or the project adopts `httpx<0.24` / an async transport with resolver support, upgrade `safe_get` to pin.
 - **FastAPI route declaration order**: declare every static sub-path route before any dynamic `/{id}` route in the same router. FastAPI matches routes in declaration order; a static path like `/payment-methods` declared after `/{subscription_id}` gets captured as `subscription_id="payment-methods"` and fails `int` parsing → 422. Order all static sub-paths (`/categories`, `/stats`, `/upload-logo`, `/payment-methods`, `/{id}/acknowledge`) ahead of `GET/PUT/DELETE /{subscription_id}` in `routers/subscriptions.py`.
 
   ```python
@@ -60,3 +63,5 @@
 - [ ] Static sub-path routes declared before dynamic `/{id}` routes in every router
 - [ ] Scheduled jobs swallow exceptions (`logger.exception`, no re-raise)
 - [ ] New `detail` strings added to frontend `ERROR_KEY_MAP` + both i18n files when user-facing
+- [ ] Outbound fetches of user-influenced URLs go through `services/ssrf.py::safe_get` (host allowlist or IP filter + CGNAT check)
+- [ ] Logs of upstream failures do not embed user-supplied query/URL content at INFO/WARNING (PII-ish) — log exception type/name, not the URL
