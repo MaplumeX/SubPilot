@@ -237,7 +237,7 @@ export default function SubscriptionsPage() {
       <div className="flex items-center gap-4">
         <Select value={filterCategory != null ? String(filterCategory) : "__all__"} onValueChange={(v) => setFilterCategory(v === "__all__" ? null : Number(v))}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue label={filterCategory != null ? categories.find((c) => c.id === filterCategory)?.name : undefined} placeholder={t("subscriptions.allCategories")} />
+            <SelectValue label={filterCategory != null ? categories.find((c) => c.id === filterCategory)?.name : t("subscriptions.allCategories")} placeholder={t("subscriptions.allCategories")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">{t("subscriptions.allCategories")}</SelectItem>
@@ -249,9 +249,9 @@ export default function SubscriptionsPage() {
           </SelectContent>
         </Select>
 
-        <Select value={filterStatus || null} onValueChange={(v) => setFilterStatus(v === "__all__" ? "" : (v ?? ""))}>
+        <Select value={filterStatus || "__all__"} onValueChange={(v) => setFilterStatus(v === "__all__" ? "" : (v ?? ""))}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue label={filterStatus ? t(`subscriptions.statuses.${filterStatus}`) : undefined} placeholder={t("subscriptions.allStatuses")} />
+            <SelectValue label={filterStatus ? t(`subscriptions.statuses.${filterStatus}`) : t("subscriptions.allStatuses")} placeholder={t("subscriptions.allStatuses")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">{t("subscriptions.allStatuses")}</SelectItem>
