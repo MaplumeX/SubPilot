@@ -682,3 +682,36 @@ Redesigned CalendarPage month grid as a calm Notion/Linear-style surface: shared
 ### Next Steps
 
 - None - task complete
+
+
+## Session 20: Enhance reminder configuration
+
+**Date**: 2026-07-05
+**Task**: Enhance reminder configuration
+**Branch**: `main`
+
+### Summary
+
+Added per-subscription reminder config (enable switch + default/custom mode + custom days 1..90) and free-form global reminder days input. Fixed pre-existing stats due_soon hardcoded 3-day window to use per-subscription effective days. Migration f5edd13044d3 with server_default preserves existing behavior. Trellis-check passed all 9 acceptance criteria.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a1b4060a875a7a83ab593a7669dd71ef01fd1c6e` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
