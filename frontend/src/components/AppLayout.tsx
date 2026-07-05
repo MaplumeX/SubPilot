@@ -73,7 +73,7 @@ export default function AppLayout() {
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <h1 className="flex items-center gap-2 text-lg font-semibold">
             <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground" aria-hidden="true">
-              <ShieldCheck className="size-4 text-pending" />
+              <ShieldCheck className="size-4 text-primary-foreground" />
             </span>
             {t("layout.appName")}
           </h1>

@@ -45,7 +45,7 @@ export default function LoginPage() {
       {/* Brand panel — calm, reliable voice. No theatrics, just the promise. */}
       <aside className="relative hidden flex-col justify-between bg-primary p-10 text-primary-foreground lg:flex">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="size-6 text-pending" aria-hidden="true" />
+          <ShieldCheck className="size-6 text-primary-foreground" aria-hidden="true" />
           <span className="font-heading text-lg font-semibold">
             {t("layout.appName")}
           </span>
