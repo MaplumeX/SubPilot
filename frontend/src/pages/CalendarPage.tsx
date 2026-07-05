@@ -221,7 +221,7 @@ export default function CalendarPage({ now }: CalendarPageProps) {
             <ChevronRight />
           </Button>
         </div>
-        <p className="font-heading text-lg font-semibold" aria-live="polite">
+        <p className="font-heading text-base font-semibold" aria-live="polite">
           {monthLabel}
         </p>
       </div>
@@ -243,60 +243,78 @@ export default function CalendarPage({ now }: CalendarPageProps) {
           aria-live="polite"
           aria-label={t("calendar.loadingLabel")}
         >
-          <div className="grid grid-cols-7 gap-1">
+          <div className="grid grid-cols-7 gap-px">
             {Array.from({ length: 7 }).map((_, i) => (
-              <div key={i} className="h-8 rounded bg-muted/40 animate-pulse" />
+              <div
+                key={i}
+                className="flex h-9 items-center justify-center"
+              >
+                <div className="h-3 w-6 rounded bg-muted/60 animate-pulse" />
+              </div>
             ))}
           </div>
-          <div className="grid grid-cols-7 gap-1">
-            {Array.from({ length: WEEK_DAYS * 6 }).map((_, i) => (
-              <div key={i} className="h-24 rounded bg-muted/40 animate-pulse" />
-            ))}
+          <div className="overflow-hidden rounded-lg border border-border">
+            <div className="grid grid-cols-7 gap-px bg-border">
+              {Array.from({ length: WEEK_DAYS * 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-24 bg-muted/30 animate-pulse"
+                />
+              ))}
+            </div>
           </div>
         </div>
       ) : (
-        <div role="grid" aria-label={monthLabel} className="space-y-1">
+        <div role="grid" aria-label={monthLabel} className="space-y-2">
           {/* Weekday header row */}
-          <div role="row" className="grid grid-cols-7 gap-1">
+          <div role="row" className="grid grid-cols-7 gap-px">
             {weekdayLabels.map((label, i) => (
               <div
                 key={i}
                 role="columnheader"
-                className="flex h-8 items-center justify-center text-xs font-medium text-muted-foreground"
+                className="flex h-9 items-center justify-center px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground"
               >
                 {label}
               </div>
             ))}
           </div>
 
-          {/* Day grid */}
-          {Array.from({ length: 6 }).map((_, weekIdx) => (
-            <div key={weekIdx} role="row" className="grid grid-cols-7 gap-1">
-              {gridDays
-                .slice(weekIdx * WEEK_DAYS, weekIdx * WEEK_DAYS + WEEK_DAYS)
-                .map((day) => {
-                  const iso = toISODate(day);
-                  const inMonth = day.getMonth() === cursor.getMonth();
-                  const isPast = inMonth && iso < todayISO;
-                  const events = eventsByDay.get(iso) ?? [];
-                  const hasEvents = events.length > 0;
-                  return (
-                    <DayCell
-                      key={iso}
-                      day={day}
-                      inMonth={inMonth}
-                      isPast={isPast}
-                      events={events}
-                      hasEvents={hasEvents}
-                      openDay={openDay}
-                      setOpenDay={setOpenDay}
-                      t={t}
-                      locale={locale}
-                    />
-                  );
-                })}
-            </div>
-          ))}
+          {/* Day grid — single shared surface with divider lines */}
+          <div className="overflow-hidden rounded-lg border border-border">
+            {Array.from({ length: 6 }).map((_, weekIdx) => (
+              <div
+                key={weekIdx}
+                role="row"
+                className="grid grid-cols-7 gap-px bg-border"
+              >
+                {gridDays
+                  .slice(weekIdx * WEEK_DAYS, weekIdx * WEEK_DAYS + WEEK_DAYS)
+                  .map((day) => {
+                    const iso = toISODate(day);
+                    const inMonth = day.getMonth() === cursor.getMonth();
+                    const isPast = inMonth && iso < todayISO;
+                    const isToday = inMonth && iso === todayISO;
+                    const events = eventsByDay.get(iso) ?? [];
+                    const hasEvents = events.length > 0;
+                    return (
+                      <DayCell
+                        key={iso}
+                        day={day}
+                        inMonth={inMonth}
+                        isPast={isPast}
+                        isToday={isToday}
+                        events={events}
+                        hasEvents={hasEvents}
+                        openDay={openDay}
+                        setOpenDay={setOpenDay}
+                        t={t}
+                        locale={locale}
+                      />
+                    );
+                  })}
+              </div>
+            ))}
+          </div>
 
           {/* Empty-month message */}
           {!loading && !monthHasEvents && cached && cached.length > 0 && (
@@ -315,6 +333,7 @@ function DayCell({
   day,
   inMonth,
   isPast,
+  isToday,
   events,
   hasEvents,
   openDay,
@@ -325,6 +344,7 @@ function DayCell({
   day: Date;
   inMonth: boolean;
   isPast: boolean;
+  isToday: boolean;
   events: Subscription[];
   hasEvents: boolean;
   openDay: Date | null;
@@ -340,18 +360,30 @@ function DayCell({
 
   const triggerLabel = String(day.getDate());
 
+  const numberClass = cn(
+    "text-sm font-medium",
+    !inMonth && "text-muted-foreground/40",
+    isPast && inMonth && "text-muted-foreground/50"
+  );
+
+  const numberSpan = isToday ? (
+    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full text-sm font-semibold ring-1 ring-primary text-primary">
+      {triggerLabel}
+    </span>
+  ) : (
+    <span className={numberClass}>{triggerLabel}</span>
+  );
+
   const cellBase = cn(
-    "relative min-h-24 rounded-lg border p-1.5 text-left align-top transition-colors",
-    inMonth ? "bg-card" : "bg-muted/20",
-    inMonth ? "border-border" : "border-transparent",
-    isPast && inMonth && "text-muted-foreground/60",
-    !inMonth && "text-muted-foreground/40"
+    "relative min-h-24 p-2 text-left align-top transition-colors bg-background",
+    !inMonth && "text-muted-foreground/40",
+    isPast && inMonth && "text-muted-foreground/50"
   );
 
   if (!hasEvents) {
     return (
       <div role="gridcell" className={cellBase} aria-disabled={!inMonth}>
-        <span className="text-sm font-medium">{triggerLabel}</span>
+        {numberSpan}
       </div>
     );
   }
@@ -367,8 +399,8 @@ function DayCell({
             type="button"
             className={cn(
               cellBase,
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              isOpen && "ring-2 ring-ring"
+              "hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+              isOpen && "bg-muted/40 ring-2 ring-inset ring-ring"
             )}
             aria-pressed={!!isOpen}
             aria-label={t("calendar.dayEvents", {
@@ -378,19 +410,13 @@ function DayCell({
           />
         }
       >
-        <span className="flex items-center gap-1">
-          <span className="text-sm font-medium">{triggerLabel}</span>
-          <span
-            aria-hidden="true"
-            className="size-1.5 rounded-full bg-pending"
-          />
-        </span>
+        {numberSpan}
         <div className="mt-1 space-y-0.5">
           {visibleEvents.map((sub) => (
             <EventMarker key={sub.id} sub={sub} />
           ))}
           {hiddenCount > 0 && (
-            <span className="block text-xs font-medium text-pending">
+            <span className="block truncate rounded-sm bg-muted/60 px-1 py-0.5 text-[10px] font-medium text-muted-foreground">
               {t("calendar.more", { count: hiddenCount })}
             </span>
           )}
@@ -406,11 +432,8 @@ function DayCell({
 /** Compact event marker inside a day cell. */
 function EventMarker({ sub }: { sub: Subscription }) {
   return (
-    <span className="block truncate text-xs text-foreground">
-      {sub.name}{" "}
-      <span className="font-variant-numeric tabular-nums text-muted-foreground">
-        {sub.currency} {sub.price.toFixed(2)}
-      </span>
+    <span className="block truncate rounded-sm bg-pending/10 px-1 py-0.5 text-[10px] font-medium text-pending">
+      {sub.name}
     </span>
   );
 }
