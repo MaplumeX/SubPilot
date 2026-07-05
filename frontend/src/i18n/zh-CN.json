@@ -36,7 +36,7 @@
     "dueInDays_other": "{{count}} 天后",
     "dueToday": "今天到期",
     "acknowledgedTitle": "已确认续费",
-    "acknowledgedMessage": "好的，已记下。下次将在 {{date}} 提醒你。",
+    "acknowledgedMessage": "好的，已记下，本周期不再提醒。",
     "nextMonthProjection": "下月预计支出",
     "nextMonthProjectionSubtitle": "根据活跃订阅的下次扣费日期估算",
     "subtitleDue": "有 {{count}} 笔订阅即将到期，请在续费前确认。",

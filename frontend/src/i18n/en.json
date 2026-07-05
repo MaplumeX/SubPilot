@@ -36,7 +36,7 @@
     "dueInDays_other": "in {{count}} days",
     "dueToday": "due today",
     "acknowledgedTitle": "Marked as renewed",
-    "acknowledgedMessage": "Got it. We'll remind you about the next billing on {{date}}.",
+    "acknowledgedMessage": "Got it. We won't remind you again this cycle.",
     "nextMonthProjection": "Next month projection",
     "nextMonthProjectionSubtitle": "Based on your active subscriptions' next billing dates",
     "subtitleDue": "{{count}} subscription(s) due soon — review before they renew.",

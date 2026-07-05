@@ -113,7 +113,7 @@ export default function DashboardPage({
 
   const handleAcknowledge = async (sub: Subscription) => {
     try {
-      const updated = await acknowledgeSubscription(sub.id);
+      await acknowledgeSubscription(sub.id);
       setStats((prev) =>
         prev
           ? {
@@ -124,9 +124,7 @@ export default function DashboardPage({
       );
       toast({
         title: t("dashboard.acknowledgedTitle"),
-        message: t("dashboard.acknowledgedMessage", {
-          date: updated.next_billing_date ?? "-",
-        }),
+        message: t("dashboard.acknowledgedMessage"),
       });
     } catch (err) {
       // 401 handled by interceptor; surface all other failures.

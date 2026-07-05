@@ -127,6 +127,8 @@ or_(
 
 **When to apply**: any feature that lets a user "dismiss" a dated event where another mechanism mutates that date. If no other writer touched the field, advancing it on ack would be fine — the conflict only arises because two writers target the same field.
 
+> **Warning (cross-query invariant)**: EVERY query that surfaces "due-soon / upcoming / to-remind" subscriptions MUST apply the same `or_(acknowledged_billing_date.is_(None), acknowledged_billing_date != next_billing_date)` filter as the scanner — not just the notification scanner. A read path that skips this filter (e.g. `GET /stats` `due_soon`) will silently re-surface subscriptions the user already acknowledged after a page refresh, splitting the UI's "confirmed" state from the backend's. Bug `07-05-fix-dashboard-acknowledge` was exactly this: the scanner excluded acknowledged subs but `/stats` forgot to, so Dashboard's "确认已续费" button reappeared on refresh. When adding any new due-soon-style query, copy the filter from `backend/app/services/notifications/scanner.py:43-44` verbatim.
+
 ---
 
 ## Per-User External Credentials: Enable Requires Validation

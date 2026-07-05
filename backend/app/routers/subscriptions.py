@@ -4,7 +4,7 @@ from datetime import date, timedelta
 
 from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
-from sqlalchemy import and_, case, func
+from sqlalchemy import and_, case, func, or_
 from sqlalchemy.orm import Session, joinedload
 
 from app.deps import get_current_user, get_db
@@ -265,6 +265,10 @@ def get_stats(
             Subscription.next_billing_date.isnot(None),
             Subscription.next_billing_date >= today,
             Subscription.next_billing_date <= three_days,
+            or_(
+                Subscription.acknowledged_billing_date.is_(None),
+                Subscription.acknowledged_billing_date != Subscription.next_billing_date,
+            ),
         )
         .all()
     )

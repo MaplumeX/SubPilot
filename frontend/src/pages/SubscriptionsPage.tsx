@@ -189,7 +189,7 @@ export default function SubscriptionsPage() {
       );
       toast({
         title: t("dashboard.acknowledgedTitle"),
-        message: t("dashboard.acknowledgedMessage", { date: updated.next_billing_date ?? "-" }),
+        message: t("dashboard.acknowledgedMessage"),
       });
     } catch (err) {
       // 401 handled by interceptor; surface all other failures.
