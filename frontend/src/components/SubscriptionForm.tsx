@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import type { Subscription, SubscriptionCreate, CycleUnit, SubscriptionStatus } from "@/api/types";
-import { uploadLogo } from "@/api/subscriptions";
+import type { Subscription, SubscriptionCreate, CycleUnit, SubscriptionStatus, LogoCandidate } from "@/api/types";
+import { uploadLogo, searchLogo, cacheLogo } from "@/api/subscriptions";
 import { listCategories } from "@/api/categories";
 import { listPaymentMethods } from "@/api/payment_methods";
 import type { Category, PaymentMethod } from "@/api/types";
@@ -52,6 +52,8 @@ const ERROR_KEY_MAP: Record<string, string> = {
   "Subscription not found": "errors.subscriptionNotFound",
   "Invalid file type. Allowed: JPG, PNG, SVG, GIF": "subscriptionForm.invalidFileType",
   "File size exceeds 2MB limit": "subscriptionForm.fileTooLarge",
+  "Query must not be empty": "subscriptionForm.logoSearchFailed",
+  "Image URL host is not allowed": "subscriptionForm.cacheLogoFailed",
 };
 
 const PRESET_MAP: Record<string, { cycle_count: number; cycle_unit: CycleUnit }> = {
@@ -99,6 +101,11 @@ export default function SubscriptionForm({
   const [logoUrl, setLogoUrl] = useState(subscription?.logo_url ?? "");
   const [logoTab, setLogoTab] = useState("search");
   const [searchDomain, setSearchDomain] = useState("");
+  const [searchResults, setSearchResults] = useState<LogoCandidate[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [cachingIndex, setCachingIndex] = useState<number | null>(null);
+  const [searchError, setSearchError] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [autoRenew, setAutoRenew] = useState(subscription?.auto_renew ?? true);
@@ -122,10 +129,41 @@ export default function SubscriptionForm({
 
   const previewUrl = logoUrl || null;
 
-  const handleSearchLogo = () => {
+  const handleSearchLogo = async () => {
     if (!searchDomain.trim()) return;
-    const url = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(searchDomain.trim())}&sz=64`;
-    setLogoUrl(url);
+    setSearching(true);
+    setSearchError("");
+    setHasSearched(true);
+    try {
+      const { results } = await searchLogo(searchDomain.trim());
+      setSearchResults(results);
+    } catch (err: unknown) {
+      const detail =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail ?? "";
+      const key = ERROR_KEY_MAP[detail];
+      setSearchError(key ? t(key) : t("subscriptionForm.logoSearchFailed"));
+      setSearchResults([]);
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handlePickLogo = async (candidate: LogoCandidate, index: number) => {
+    setCachingIndex(index);
+    setSearchError("");
+    try {
+      const { logo_url } = await cacheLogo(candidate.image);
+      setLogoUrl(logo_url);
+    } catch (err: unknown) {
+      const detail =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail ?? "";
+      const key = ERROR_KEY_MAP[detail];
+      setSearchError(key ? t(key) : t("subscriptionForm.cacheLogoFailed"));
+    } finally {
+      setCachingIndex(null);
+    }
   };
 
   const handleUploadLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -166,6 +204,9 @@ export default function SubscriptionForm({
   const handleRemoveLogo = () => {
     setLogoUrl("");
     setSearchDomain("");
+    setSearchResults([]);
+    setHasSearched(false);
+    setSearchError("");
     setLinkUrl("");
   };
 
@@ -279,15 +320,45 @@ export default function SubscriptionForm({
                 <TabsContent value="search" className="mt-2">
                   <div className="flex gap-2">
                     <Input
-                      placeholder={t("subscriptionForm.domainPlaceholder")}
+                      placeholder={t("subscriptionForm.logoSearchPlaceholder")}
                       value={searchDomain}
                       onChange={(e) => setSearchDomain(e.target.value)}
                       onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSearchLogo(); } }}
+                      disabled={searching}
                     />
-                    <Button type="button" variant="outline" onClick={handleSearchLogo}>
-                      {t("subscriptionForm.search")}
+                    <Button type="button" variant="outline" onClick={handleSearchLogo} disabled={searching}>
+                      {searching ? t("subscriptionForm.searching") : t("subscriptionForm.search")}
                     </Button>
                   </div>
+                  {searchError && (
+                    <p className="text-sm text-destructive mt-2">{searchError}</p>
+                  )}
+                  {searching && (
+                    <p className="text-sm text-muted-foreground mt-2">{t("subscriptionForm.searching")}</p>
+                  )}
+                  {!searching && hasSearched && searchResults.length === 0 && !searchError && (
+                    <p className="text-sm text-muted-foreground mt-2">{t("subscriptionForm.noLogos")}</p>
+                  )}
+                  {searchResults.length > 0 && (
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mt-2">
+                      {searchResults.map((candidate, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => handlePickLogo(candidate, i)}
+                          disabled={cachingIndex !== null}
+                          className="rounded-md border p-1 hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <img
+                            src={candidate.thumbnail}
+                            alt=""
+                            loading="lazy"
+                            className="aspect-square w-full object-contain"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </TabsContent>
                 <TabsContent value="upload" className="mt-2">
                   <Input

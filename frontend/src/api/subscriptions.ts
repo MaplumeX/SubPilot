@@ -4,6 +4,7 @@ import type {
   SubscriptionCreate,
   SubscriptionStats,
   SubscriptionUpdate,
+  LogoCandidate,
 } from "./types";
 
 export async function createSubscription(
@@ -54,6 +55,22 @@ export async function uploadLogo(file: File): Promise<{ logo_url: string }> {
   const { data } = await api.post<{ logo_url: string }>(
     "/subscriptions/upload-logo",
     formData
+  );
+  return data;
+}
+
+export async function searchLogo(query: string): Promise<{ results: LogoCandidate[] }> {
+  const { data } = await api.get<{ results: LogoCandidate[] }>(
+    "/subscriptions/search-logo",
+    { params: { query } }
+  );
+  return data;
+}
+
+export async function cacheLogo(imageUrl: string): Promise<{ logo_url: string }> {
+  const { data } = await api.post<{ logo_url: string }>(
+    "/subscriptions/cache-logo",
+    { image_url: imageUrl }
   );
   return data;
 }

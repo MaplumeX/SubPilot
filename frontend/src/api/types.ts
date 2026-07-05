@@ -114,6 +114,13 @@ export interface SubscriptionStats {
   top3_percentage: number;
 }
 
+export interface LogoCandidate {
+  thumbnail: string;
+  image: string;
+  width: number | null;
+  height: number | null;
+}
+
 export interface NotificationSettings {
   reminders_enabled: boolean;
   reminder_days: number;
