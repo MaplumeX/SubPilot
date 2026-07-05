@@ -85,7 +85,7 @@ export default function SubscriptionCard({
             title={sub.auto_renew ? t("subscriptions.auto_renew_enabled") : t("subscriptions.auto_renew_disabled")}
             className="inline-flex items-center"
           >
-            <RefreshCw className={`size-3 ${sub.auto_renew ? "text-pending" : "text-muted-foreground/40"}`} />
+            <RefreshCw className={`size-3 ${sub.auto_renew ? "text-pending" : "text-muted-foreground/80"}`} />
           </span>
         </div>
         <div className="text-xs text-muted-foreground">

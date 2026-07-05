@@ -382,7 +382,7 @@ export default function SubscriptionsPage() {
                       className="inline-flex items-center"
                     >
                       <RefreshCw
-                        className={`size-4 ${sub.auto_renew ? "text-pending" : "text-muted-foreground/40"}`}
+                        className={`size-4 ${sub.auto_renew ? "text-pending" : "text-muted-foreground/80"}`}
                       />
                     </span>
                   </TableCell>
