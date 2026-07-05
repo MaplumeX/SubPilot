@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend spec index — links to the Quality Check section used for the final full-scope check."}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Code review checklist + forbidden patterns to verify against the new CalendarPage and AppLayout edits."}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Verify base-ui `render` prop usage on PopoverTrigger (not asChild), i18n key conventions, and Badge usage."}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Verify date parsing and Subscription type usage match project conventions."}

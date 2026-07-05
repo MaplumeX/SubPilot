@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend spec index — entry point pointing to all relevant guideline files for this task."}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Where the new CalendarPage.tsx lives, how to add a route inside AppLayout, and the nav/page naming convention."}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "base-ui vs Radix — must use `render` prop (not asChild) on PopoverTrigger; Select/Combobox/oklch and i18n-in-components rules."}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Confirms no caching layer — fetch via Axios in useEffect, local component state only; subsCache stays in-component."}
+{"file": ".trellis/spec/frontend/hook-guidelines.md", "reason": "Data-fetching pattern (useCallback + useEffect + stale-effect active flag) and the flat src/*.ts hook naming if a hook is extracted."}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Forbidden/required patterns: no asChild, no any, no inline styles, no exported style variants, default export per file."}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Type patterns and validation conventions for the Subscription type and date parsing."}
