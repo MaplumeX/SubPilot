@@ -221,7 +221,9 @@
     "invalidRefreshToken": "Invalid refresh token",
     "userNotFound": "User not found",
     "subscriptionNotFound": "Subscription not found",
-    "entityNameExists": "Name already exists"
+    "entityNameExists": "Name already exists",
+    "loadFailed": "Failed to load data. Please retry.",
+    "updateFailed": "Update failed. Please retry."
   },
   "statistics": {
     "title": "Statistics",

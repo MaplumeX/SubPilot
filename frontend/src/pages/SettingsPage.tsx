@@ -33,6 +33,8 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/toaster";
+import { isNonAuthError } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import {
@@ -54,8 +56,11 @@ export default function SettingsPage() {
     if (user) {
       try {
         await updateLocale(locale);
-      } catch {
-        // silently fail — language is already applied locally
+      } catch (err) {
+        // 401 handled by interceptor; language is already applied locally.
+        if (isNonAuthError(err)) {
+          toast({ title: t("errors.updateFailed"), variant: "destructive" });
+        }
       }
     }
   };
@@ -65,8 +70,11 @@ export default function SettingsPage() {
     try {
       await updateBaseCurrency(currency);
       await refreshUser();
-    } catch {
-      // silently fail
+    } catch (err) {
+      // 401 handled by interceptor.
+      if (isNonAuthError(err)) {
+        toast({ title: t("errors.updateFailed"), variant: "destructive" });
+      }
     }
   };
 
@@ -152,7 +160,11 @@ function CategoryManagerCard() {
   const reload = useCallback(() => {
     listCategories()
       .then(setCategories)
-      .catch(() => {})
+      .catch((err) => {
+        if (isNonAuthError(err)) {
+          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -197,7 +209,11 @@ function PaymentMethodManagerCard() {
   const reload = useCallback(() => {
     listPaymentMethods()
       .then(setPaymentMethods)
-      .catch(() => {})
+      .catch((err) => {
+        if (isNonAuthError(err)) {
+          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -252,8 +268,11 @@ function NotificationsCard({
       .then((data) => {
         if (active) setSettings(data);
       })
-      .catch(() => {
-        // 401 handled by interceptor
+      .catch((err) => {
+        // 401 handled by interceptor.
+        if (isNonAuthError(err)) {
+          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        }
       })
       .finally(() => {
         if (active) setLoading(false);

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
-import { cn } from "@/lib/utils";
+import { cn, isNonAuthError } from "@/lib/utils";
 import { getNotificationSettings } from "@/api/notifications";
 import DashboardPage from "@/pages/DashboardPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
@@ -10,7 +10,7 @@ import SettingsPage from "@/pages/SettingsPage";
 import StatisticsPage from "@/pages/StatisticsPage";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import ThemeToggle from "@/components/theme-toggle";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster, toast } from "@/components/ui/toaster";
 import { ShieldCheck } from "lucide-react";
 import { createSubscription } from "@/api/subscriptions";
 import type { SubscriptionCreate } from "@/api/types";
@@ -44,8 +44,11 @@ export default function AppLayout() {
   useEffect(() => {
     getNotificationSettings()
       .then((s) => setReminderDays(s.reminder_days))
-      .catch(() => {
-        // 401 handled by interceptor; default reminderDays stays at 3
+      .catch((err) => {
+        // 401 handled by interceptor; default reminderDays stays at 3.
+        if (isNonAuthError(err)) {
+          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        }
       });
   }, []);
 

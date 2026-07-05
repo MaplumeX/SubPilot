@@ -36,6 +36,7 @@ import SubscriptionCard from "@/components/SubscriptionCard";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { toast } from "@/components/ui/toaster";
 import { formatDueLabel, isDueWithin } from "@/lib/due";
+import { isNonAuthError } from "@/lib/utils";
 
 type ViewMode = "table" | "card";
 
@@ -119,8 +120,11 @@ export default function SubscriptionsPage() {
     fetchCategories();
     getNotificationSettings()
       .then((s) => setReminderDays(s.reminder_days))
-      .catch(() => {
-        // 401 handled by interceptor; default reminderDays stays at 3
+      .catch((err) => {
+        // 401 handled by interceptor; default reminderDays stays at 3.
+        if (isNonAuthError(err)) {
+          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        }
       });
   }, [fetchCategories]);
 

@@ -9,7 +9,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ShieldCheck, BellRing, CheckCircle2 } from "lucide-react";
 import { toast } from "@/components/ui/toaster";
 import { formatDueLabel } from "@/lib/due";
-import { cn } from "@/lib/utils";
+import { cn, isNonAuthError } from "@/lib/utils";
 
 interface DashboardPageProps {
   onAddSubscription: () => void;
@@ -88,8 +88,11 @@ export default function DashboardPage({
       ]);
       setStats(statsData);
       setSubscriptions(subsData);
-    } catch {
-      // 401 handled by interceptor
+    } catch (err) {
+      // 401 handled by interceptor; surface all other failures.
+      if (isNonAuthError(err)) {
+        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+      }
     } finally {
       setLoading(false);
     }
@@ -125,8 +128,11 @@ export default function DashboardPage({
           date: updated.next_billing_date ?? "-",
         }),
       });
-    } catch {
-      // 401 handled by interceptor
+    } catch (err) {
+      // 401 handled by interceptor; surface all other failures.
+      if (isNonAuthError(err)) {
+        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+      }
     }
   };
 

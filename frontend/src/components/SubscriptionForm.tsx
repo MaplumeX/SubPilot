@@ -29,6 +29,8 @@ import {
   AvatarFallback,
 } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { toast } from "@/components/ui/toaster";
+import { isNonAuthError } from "@/lib/utils";
 
 interface SubscriptionFormProps {
   key?: React.Key;
@@ -106,8 +108,16 @@ export default function SubscriptionForm({
   const [existingPaymentMethods, setExistingPaymentMethods] = useState<PaymentMethod[]>([]);
 
   useEffect(() => {
-    listCategories().then(setExistingCategories).catch(() => {});
-    listPaymentMethods().then(setExistingPaymentMethods).catch(() => {});
+    listCategories().then(setExistingCategories).catch((err) => {
+      if (isNonAuthError(err)) {
+        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+      }
+    });
+    listPaymentMethods().then(setExistingPaymentMethods).catch((err) => {
+      if (isNonAuthError(err)) {
+        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+      }
+    });
   }, []);
 
   const previewUrl = logoUrl || null;

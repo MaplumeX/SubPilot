@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
 import { getStats, listSubscriptions } from "@/api/subscriptions";
 import type { SubscriptionStats, Subscription } from "@/api/types";
+import { toast } from "@/components/ui/toaster";
+import { isNonAuthError } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   PieChart,
@@ -61,8 +63,11 @@ export default function StatisticsPage() {
       ]);
       setStats(statsData);
       setSubscriptions(subsData);
-    } catch {
-      // 401 handled by interceptor
+    } catch (err) {
+      // 401 handled by interceptor; surface all other failures.
+      if (isNonAuthError(err)) {
+        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+      }
     } finally {
       setLoading(false);
     }

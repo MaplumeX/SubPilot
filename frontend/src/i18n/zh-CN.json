@@ -221,7 +221,9 @@
     "invalidRefreshToken": "无效的刷新令牌",
     "userNotFound": "用户未找到",
     "subscriptionNotFound": "订阅未找到",
-    "entityNameExists": "名称已存在"
+    "entityNameExists": "名称已存在",
+    "loadFailed": "加载数据失败，请重试。",
+    "updateFailed": "更新失败，请重试。"
   },
   "statistics": {
     "title": "统计",
