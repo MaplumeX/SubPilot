@@ -1,0 +1,8 @@
+{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "迁移加列 + server_default + ack-marker 模式参考"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "scanner/service 与 router/schema 分层约定"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "后端代码标准/禁用模式"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "SubscriptionForm 表单 + Select/Input/Switch 用法与 oklch 规则"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "api/types.ts 接口扩展类型规范"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "表单 state 与编辑回填模式"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "本任务跨 DB/后端/前端三层，数据流一致性检查"}
