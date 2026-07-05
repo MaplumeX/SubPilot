@@ -544,3 +544,36 @@ Planned (brainstorm 6 questions: minimal field set, block-delete-on-reference, d
 ### Next Steps
 
 - None - task complete
+
+
+## Session 16: Fix Dashboard acknowledge 刷新重现 + toast 文案不一致
+
+**Date**: 2026-07-05
+**Task**: Fix Dashboard acknowledge 刷新重现 + toast 文案不一致
+**Branch**: `main`
+
+### Summary
+
+Fixed two bugs in the Dashboard '确认已续费' flow. (A) Backend /stats due_soon query was missing the acknowledged_billing_date filter, so acknowledged subs reappeared on refresh — added the or_(is_(None), != next_billing_date) filter mirroring scanner.py:43-44. (B) Toast copy promised a next-reminder date that was actually the current billing date (ack does not advance next_billing_date) — dropped {{date}} from zh-CN/en acknowledgedMessage and removed the orphan date interpolation at both t() call sites. Also added a cross-query invariant warning to the ack-marker pattern in database-guidelines.md so future due-soon-style queries copy the filter verbatim. Verified via tsc -b, npm run build, ruff check; eslint no new violations.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ddc492b` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

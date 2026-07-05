@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 15
-- **Last Active**: 2026-06-27
+- **Total Sessions**: 16
+- **Last Active**: 2026-07-05
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~546 | Active |
+| `journal-1.md` | ~579 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 16 | 2026-07-05 | Fix Dashboard acknowledge 刷新重现 + toast 文案不一致 | `ddc492b` | `main` |
 | 15 | 2026-06-27 | Redesign category & payment method as managed entities | `b3bba65`, `6d3eea4`, `ee07031` | `emdash/forty-knives-rest-gl5he` |
 | 14 | 2026-06-26 | 修复订阅路由顺序导致支付方式 422 | `3323156` | `emdash/two-socks-laugh-d4a3h` |
 | 13 | 2026-06-17 | Add payment method field to subscriptions | `da8fe12` | `MaplumeX/subscription-payment-method` |
