@@ -280,7 +280,7 @@ export default function CalendarPage({ now }: CalendarPageProps) {
           </div>
 
           {/* Day grid — single shared surface with divider lines */}
-          <div className="overflow-hidden rounded-lg border border-border">
+          <div className="overflow-hidden rounded-lg border border-border divide-y divide-border">
             {Array.from({ length: 6 }).map((_, weekIdx) => (
               <div
                 key={weekIdx}
