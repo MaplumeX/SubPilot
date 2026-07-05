@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 16
+- **Total Sessions**: 17
 - **Last Active**: 2026-07-05
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~579 | Active |
+| `journal-1.md` | ~615 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 17 | 2026-07-05 | Rewrite logo search with backend proxy endpoint | `5dddfe2`, `65fc197`, `65ce55d`, `3796ccf` | `main` |
 | 16 | 2026-07-05 | Fix Dashboard acknowledge 刷新重现 + toast 文案不一致 | `ddc492b` | `main` |
 | 15 | 2026-06-27 | Redesign category & payment method as managed entities | `b3bba65`, `6d3eea4`, `ee07031` | `emdash/forty-knives-rest-gl5he` |
 | 14 | 2026-06-26 | 修复订阅路由顺序导致支付方式 422 | `3323156` | `emdash/two-socks-laugh-d4a3h` |

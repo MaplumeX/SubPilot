@@ -577,3 +577,39 @@ Fixed two bugs in the Dashboard '确认已续费' flow. (A) Backend /stats due_s
 ### Next Steps
 
 - None - task complete
+
+
+## Session 17: Rewrite logo search with backend proxy endpoint
+
+**Date**: 2026-07-05
+**Task**: Rewrite logo search with backend proxy endpoint
+**Branch**: `main`
+
+### Summary
+
+Replaced single-favicon URL hack with backend-proxied image search: new services/ssrf.py (host allowlist + IP filter incl CGNAT + DNS pin) + services/logo_search.py (DDG i.js primary, Brave HTML fallback, zero API key). Added GET /search-logo and POST /cache-logo endpoints (declared before /{subscription_id}), cache-logo downloads chosen image to /static/logos/ reusing upload-logo conventions. Frontend SubscriptionForm search tab rewritten to candidate grid + click-to-cache flow; LogoCandidate type, searchLogo/cacheLogo API fns, 5 i18n keys (zh/en), ERROR_KEY_MAP entries. Codified SSRF helper pattern + httpx 0.28 DNS-pin limitation in backend quality-guidelines spec.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `5dddfe2` | (see git log) |
+| `65fc197` | (see git log) |
+| `65ce55d` | (see git log) |
+| `3796ccf` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
