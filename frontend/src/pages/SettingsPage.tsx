@@ -86,8 +86,6 @@ export default function SettingsPage() {
     { value: "JPY", label: t("subscriptionForm.currencies.JPY") },
   ];
 
-  const REMINDER_DAYS_OPTIONS = [1, 3, 7, 14];
-
   return (
     <div className="space-y-6">
       <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">{t("settings.title")}</h2>
@@ -144,7 +142,7 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <NotificationsCard reminderDaysOptions={REMINDER_DAYS_OPTIONS} />
+      <NotificationsCard />
 
       <CategoryManagerCard />
       <PaymentMethodManagerCard />
@@ -250,11 +248,7 @@ function PaymentMethodManagerCard() {
   );
 }
 
-function NotificationsCard({
-  reminderDaysOptions,
-}: {
-  reminderDaysOptions: number[];
-}) {
+function NotificationsCard() {
   const { t } = useTranslation();
   const [settings, setSettings] = useState<NotificationSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -367,21 +361,14 @@ function NotificationsCard({
 
         <div className="space-y-2">
           <Label>{t("notifications.reminderDays")}</Label>
-          <Select
-            value={String(settings.reminder_days)}
-            onValueChange={(v) => update("reminder_days", Number(v))}
-          >
-            <SelectTrigger className="w-[200px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {reminderDaysOptions.map((d) => (
-                <SelectItem key={d} value={String(d)}>
-                  {t("notifications.daysAhead", { count: d })}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input
+            type="number"
+            min={1}
+            max={90}
+            value={settings.reminder_days}
+            onChange={(e) => update("reminder_days", Number(e.target.value))}
+            className="w-[120px]"
+          />
         </div>
 
         <div className="space-y-4 rounded-lg border p-4">

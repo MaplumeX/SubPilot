@@ -59,6 +59,9 @@ export interface Subscription {
   next_billing_date: string | null;
   acknowledged_billing_date: string | null;
   auto_renew: boolean;
+  reminder_enabled: boolean;
+  reminder_mode: "default" | "custom";
+  reminder_days: number | null;
   notes: string | null;
   logo_url: string | null;
   created_at: string;
@@ -77,6 +80,9 @@ export interface SubscriptionCreate {
   status?: SubscriptionStatus;
   start_date: string;
   auto_renew?: boolean;
+  reminder_enabled?: boolean;
+  reminder_mode?: "default" | "custom";
+  reminder_days?: number | null;
   notes?: string | null;
   logo_url?: string | null;
 }
@@ -92,6 +98,9 @@ export interface SubscriptionUpdate {
   status?: SubscriptionStatus;
   start_date?: string;
   auto_renew?: boolean;
+  reminder_enabled?: boolean;
+  reminder_mode?: "default" | "custom";
+  reminder_days?: number | null;
   notes?: string | null;
   logo_url?: string | null;
 }

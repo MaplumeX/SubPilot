@@ -11,7 +11,7 @@ from app.deps import get_current_user, get_db
 from app.models.category import Category
 from app.models.exchange_rate import ExchangeRate
 from app.models.payment_method import PaymentMethod
-from app.models.subscription import CycleUnit, Subscription, SubscriptionStatus
+from app.models.subscription import CycleUnit, ReminderMode, Subscription, SubscriptionStatus
 from app.models.user import User
 from app.services import logo_search, ssrf
 from app.services.exchange_rate import get_rate
@@ -265,15 +265,17 @@ def get_stats(
     top3_percentage = round(top3_sum / total_monthly * 100, 2) if total_monthly else 0.0
 
     today = date.today()
-    three_days = today + timedelta(days=3)
-    due_soon_subs = (
+    # Per-subscription effective reminder window (D2/D3). Pull all active,
+    # unacknowledged, dated subs once, then filter in Python by each sub's
+    # effective days (default -> user.reminder_days, custom -> sub.reminder_days).
+    # Not affected by sub.reminder_enabled (D2: that only gates notifications).
+    candidate_subs = (
         db.query(Subscription)
         .filter(
             Subscription.user_id == current_user.id,
             Subscription.status == SubscriptionStatus.active,
             Subscription.next_billing_date.isnot(None),
             Subscription.next_billing_date >= today,
-            Subscription.next_billing_date <= three_days,
             or_(
                 Subscription.acknowledged_billing_date.is_(None),
                 Subscription.acknowledged_billing_date != Subscription.next_billing_date,
@@ -281,6 +283,16 @@ def get_stats(
         )
         .all()
     )
+    user_reminder_days = current_user.reminder_days
+    due_soon_subs = []
+    for sub in candidate_subs:
+        if sub.reminder_mode == ReminderMode.custom:
+            effective_days = sub.reminder_days if sub.reminder_days is not None else user_reminder_days
+        else:
+            effective_days = user_reminder_days
+        window_end = today + timedelta(days=effective_days)
+        if sub.next_billing_date <= window_end:
+            due_soon_subs.append(sub)
 
     return SubscriptionStats(
         total_monthly=round(total_monthly, 2),
@@ -440,6 +452,10 @@ def update_subscription(
         _validate_category_ownership(db, update_data["category_id"], current_user.id)
     if "payment_method_id" in update_data:
         _validate_payment_method_ownership(db, update_data["payment_method_id"], current_user.id)
+    # When reminder_mode is explicitly set to default, force reminder_days to None
+    # so stale custom values are cleared even if the client didn't send reminder_days.
+    if update_data.get("reminder_mode") == ReminderMode.default:
+        update_data["reminder_days"] = None
     for field, value in update_data.items():
         setattr(subscription, field, value)
 

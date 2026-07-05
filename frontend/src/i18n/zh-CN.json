@@ -150,7 +150,14 @@
     "update": "更新",
     "create": "创建",
     "saveFailed": "保存订阅失败",
-    "auto_renew": "自动续订"
+    "auto_renew": "自动续订",
+    "reminder": "到期提醒",
+    "reminderDescription": "关闭后此订阅不发提醒通知",
+    "reminderMode": "提醒天数模式",
+    "reminderModeDefault": "跟随全局默认",
+    "reminderModeCustom": "自定义天数",
+    "reminderDays": "提前天数",
+    "reminderDaysRange": "提前天数必须在 1 到 90 之间"
   },
   "layout": {
     "appName": "SubPilot",

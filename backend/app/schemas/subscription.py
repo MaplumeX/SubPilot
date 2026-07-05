@@ -1,8 +1,8 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, model_validator
 
-from app.models.subscription import CycleUnit, SubscriptionStatus
+from app.models.subscription import CycleUnit, ReminderMode, SubscriptionStatus
 from app.schemas.category import CategoryBrief
 from app.schemas.payment_method import PaymentMethodBrief
 
@@ -20,6 +20,19 @@ class SubscriptionCreate(BaseModel):
     auto_renew: bool = True
     notes: str | None = None
     logo_url: str | None = None
+    reminder_enabled: bool = True
+    reminder_mode: ReminderMode = ReminderMode.default
+    reminder_days: int | None = Field(default=None, ge=1, le=90)
+
+    @model_validator(mode="after")
+    def _validate_reminder_mode(self) -> "SubscriptionCreate":
+        if self.reminder_mode == ReminderMode.custom:
+            if self.reminder_days is None:
+                raise ValueError("reminder_days is required when reminder_mode is 'custom'")
+        else:
+            # default mode: never persist a custom days value
+            self.reminder_days = None
+        return self
 
 
 class SubscriptionUpdate(BaseModel):
@@ -35,6 +48,20 @@ class SubscriptionUpdate(BaseModel):
     auto_renew: bool | None = None
     notes: str | None = None
     logo_url: str | None = None
+    reminder_enabled: bool | None = None
+    reminder_mode: ReminderMode | None = None
+    reminder_days: int | None = Field(default=None, ge=1, le=90)
+
+    @model_validator(mode="after")
+    def _validate_reminder_mode(self) -> "SubscriptionUpdate":
+        if self.reminder_mode == ReminderMode.custom:
+            if self.reminder_days is None:
+                raise ValueError("reminder_days is required when reminder_mode is 'custom'")
+        elif self.reminder_mode == ReminderMode.default:
+            # default mode: clear any custom days value
+            self.reminder_days = None
+        # when reminder_mode is None (unchanged), leave reminder_days as-is
+        return self
 
 
 class SubscriptionResponse(BaseModel):
@@ -52,6 +79,9 @@ class SubscriptionResponse(BaseModel):
     next_billing_date: date | None
     acknowledged_billing_date: date | None = None
     auto_renew: bool
+    reminder_enabled: bool
+    reminder_mode: ReminderMode
+    reminder_days: int | None
     notes: str | None
     logo_url: str | None
     created_at: datetime

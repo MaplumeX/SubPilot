@@ -1,6 +1,20 @@
 // Minimal t() shape we depend on (avoids coupling to i18next internals).
 type TFunc = (key: string, options?: Record<string, unknown>) => string;
 
+/** Per-subscription effective reminder days (D2/D3).
+ *  custom mode -> sub.reminder_days (fallback to global if null);
+ *  default mode -> userReminderDays.
+ *  Not affected by sub.reminder_enabled (that only gates notifications). */
+export function effectiveDaysFor(
+  sub: { reminder_mode?: "default" | "custom"; reminder_days?: number | null },
+  userReminderDays: number
+): number {
+  if (sub.reminder_mode === "custom") {
+    return sub.reminder_days != null ? sub.reminder_days : userReminderDays;
+  }
+  return userReminderDays;
+}
+
 /**
  * Format a relative "days until" label for a billing date.
  * Returns one of: dueToday | dueInDays (singular/plural per locale).

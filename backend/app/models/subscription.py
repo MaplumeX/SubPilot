@@ -27,6 +27,11 @@ class SubscriptionStatus(str, enum.Enum):
     trial = "trial"
 
 
+class ReminderMode(str, enum.Enum):
+    default = "default"
+    custom = "custom"
+
+
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -60,6 +65,14 @@ class Subscription(Base):
     auto_renew: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=text("1"), nullable=False
     )
+    reminder_enabled: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default=text("1"), nullable=False
+    )
+    reminder_mode: Mapped[ReminderMode] = mapped_column(
+        Enum(ReminderMode), nullable=False, default=ReminderMode.default,
+        server_default=text("'default'"),
+    )
+    reminder_days: Mapped[int | None] = mapped_column(Integer, nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     logo_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)

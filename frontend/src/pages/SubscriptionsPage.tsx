@@ -35,7 +35,7 @@ import SubscriptionForm from "@/components/SubscriptionForm";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { toast } from "@/components/ui/toaster";
-import { formatDueLabel, isDueWithin } from "@/lib/due";
+import { formatDueLabel, isDueWithin, effectiveDaysFor } from "@/lib/due";
 import { isNonAuthError } from "@/lib/utils";
 
 type ViewMode = "table" | "card";
@@ -199,7 +199,7 @@ export default function SubscriptionsPage() {
     }
   };
 
-  const isDueSoon = (sub: Subscription) => isDueWithin(sub.next_billing_date, reminderDays);
+  const isDueSoon = (sub: Subscription) => isDueWithin(sub.next_billing_date, effectiveDaysFor(sub, reminderDays));
 
   const formatCycle = (cycle_count: number, cycle_unit: CycleUnit) => {
     if (cycle_count === 1) {

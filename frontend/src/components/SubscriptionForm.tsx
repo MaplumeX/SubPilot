@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import type { Subscription, SubscriptionCreate, CycleUnit, SubscriptionStatus, LogoCandidate } from "@/api/types";
+
+type ReminderMode = "default" | "custom";
 import { uploadLogo, searchLogo, cacheLogo } from "@/api/subscriptions";
 import { listCategories } from "@/api/categories";
 import { listPaymentMethods } from "@/api/payment_methods";
@@ -109,6 +111,11 @@ export default function SubscriptionForm({
   const [linkUrl, setLinkUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [autoRenew, setAutoRenew] = useState(subscription?.auto_renew ?? true);
+  const [reminderEnabled, setReminderEnabled] = useState(subscription?.reminder_enabled ?? true);
+  const [reminderMode, setReminderMode] = useState<ReminderMode>(subscription?.reminder_mode ?? "default");
+  const [reminderDays, setReminderDays] = useState<string>(
+    subscription?.reminder_days != null ? String(subscription.reminder_days) : ""
+  );
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [existingCategories, setExistingCategories] = useState<Category[]>([]);
@@ -248,6 +255,13 @@ export default function SubscriptionForm({
       setError(t("subscriptionForm.paymentMethodRequired"));
       return;
     }
+    if (reminderEnabled && reminderMode === "custom") {
+      const daysNum = parseInt(reminderDays, 10);
+      if (isNaN(daysNum) || daysNum < 1 || daysNum > 90) {
+        setError(t("subscriptionForm.reminderDaysRange"));
+        return;
+      }
+    }
 
     setSubmitting(true);
     try {
@@ -264,6 +278,9 @@ export default function SubscriptionForm({
         auto_renew: autoRenew,
         notes: notes || null,
         logo_url: logoUrl || null,
+        reminder_enabled: reminderEnabled,
+        reminder_mode: reminderMode,
+        reminder_days: reminderMode === "custom" ? Number(reminderDays) : null,
       };
       await onSubmit(payload);
       onOpenChange(false);
@@ -550,6 +567,55 @@ export default function SubscriptionForm({
               onCheckedChange={setAutoRenew}
             />
             <Label>{t("subscriptionForm.auto_renew")}</Label>
+          </div>
+
+          <div className="space-y-3 rounded-lg border p-3">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>{t("subscriptionForm.reminder")}</Label>
+                <p className="text-xs text-muted-foreground">{t("subscriptionForm.reminderDescription")}</p>
+              </div>
+              <Switch
+                checked={reminderEnabled}
+                onCheckedChange={setReminderEnabled}
+              />
+            </div>
+            {reminderEnabled && (
+              <>
+                <div className="space-y-1">
+                  <Label>{t("subscriptionForm.reminderMode")}</Label>
+                  <Select
+                    value={reminderMode}
+                    onValueChange={(v) => setReminderMode(v as ReminderMode)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        label={reminderMode === "custom"
+                          ? t("subscriptionForm.reminderModeCustom")
+                          : t("subscriptionForm.reminderModeDefault")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="default">{t("subscriptionForm.reminderModeDefault")}</SelectItem>
+                      <SelectItem value="custom">{t("subscriptionForm.reminderModeCustom")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {reminderMode === "custom" && (
+                  <div className="space-y-1">
+                    <Label>{t("subscriptionForm.reminderDays")}</Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={90}
+                      value={reminderDays}
+                      onChange={(e) => setReminderDays(e.target.value)}
+                      placeholder="1-90"
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           <Button type="submit" disabled={submitting}>

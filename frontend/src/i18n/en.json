@@ -150,7 +150,14 @@
     "update": "Update",
     "create": "Create",
     "saveFailed": "Failed to save subscription",
-    "auto_renew": "Auto Renew"
+    "auto_renew": "Auto Renew",
+    "reminder": "Reminder",
+    "reminderDescription": "When off, no reminder is sent for this subscription",
+    "reminderMode": "Reminder days mode",
+    "reminderModeDefault": "Follow global default",
+    "reminderModeCustom": "Custom days",
+    "reminderDays": "Days ahead",
+    "reminderDaysRange": "Days ahead must be between 1 and 90"
   },
   "layout": {
     "appName": "SubPilot",
