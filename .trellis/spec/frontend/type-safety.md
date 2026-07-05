@@ -35,6 +35,14 @@
 - API response types in `src/api/types.ts`: `UserResponse` (includes `base_currency`, `locale`), `Subscription` (the response shape, includes `converted_price`, `acknowledged_billing_date`, `payment_method`, `logo_url`), `TokenResponse`, `SubscriptionStats`, `NotificationSettings`.
 - `NotificationSettingsUpdate = Partial<NotificationSettings>` — the PATCH payload mirrors the full settings object.
 - Error type narrowing: `(err as { response?: { data?: { detail?: string } } })?.response?.data?.detail`, falling back to a generic message.
+- `Intl.Locale.weekInfo` is not in TS lib types — narrow with an intersection cast when you need the first-day-of-week:
+  ```ts
+  const loc = new Intl.Locale(locale) as Intl.Locale & {
+    weekInfo?: { firstDay: number };
+  };
+  const first = loc.weekInfo?.firstDay; // 1–7 (Mon–Sun); normalize 7 → 0 for Sunday
+  ```
+  Used by `CalendarPage.getFirstDayOfWeek`. Wrap in try/catch with a Sunday fallback — some environments lack `weekInfo`.
 
 ---
 
