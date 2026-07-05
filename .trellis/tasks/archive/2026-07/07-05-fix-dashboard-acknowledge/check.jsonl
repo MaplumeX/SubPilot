@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Verify the /stats due_soon query edit conforms to backend code standards / forbidden patterns."}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Verify the due_soon ack-filter matches the documented ack-marker pattern (lines 103-128) and stays consistent with scanner.py:43-44."}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Verify the toast t() call edits and i18n key changes conform to frontend standards."}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Check cross-layer consistency: backend filter logic vs frontend optimistic update vs toast message semantics."}

@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "ack-marker pattern (lines 103-128) documents the exact filter condition this fix must mirror in /stats due_soon: acknowledged_billing_date IS NULL OR != next_billing_date. Confirms acknowledge must NOT advance next_billing_date."}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Backend code standards / forbidden patterns to honor when editing the /stats query."}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend code standards for the toast t() call edits in DashboardPage/SubscriptionsPage."}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "This task spans backend query fix + frontend i18n fix; cross-layer consistency guide applies."}
