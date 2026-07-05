@@ -54,11 +54,11 @@ export default function LoginPage() {
           <h2 className="font-heading text-3xl font-bold leading-tight tracking-[-0.01em]">
             {t("auth.brandHeadline")}
           </h2>
-          <p className="mt-3 text-sm text-primary-foreground/70">
+          <p className="mt-3 text-sm text-primary-foreground/80">
             {t("auth.brandBody")}
           </p>
         </div>
-        <p className="text-xs text-primary-foreground/50">
+        <p className="text-xs text-primary-foreground/80">
           {t("auth.brandFooter")}
         </p>
       </aside>
