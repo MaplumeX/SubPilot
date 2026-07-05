@@ -205,7 +205,6 @@ export default function DashboardPage({
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-pending/30 text-pending hover:bg-pending/10 hover:text-pending"
                           onClick={() => void handleAcknowledge(sub)}
                         >
                           <CheckCircle2 className="size-4 text-pending" />

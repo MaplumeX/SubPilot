@@ -404,7 +404,6 @@ export default function SubscriptionsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-pending/30 text-pending hover:bg-pending/10 hover:text-pending"
                             onClick={() => handleAcknowledge(sub.id)}
                           >
                             <CheckCircle2 className="size-4 text-pending" />
