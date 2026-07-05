@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend entry point: shadcn/base-ui stack, Tailwind v4, cn() convention"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Styling patterns, theme tokens (oklch), cn() usage, base-ui render prop — needed for class-only refactor"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Lint/typecheck standards the implement agent must satisfy before reporting done"}

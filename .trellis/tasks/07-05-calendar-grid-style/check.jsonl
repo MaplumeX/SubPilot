@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend entry point with Quality Check section the check agent must run against"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Code standards and forbidden patterns to verify in the diff"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Verify cn()/theme-token/base-ui conventions are respected in the refactored CalendarPage"}
