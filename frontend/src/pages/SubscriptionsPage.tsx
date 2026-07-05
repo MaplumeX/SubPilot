@@ -344,8 +344,8 @@ export default function SubscriptionsPage() {
                 <TableRow key={sub.id} className="transition-colors hover:bg-muted/30">
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
-                      <Avatar className="size-7">
-                        <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} />
+                      <Avatar className="size-7 rounded-md after:rounded-md">
+                        <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} className="rounded-md object-contain" />
                         <AvatarFallback>{sub.name.charAt(0).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <span>{sub.name}</span>

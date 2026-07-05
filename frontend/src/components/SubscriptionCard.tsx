@@ -41,8 +41,8 @@ export default function SubscriptionCard({
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <Avatar className="size-8 shrink-0">
-              <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} />
+            <Avatar className="size-8 shrink-0 rounded-md after:rounded-md">
+              <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} className="rounded-md object-contain" />
               <AvatarFallback>{sub.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
             <CardTitle className="truncate text-sm">{sub.name}</CardTitle>

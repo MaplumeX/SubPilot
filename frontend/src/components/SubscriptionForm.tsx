@@ -301,8 +301,8 @@ export default function SubscriptionForm({
             <Label>{t("subscriptionForm.logo")}</Label>
             {previewUrl ? (
               <div className="flex items-center gap-3">
-                <Avatar className="size-7">
-                  <AvatarImage src={previewUrl} alt={name} />
+                <Avatar className="size-7 rounded-md after:rounded-md">
+                  <AvatarImage src={previewUrl} alt={name} className="rounded-md object-contain" />
                   <AvatarFallback>{name.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <span className="text-sm text-muted-foreground truncate max-w-[200px]">{previewUrl}</span>

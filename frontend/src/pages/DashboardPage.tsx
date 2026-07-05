@@ -185,8 +185,8 @@ export default function DashboardPage({
                       className="flex items-center justify-between gap-3 rounded-lg border border-pending/10 bg-background/60 p-3 transition-colors hover:border-pending/20"
                     >
                       <div className="flex min-w-0 items-center gap-3">
-                        <Avatar className="size-7 shrink-0">
-                          <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} />
+                        <Avatar className="size-7 shrink-0 rounded-md after:rounded-md">
+                          <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} className="rounded-md object-contain" />
                           <AvatarFallback>{sub.name.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
