@@ -340,75 +340,81 @@ export default function SubscriptionsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {subscriptions.map((sub) => (
-                <TableRow key={sub.id} className="transition-colors hover:bg-muted/30">
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="size-7 rounded-md after:rounded-md">
-                        <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} className="rounded-md object-contain" />
-                        <AvatarFallback>{sub.name.charAt(0).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                      <span>{sub.name}</span>
-                      {isDueSoon(sub) && (
-                        <Badge variant="pending" className="ml-2">
-                          {formatDueLabel(sub.next_billing_date, t)}
-                        </Badge>
+              {subscriptions.map((sub) => {
+                const dueSoon = isDueSoon(sub);
+                const acknowledged =
+                  sub.acknowledged_billing_date != null &&
+                  sub.acknowledged_billing_date === sub.next_billing_date;
+                return (
+                  <TableRow key={sub.id} className="transition-colors hover:bg-muted/30">
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <Avatar className="size-7 rounded-md after:rounded-md">
+                          <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} className="rounded-md object-contain" />
+                          <AvatarFallback>{sub.name.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <span>{sub.name}</span>
+                        {dueSoon && (
+                          <Badge variant={acknowledged ? "secondary" : "pending"} className="ml-2">
+                            {acknowledged
+                              ? t("subscriptions.acknowledged")
+                              : formatDueLabel(sub.next_billing_date, t)}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {sub.currency} {sub.price.toFixed(2)}
+                      {sub.converted_price != null && sub.currency !== baseCurrency && (
+                        <span className="ml-1 text-xs text-muted-foreground">
+                          (~{new Intl.NumberFormat(i18n.language, { style: "currency", currency: baseCurrency }).format(sub.converted_price)})
+                        </span>
                       )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {sub.currency} {sub.price.toFixed(2)}
-                    {sub.converted_price != null && sub.currency !== baseCurrency && (
-                      <span className="ml-1 text-xs text-muted-foreground">
-                        (~{new Intl.NumberFormat(i18n.language, { style: "currency", currency: baseCurrency }).format(sub.converted_price)})
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell>{formatCycle(sub.cycle_count, sub.cycle_unit)}</TableCell>
-                  <TableCell>
-                    {sub.category?.name ?? "-"}
-                  </TableCell>
-                  <TableCell>
-                    {sub.payment_method?.name ?? "-"}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        sub.status === "active"
-                          ? "default"
-                          : sub.status === "trial"
-                            ? "secondary"
-                            : "outline"
-                      }
-                    >
-                      {t(`subscriptions.statuses.${sub.status}`)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      title={sub.auto_renew ? t("subscriptions.auto_renew_enabled") : t("subscriptions.auto_renew_disabled")}
-                      className="inline-flex items-center"
-                    >
-                      <RefreshCw
-                        className={`size-4 ${sub.auto_renew ? "text-pending" : "text-muted-foreground/80"}`}
-                      />
-                    </span>
-                  </TableCell>
-                  <TableCell>{formatDueLabel(sub.next_billing_date, t)}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setEditing(sub);
-                          setFormOpen(true);
-                        }}
+                    </TableCell>
+                    <TableCell>{formatCycle(sub.cycle_count, sub.cycle_unit)}</TableCell>
+                    <TableCell>
+                      {sub.category?.name ?? "-"}
+                    </TableCell>
+                    <TableCell>
+                      {sub.payment_method?.name ?? "-"}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          sub.status === "active"
+                            ? "default"
+                            : sub.status === "trial"
+                              ? "secondary"
+                              : "outline"
+                        }
                       >
-                        {t("subscriptions.edit")}
-                      </Button>
-                      {isDueSoon(sub) &&
-                        !(sub.acknowledged_billing_date != null && sub.acknowledged_billing_date === sub.next_billing_date) && (
+                        {t(`subscriptions.statuses.${sub.status}`)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        title={sub.auto_renew ? t("subscriptions.auto_renew_enabled") : t("subscriptions.auto_renew_disabled")}
+                        className="inline-flex items-center"
+                      >
+                        <RefreshCw
+                          className={`size-4 ${sub.auto_renew ? "text-pending" : "text-muted-foreground/80"}`}
+                        />
+                      </span>
+                    </TableCell>
+                    <TableCell>{formatDueLabel(sub.next_billing_date, t)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditing(sub);
+                            setFormOpen(true);
+                          }}
+                        >
+                          {t("subscriptions.edit")}
+                        </Button>
+                        {dueSoon && !acknowledged && (
                           <Button
                             variant="outline"
                             size="sm"
@@ -418,19 +424,20 @@ export default function SubscriptionsPage() {
                             {t("subscriptions.acknowledge")}
                           </Button>
                         )}
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        className="text-muted-foreground hover:text-destructive"
-                        onClick={() => setDeleteTarget(sub)}
-                        aria-label={t("subscriptions.delete")}
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          className="text-muted-foreground hover:text-destructive"
+                          onClick={() => setDeleteTarget(sub)}
+                          aria-label={t("subscriptions.delete")}
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>

@@ -75,6 +75,7 @@ if (theme === 'dark' || ((theme === 'system' || !theme) && window.matchMedia('(p
 - **Using `theme` instead of `resolvedTheme` for icon display** — in system mode `theme` is `"system"`, but the icon should reflect the actual resolved value (`"light"` or `"dark"`). Use `resolvedTheme` for UI that reflects what the user sees (see `theme-toggle.tsx`).
 - **FOUC script missing `system` branch** — if the inline script in `index.html` only checks `theme === 'dark'`, users who selected "System" with a dark OS preference will see a white flash before `.dark` is applied.
 - **Wrapping oklch CSS vars with `hsl()`** — theme variables are defined in oklch format; `hsl(var(--primary))` produces invalid CSS like `hsl(oklch(0.205 0 0))`. Always use bare `var(--primary)` for SVG attributes (Recharts stroke/fill, etc.)
+- **Due-soon badge ignores acknowledge state** — if a surface shows a due-soon badge *and* an acknowledge button, the badge must branch on `acknowledged_billing_date === next_billing_date` the same way `SubscriptionCard` does: unacked → `pending` + `formatDueLabel`; acked → `secondary` + `t("subscriptions.acknowledged")`. Hiding only the button leaves the row looking still-due after confirm (see table view in `SubscriptionsPage`).
 
 ---
 
