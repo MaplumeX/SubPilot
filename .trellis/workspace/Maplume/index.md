@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 23
+- **Total Sessions**: 24
 - **Last Active**: 2026-07-09
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~818 | Active |
+| `journal-1.md` | ~852 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 24 | 2026-07-09 | Future monthly cashflow forecast on Statistics + Dashboard | `47b16b6`, `8c0942d` | `main` |
 | 23 | 2026-07-09 | Configurable daily notification time | `204655f`, `4172bc5` | `main` |
 | 22 | 2026-07-09 | Show acknowledged status in subscriptions table | `a15eb68` | `main` |
 | 21 | 2026-07-09 | Fix auto-renewal scheduler startup and catch-up | `ca9bfb1`, `62be83f` | `main` |

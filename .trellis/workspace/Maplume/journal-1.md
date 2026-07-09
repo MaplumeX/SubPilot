@@ -816,3 +816,37 @@ Added user-local reminder_time + timezone settings, 1-minute scanner with once-p
 ### Next Steps
 
 - None - task complete
+
+
+## Session 24: Future monthly cashflow forecast on Statistics + Dashboard
+
+**Date**: 2026-07-09
+**Task**: Future monthly cashflow forecast on Statistics + Dashboard
+**Branch**: `main`
+
+### Summary
+
+Added GET /subscriptions/forecast projecting actual billing charges (price×FX, not monthly-normalized) for 12 calendar months with auto_renew-aware rolling. Statistics page shows Recharts bar chart + click-for-month detail; Dashboard next-30-days now uses the same server total. Spec updated for cashflow vs stats semantics and /forecast route order.
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `47b16b6` | (see git log) |
+| `8c0942d` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
