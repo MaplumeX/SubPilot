@@ -715,3 +715,37 @@ Added per-subscription reminder config (enable switch + default/custom mode + cu
 ### Next Steps
 
 - None - task complete
+
+
+## Session 21: Fix auto-renewal scheduler startup and catch-up
+
+**Date**: 2026-07-09
+**Task**: Fix auto-renewal scheduler startup and catch-up
+**Branch**: `main`
+
+### Summary
+
+Diagnosed auto-renewal not firing: APScheduler interval days=1 never ran on startup and only advanced one cycle per run. Fixed by calling _run_renewals() in lifespan (like exchange rates) and looping process_renewals until next_billing_date > today. Documented startup-immediate-run and catch-up conventions in backend directory-structure spec.
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ca9bfb1` | (see git log) |
+| `62be83f` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
