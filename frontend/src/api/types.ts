@@ -133,6 +133,8 @@ export interface LogoCandidate {
 export interface NotificationSettings {
   reminders_enabled: boolean;
   reminder_days: number;
+  reminder_time: string;
+  timezone: string;
   reminder_email_enabled: boolean;
   reminder_telegram_enabled: boolean;
   telegram_chat_id: string | null;

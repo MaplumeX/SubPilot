@@ -46,6 +46,25 @@ import type { NotificationSettings } from "@/api/types";
 
 type ChannelKey = "email" | "telegram";
 
+const TIMEZONES = [
+  { value: "Asia/Shanghai", label: "Asia/Shanghai (UTC+8)" },
+  { value: "Asia/Tokyo", label: "Asia/Tokyo (UTC+9)" },
+  { value: "Asia/Hong_Kong", label: "Asia/Hong_Kong (UTC+8)" },
+  { value: "Asia/Singapore", label: "Asia/Singapore (UTC+8)" },
+  { value: "Asia/Kolkata", label: "Asia/Kolkata (UTC+5:30)" },
+  { value: "Europe/London", label: "Europe/London" },
+  { value: "Europe/Paris", label: "Europe/Paris" },
+  { value: "Europe/Berlin", label: "Europe/Berlin" },
+  { value: "America/New_York", label: "America/New_York" },
+  { value: "America/Chicago", label: "America/Chicago" },
+  { value: "America/Denver", label: "America/Denver" },
+  { value: "America/Los_Angeles", label: "America/Los_Angeles" },
+  { value: "America/Sao_Paulo", label: "America/Sao_Paulo" },
+  { value: "Australia/Sydney", label: "Australia/Sydney" },
+  { value: "Pacific/Auckland", label: "Pacific/Auckland" },
+  { value: "UTC", label: "UTC" },
+] as const;
+
 export default function SettingsPage() {
   const { t, i18n } = useTranslation();
   const { user, refreshUser } = useAuth();
@@ -369,6 +388,49 @@ function NotificationsCard() {
             onChange={(e) => update("reminder_days", Number(e.target.value))}
             className="w-[120px]"
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label>{t("notifications.reminderTime")}</Label>
+          <Input
+            type="time"
+            step={60}
+            value={settings.reminder_time.slice(0, 5)}
+            onChange={(e) =>
+              update("reminder_time", e.target.value.slice(0, 5))
+            }
+            className="w-[160px]"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>{t("notifications.timezone")}</Label>
+          <Select
+            value={settings.timezone}
+            onValueChange={(v) => {
+              if (v) update("timezone", v);
+            }}
+          >
+            <SelectTrigger className="w-[280px]">
+              <SelectValue
+                label={
+                  TIMEZONES.find((z) => z.value === settings.timezone)?.label ??
+                  settings.timezone
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {TIMEZONES.map((z) => (
+                <SelectItem key={z.value} value={z.value}>
+                  {z.label}
+                </SelectItem>
+              ))}
+              {/* Keep current value selectable if not in the curated list */}
+              {!TIMEZONES.some((z) => z.value === settings.timezone) && (
+                <SelectItem value={settings.timezone}>{settings.timezone}</SelectItem>
+              )}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-4 rounded-lg border p-4">

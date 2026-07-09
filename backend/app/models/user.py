@@ -1,7 +1,7 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, Integer, String, text
+from sqlalchemy import Boolean, Date, DateTime, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -49,6 +49,13 @@ class User(Base):
     smtp_port: Mapped[int | None] = mapped_column(Integer, nullable=True)
     smtp_user: Mapped[str | None] = mapped_column(String(255), nullable=True)
     smtp_password: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    reminder_time: Mapped[str] = mapped_column(
+        String(5), nullable=False, default="09:00", server_default=text("'09:00'")
+    )
+    timezone: Mapped[str] = mapped_column(
+        String(64), nullable=False, default="Asia/Shanghai", server_default=text("'Asia/Shanghai'")
+    )
+    last_reminder_local_date: Mapped[date | None] = mapped_column(Date, nullable=True)
 
     subscriptions: Mapped[list["Subscription"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"

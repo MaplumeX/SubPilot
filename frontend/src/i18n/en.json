@@ -228,6 +228,8 @@
     "masterSwitchDescription": "Turn off to stop all reminders.",
     "reminderDays": "Days before due",
     "daysAhead": "{{count}} day(s) ahead",
+    "reminderTime": "Send time",
+    "timezone": "Timezone",
     "emailChannel": "Email",
     "smtpHost": "SMTP Host",
     "smtpPort": "SMTP Port",
