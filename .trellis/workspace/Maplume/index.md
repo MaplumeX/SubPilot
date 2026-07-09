@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 21
+- **Total Sessions**: 22
 - **Last Active**: 2026-07-09
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~751 | Active |
+| `journal-1.md` | ~784 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 22 | 2026-07-09 | Show acknowledged status in subscriptions table | `a15eb68` | `main` |
 | 21 | 2026-07-09 | Fix auto-renewal scheduler startup and catch-up | `ca9bfb1`, `62be83f` | `main` |
 | 20 | 2026-07-05 | Enhance reminder configuration | `a1b4060a875a7a83ab593a7669dd71ef01fd1c6e` | `main` |
 | 19 | 2026-07-05 | Refine calendar grid to minimalist Notion/Linear style | `4588e75`, `5f1c919` | `main` |

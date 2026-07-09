@@ -749,3 +749,36 @@ Diagnosed auto-renewal not firing: APScheduler interval days=1 never ran on star
 ### Next Steps
 
 - None - task complete
+
+
+## Session 22: Show acknowledged status in subscriptions table
+
+**Date**: 2026-07-09
+**Task**: Show acknowledged status in subscriptions table
+**Branch**: `main`
+
+### Summary
+
+Fixed table view so due-soon rows show a secondary '已确认' badge after acknowledge (matching SubscriptionCard), instead of only hiding the button. Documented the dual-surface badge gotcha in frontend component guidelines.
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a15eb68` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
