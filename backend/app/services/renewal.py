@@ -27,9 +27,11 @@ def process_renewals(db: Session) -> int:
     """Process auto-renewals for all eligible subscriptions.
 
     Queries subscriptions where auto_renew=True, status=active,
-    and next_billing_date <= today. Advances each by one billing cycle.
+    and next_billing_date <= today. Advances each subscription by one
+    billing cycle repeatedly until next_billing_date > today (catch-up
+    for missed cycles after downtime).
 
-    Returns the count of renewed subscriptions.
+    Returns the count of renewed subscriptions (subscription-level).
     """
     today = date.today()
 
@@ -46,9 +48,10 @@ def process_renewals(db: Session) -> int:
 
     count = 0
     for sub in subscriptions:
-        sub.next_billing_date = advance_next_billing_date(
-            sub.next_billing_date, sub.cycle_count, sub.cycle_unit
-        )
+        while sub.next_billing_date is not None and sub.next_billing_date <= today:
+            sub.next_billing_date = advance_next_billing_date(
+                sub.next_billing_date, sub.cycle_count, sub.cycle_unit
+            )
         count += 1
 
     if count > 0:

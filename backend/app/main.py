@@ -59,6 +59,7 @@ async def lifespan(app: FastAPI):
     scheduler.add_job(_run_renewals, "interval", days=1, id="auto_renewal")
     scheduler.add_job(_run_exchange_rates, "interval", days=1, id="fetch_exchange_rates")
     scheduler.add_job(_run_reminders, "interval", days=1, id="send_reminders")
+    _run_renewals()
     _run_exchange_rates()
     scheduler.start()
     os.makedirs("static/logos", exist_ok=True)
