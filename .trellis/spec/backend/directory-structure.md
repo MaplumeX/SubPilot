@@ -91,18 +91,19 @@ backend/
    - Calls the service function
    - Closes the session after completion
 4. Wrap the job body in `try/except` with `logger.exception(...)` — **never** let a background job raise, or the scheduler crashes for all users. See the `_run_renewals` / `_run_reminders` wrappers in `main.py`.
-5. **Startup immediate run for correctness-critical jobs**: APScheduler `interval` triggers (e.g. `days=1`) first fire at roughly `now + interval`, **not** on registration. Dev `--reload` also resets that timer. If the job must keep data correct after restarts/downtime (auto-renewal, exchange rates), call the same `_run_*` wrapper **once in lifespan before `scheduler.start()`**, then keep the interval job for ongoing runs. Current pattern in `main.py`:
+5. **Startup immediate run for correctness-critical jobs**: APScheduler `interval` triggers (e.g. `days=1`) first fire at roughly `now + interval`, **not** on registration. Dev `--reload` also resets that timer. If the job must keep data correct after restarts/downtime (auto-renewal, exchange rates, reminders catch-up), call the same `_run_*` wrapper **once in lifespan before `scheduler.start()`**, then keep the interval job for ongoing runs. Current pattern in `main.py`:
    ```python
    scheduler.add_job(_run_renewals, "interval", days=1, id="auto_renewal")
    scheduler.add_job(_run_exchange_rates, "interval", days=1, id="fetch_exchange_rates")
-   scheduler.add_job(_run_reminders, "interval", days=1, id="send_reminders")
+   scheduler.add_job(_run_reminders, "interval", minutes=1, id="send_reminders")
    _run_renewals()          # immediate — data correctness
    _run_exchange_rates()    # immediate — data correctness
+   _run_reminders()         # immediate — catch-up after restart (safe: per-user time + day marker)
    scheduler.start()
-   # reminders intentionally interval-only for now (not required at boot)
    ```
-6. **Catch-up for date-advancing jobs**: if a job advances a calendar field (e.g. `process_renewals` advances `Subscription.next_billing_date`), one step per run is not enough after multi-day downtime. Loop per row until the field is strictly in the future (`next_billing_date > today`), still only mutating the business date — never the ack marker. See `services/renewal.py`.
-7. Shut down scheduler in the lifespan exit handler (`scheduler.shutdown(wait=False)`).
+6. **User-local reminder schedule (not a daily global fire)**: reminders use a **1-minute** shared job + per-user filter, not `interval days=1`. Each user has `reminder_time` (`HH:MM`) + IANA `timezone`. `process_reminders` only handles a user when local time ≥ preferred time and `last_reminder_local_date != local_today`, then marks `last_reminder_local_date = local_today` (even if 0 messages). Due windows use **user local today**, not server `date.today()`. Invalid stored tz/time → `logger.warning` + skip (never raise in the job). See `services/notifications/scanner.py`.
+7. **Catch-up for date-advancing jobs**: if a job advances a calendar field (e.g. `process_renewals` advances `Subscription.next_billing_date`), one step per run is not enough after multi-day downtime. Loop per row until the field is strictly in the future (`next_billing_date > today`), still only mutating the business date — never the ack marker. See `services/renewal.py`.
+8. Shut down scheduler in the lifespan exit handler (`scheduler.shutdown(wait=False)`).
 
 ### Serving Uploaded Files
 

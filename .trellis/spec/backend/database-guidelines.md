@@ -95,6 +95,7 @@ else:
 - **Missing `server_default` on Boolean columns** — SQLite can't handle Python-side defaults in ALTER TABLE; always use `server_default=text("1")` / `text("0")` for non-nullable Boolean columns
 - **Missing `server_default` on non-nullable String columns** — SQLite ALTER TABLE requires `server_default` for adding NOT NULL columns to existing tables; always provide `server_default=text("...")` (e.g., `server_default=text("CNY")` for currency fields)
 - **Notification channel switches defaulting to `text("1")`** — enabling a channel that sends external messages should default OFF so existing users don't get surprise messages; prefer `server_default=text("0")` and require explicit opt-in.
+- **User-local reminder schedule fields** — `User.reminder_time` (`String(5)`, default/server_default `"09:00"`), `User.timezone` (`String(64)`, default/server_default `"Asia/Shanghai"`), and internal `User.last_reminder_local_date` (`Date`, nullable, no API exposure). When adding similar “preferred local wall-clock” features: store IANA timezone + `HH:MM` string, validate with `zoneinfo.ZoneInfo` + regex at write time, and use a separate day-marker column for job idempotency instead of relying on a once-daily scheduler interval.
 
 ---
 

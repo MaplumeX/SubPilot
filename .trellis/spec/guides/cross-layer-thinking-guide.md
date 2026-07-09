@@ -112,6 +112,9 @@ Reminder channels (email/Telegram) are a cross-layer feature: settings written v
 - [ ] Blank strings must normalize to `None` before storage so the "incomplete creds" check works — see `_blank_to_none` field validator in `schemas/notification.py`.
 - [ ] Render locale via `user.locale or "en"` (English fallback), and any new locale needs matching template keys in `services/notifications/templates.py`.
 - [ ] Never log credentials — log channel name + ids only (see [Logging Guidelines](../backend/logging-guidelines.md)).
+- [ ] **Send time is user-local**: `User.reminder_time` (`HH:MM`) + `User.timezone` (IANA). API validates both at write time (`schemas/notification.py`); scanner uses them for the local-time gate and local-today due window. Do **not** reintroduce server `date.today()` for reminder windows.
+- [ ] **Once-per-local-day idempotency** lives on `User.last_reminder_local_date` (internal, not in API schemas). If the job runs more often than daily, any change that removes this marker will re-spam. Mark after handling a user even when 0 messages are sent.
+- [ ] Frontend `<input type="time">` must normalize to `HH:MM` (`step={60}` + `.slice(0, 5)`); some browsers emit `HH:MM:SS` which fails backend validation.
 
 Reference files: `backend/app/routers/auth.py`, `backend/app/schemas/notification.py`, `backend/app/services/notifications/{scanner,channels,templates}.py`, `frontend/src/pages/SettingsPage.tsx`.
 
