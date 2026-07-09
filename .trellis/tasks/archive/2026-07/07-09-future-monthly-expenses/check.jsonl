@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Verify static /forecast route order and backend quality rules"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Verify service placement matches backend layout"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend quality and forbidden patterns"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Recharts color vars; i18n; Card composition"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Forecast types mirror API contract"}
+{"file": ".trellis/tasks/07-09-future-monthly-expenses/prd.md", "reason": "Acceptance criteria AC1–AC8"}
+{"file": ".trellis/tasks/07-09-future-monthly-expenses/design.md", "reason": "Design contracts for cashflow projection and endpoints"}

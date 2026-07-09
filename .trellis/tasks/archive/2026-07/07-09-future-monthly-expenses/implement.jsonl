@@ -1,0 +1,13 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend guideline index for FastAPI/SQLAlchemy layout"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Where to place services/forecast.py and router modules"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Static route order before /{id}; forbidden patterns"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "HTTP error conventions for new endpoint"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend guideline index"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Pages/api/i18n layout for Statistics and Dashboard"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Recharts oklch CSS var rules; Card/layout patterns"}
+{"file": ".trellis/spec/frontend/hook-guidelines.md", "reason": "useCallback/useEffect fetch pattern on pages"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "API response types in types.ts conventions"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Page-local state for stats/forecast; no derived store"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend quality bar before check"}
+{"file": ".trellis/tasks/07-09-future-monthly-expenses/design.md", "reason": "Technical design for forecast service, API, UI"}
+{"file": ".trellis/tasks/07-09-future-monthly-expenses/implement.md", "reason": "Ordered implementation checklist and validation"}
