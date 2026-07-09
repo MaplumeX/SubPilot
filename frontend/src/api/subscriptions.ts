@@ -2,6 +2,7 @@ import api from "./client";
 import type {
   Subscription,
   SubscriptionCreate,
+  SubscriptionForecast,
   SubscriptionStats,
   SubscriptionUpdate,
   LogoCandidate,
@@ -77,5 +78,10 @@ export async function cacheLogo(imageUrl: string): Promise<{ logo_url: string }>
 
 export async function getStats(): Promise<SubscriptionStats> {
   const { data } = await api.get<SubscriptionStats>("/subscriptions/stats");
+  return data;
+}
+
+export async function getForecast(): Promise<SubscriptionForecast> {
+  const { data } = await api.get<SubscriptionForecast>("/subscriptions/forecast");
   return data;
 }

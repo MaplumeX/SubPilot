@@ -111,3 +111,22 @@ class SubscriptionStats(BaseModel):
 
 class CacheLogoRequest(BaseModel):
     image_url: HttpUrl
+
+
+class ForecastChargeItem(BaseModel):
+    subscription_id: int
+    name: str
+    billing_date: date
+    amount: float
+
+
+class MonthlyForecast(BaseModel):
+    year_month: str  # "YYYY-MM"
+    total: float
+    items: list[ForecastChargeItem]
+
+
+class SubscriptionForecast(BaseModel):
+    base_currency: str
+    months: list[MonthlyForecast]
+    next_30_days_total: float

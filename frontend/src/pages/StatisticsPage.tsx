@@ -1,8 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
-import { getStats, listSubscriptions } from "@/api/subscriptions";
-import type { SubscriptionStats, Subscription } from "@/api/types";
+import { getStats, getForecast, listSubscriptions } from "@/api/subscriptions";
+import type {
+  SubscriptionStats,
+  Subscription,
+  SubscriptionForecast,
+  MonthlyForecast,
+} from "@/api/types";
 import { toast } from "@/components/ui/toaster";
 import { isNonAuthError } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +17,11 @@ import {
   Tooltip,
   ResponsiveContainer,
   Sector,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Cell,
 } from "recharts";
 import type { PieSectorShapeProps } from "recharts";
 
@@ -35,24 +45,44 @@ interface TopSubData {
   cost: number;
 }
 
+interface ChartMonth {
+  year_month: string;
+  total: number;
+  label: string;
+}
+
+function formatYearMonthLabel(yearMonth: string, locale: string): string {
+  const [y, m] = yearMonth.split("-").map(Number);
+  if (!y || !m) return yearMonth;
+  return new Date(y, m - 1, 1).toLocaleDateString(locale, {
+    year: "numeric",
+    month: "short",
+  });
+}
+
 export default function StatisticsPage() {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [stats, setStats] = useState<SubscriptionStats | null>(null);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [forecast, setForecast] = useState<SubscriptionForecast | null>(null);
+  const [selectedYearMonth, setSelectedYearMonth] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const baseCurrency = stats?.base_currency ?? user?.base_currency ?? "CNY";
+  const baseCurrency =
+    forecast?.base_currency ?? stats?.base_currency ?? user?.base_currency ?? "CNY";
   const locale = i18n.language;
 
   const fetchData = useCallback(async () => {
     try {
-      const [statsData, subsData] = await Promise.all([
+      const [statsData, subsData, forecastData] = await Promise.all([
         getStats(),
         listSubscriptions(),
+        getForecast(),
       ]);
       setStats(statsData);
       setSubscriptions(subsData);
+      setForecast(forecastData);
     } catch (err) {
       // 401 handled by interceptor; surface all other failures.
       if (isNonAuthError(err)) {
@@ -61,7 +91,7 @@ export default function StatisticsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     fetchData();
@@ -84,22 +114,45 @@ export default function StatisticsPage() {
     .slice(0, 5)
     .map((s) => ({ name: s.name, cost: s.converted_price ?? 0 }));
 
+  const chartMonths: ChartMonth[] =
+    forecast?.months.map((m) => ({
+      year_month: m.year_month,
+      total: m.total,
+      label: formatYearMonthLabel(m.year_month, locale),
+    })) ?? [];
+
+  const selectedMonth: MonthlyForecast | null =
+    forecast && selectedYearMonth
+      ? (forecast.months.find((m) => m.year_month === selectedYearMonth) ?? null)
+      : null;
+
   const fmt = (value: number) =>
     new Intl.NumberFormat(locale, {
       style: "currency",
       currency: baseCurrency,
     }).format(value);
 
+  const fmtDate = (iso: string) =>
+    new Date(iso + "T00:00:00").toLocaleDateString(locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+
   if (loading) {
     return (
-      <p className="text-muted-foreground" role="status" aria-live="polite">{t("statistics.loading")}</p>
+      <p className="text-muted-foreground" role="status" aria-live="polite">
+        {t("statistics.loading")}
+      </p>
     );
   }
 
   if (!hasData) {
     return (
       <div className="space-y-6">
-        <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">{t("statistics.title")}</h2>
+        <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">
+          {t("statistics.title")}
+        </h2>
         <Card>
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">{t("statistics.noData")}</p>
@@ -114,8 +167,147 @@ export default function StatisticsPage() {
 
   return (
     <div className="space-y-6 [&_.recharts-text]:fill-muted-foreground [&_.recharts-pie-label-text]:fill-foreground">
-      <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">{t("statistics.title")}</h2>
+      <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">
+        {t("statistics.title")}
+      </h2>
       <p className="mt-1 text-sm text-muted-foreground">{t("statistics.subtitle")}</p>
+
+      {/* 12-month cashflow forecast */}
+      {forecast && (
+        <Card className="transition-shadow hover:shadow-ambient-low">
+          <CardHeader>
+            <CardTitle>{t("statistics.monthlyForecast")}</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              {t("statistics.monthlyForecastSubtitle")}
+            </p>
+          </CardHeader>
+          <CardContent>
+            {chartMonths.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart
+                    data={chartMonths}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                  >
+                    <XAxis
+                      dataKey="label"
+                      tickLine={false}
+                      axisLine={false}
+                      fontSize={12}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      fontSize={12}
+                      width={56}
+                      tickFormatter={(v: number) =>
+                        new Intl.NumberFormat(locale, {
+                          notation: "compact",
+                          maximumFractionDigits: 1,
+                        }).format(v)
+                      }
+                    />
+                    <Tooltip
+                      formatter={(value) => fmt(Number(value))}
+                      labelFormatter={(_, payload) => {
+                        const item = payload?.[0]?.payload as ChartMonth | undefined;
+                        return item?.label ?? "";
+                      }}
+                      contentStyle={{
+                        backgroundColor: "var(--popover)",
+                        border: "1px solid var(--border)",
+                        borderRadius: "var(--radius)",
+                        color: "var(--popover-foreground)",
+                      }}
+                      itemStyle={{
+                        color: "var(--popover-foreground)",
+                      }}
+                      labelStyle={{
+                        color: "var(--foreground)",
+                      }}
+                      cursor={{ fill: "var(--muted)", opacity: 0.35 }}
+                    />
+                    <Bar
+                      dataKey="total"
+                      radius={[4, 4, 0, 0]}
+                      cursor="pointer"
+                      onClick={(data) => {
+                        const payload = data?.payload as ChartMonth | undefined;
+                        const ym = payload?.year_month;
+                        if (!ym) return;
+                        setSelectedYearMonth((prev) => (prev === ym ? null : ym));
+                      }}
+                    >
+                      {chartMonths.map((m) => (
+                        <Cell
+                          key={m.year_month}
+                          fill={
+                            selectedYearMonth === m.year_month
+                              ? "var(--primary)"
+                              : "var(--chart-1)"
+                          }
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+
+                {!selectedMonth && (
+                  <p className="mt-3 text-center text-sm text-muted-foreground">
+                    {t("statistics.forecastClickHint")}
+                  </p>
+                )}
+
+                {selectedMonth && (
+                  <div className="mt-4 space-y-3 border-t pt-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-medium">
+                        {t("statistics.forecastDetailTitle", {
+                          month: formatYearMonthLabel(
+                            selectedMonth.year_month,
+                            locale
+                          ),
+                        })}
+                      </h3>
+                      <span className="font-variant-numeric tabular-nums text-sm font-semibold">
+                        {fmt(selectedMonth.total)}
+                      </span>
+                    </div>
+                    {selectedMonth.items.length === 0 ? (
+                      <p className="py-4 text-center text-sm text-muted-foreground">
+                        {t("statistics.forecastEmptyMonth")}
+                      </p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {selectedMonth.items.map((item, idx) => (
+                          <li
+                            key={`${item.subscription_id}-${item.billing_date}-${idx}`}
+                            className="flex items-center justify-between rounded-lg border p-3 text-sm"
+                          >
+                            <div className="min-w-0">
+                              <p className="truncate font-medium">{item.name}</p>
+                              <p className="text-muted-foreground">
+                                {fmtDate(item.billing_date)}
+                              </p>
+                            </div>
+                            <span className="ml-3 shrink-0 font-variant-numeric tabular-nums font-semibold">
+                              {fmt(item.amount)}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="py-12 text-center text-muted-foreground">
+                {t("statistics.noData")}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Category Distribution — "where does my money go" */}
@@ -212,7 +404,9 @@ export default function StatisticsPage() {
                       </span>
                       <span className="font-medium">{sub.name}</span>
                     </div>
-                    <span className="font-variant-numeric tabular-nums font-semibold">{fmt(sub.cost)}</span>
+                    <span className="font-variant-numeric tabular-nums font-semibold">
+                      {fmt(sub.cost)}
+                    </span>
                   </div>
                 ))}
               </div>

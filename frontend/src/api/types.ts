@@ -123,6 +123,25 @@ export interface SubscriptionStats {
   top3_percentage: number;
 }
 
+export interface ForecastChargeItem {
+  subscription_id: number;
+  name: string;
+  billing_date: string;
+  amount: number;
+}
+
+export interface MonthlyForecast {
+  year_month: string;
+  total: number;
+  items: ForecastChargeItem[];
+}
+
+export interface SubscriptionForecast {
+  base_currency: string;
+  months: MonthlyForecast[];
+  next_30_days_total: number;
+}
+
 export interface LogoCandidate {
   thumbnail: string;
   image: string;

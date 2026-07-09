@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { getStats, listSubscriptions, acknowledgeSubscription } from "@/api/subscriptions";
-import type { SubscriptionStats, Subscription } from "@/api/types";
+import { getStats, getForecast, acknowledgeSubscription } from "@/api/subscriptions";
+import type { SubscriptionStats, Subscription, SubscriptionForecast } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -77,17 +77,17 @@ export default function DashboardPage({
 }: DashboardPageProps) {
   const { t, i18n } = useTranslation();
   const [stats, setStats] = useState<SubscriptionStats | null>(null);
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [forecast, setForecast] = useState<SubscriptionForecast | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
     try {
-      const [statsData, subsData] = await Promise.all([
+      const [statsData, forecastData] = await Promise.all([
         getStats(),
-        listSubscriptions(),
+        getForecast(),
       ]);
       setStats(statsData);
-      setSubscriptions(subsData);
+      setForecast(forecastData);
     } catch (err) {
       // 401 handled by interceptor; surface all other failures.
       if (isNonAuthError(err)) {
@@ -96,14 +96,14 @@ export default function DashboardPage({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   const locale = i18n.language;
-  const baseCurrency = stats?.base_currency ?? "CNY";
+  const baseCurrency = forecast?.base_currency ?? stats?.base_currency ?? "CNY";
   const fmt = (value: number) =>
     new Intl.NumberFormat(locale, {
       style: "currency",
@@ -137,6 +137,7 @@ export default function DashboardPage({
   const dueSoon = stats?.due_soon ?? [];
   const isAllClear = !loading && dueSoon.length === 0;
   const monthlySpend = stats?.total_monthly ?? 0;
+  const next30Days = forecast?.next_30_days_total ?? 0;
 
   return (
     <div className="space-y-6">
@@ -283,65 +284,24 @@ export default function DashboardPage({
             </Card>
           </div>
 
-          {/* Next-month projection — replaces fake trend chart (distill) */}
-          <NextMonthProjection subscriptions={subscriptions} fmt={fmt} />
+          {/* Next 30 days cashflow — same algorithm as Statistics forecast */}
+          {forecast && (
+            <Card className="transition-shadow hover:shadow-ambient-low">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {t("dashboard.nextMonthProjection")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <HeroNumber value={next30Days} fmt={fmt} className="text-3xl" />
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("dashboard.nextMonthProjectionSubtitle")}
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </>
       )}
     </div>
-  );
-}
-
-/**
- * A single, honest number: projected spend for the next 30 days,
- * derived from active subscriptions whose next_billing_date falls in that window.
- * Replaces the misleading 12-month flat-line trend that used total_monthly x12.
- */
-function NextMonthProjection({
-  subscriptions,
-  fmt,
-}: {
-  subscriptions: Subscription[];
-  fmt: (v: number) => string;
-}) {
-  const { t } = useTranslation();
-
-  const [projection, setProjection] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (subscriptions.length === 0) {
-      setProjection(null);
-      return;
-    }
-    const now = new Date();
-    const windowEnd = new Date(now);
-    windowEnd.setDate(now.getDate() + 30);
-
-    const total = subscriptions
-      .filter((s) => s.status === "active" && s.converted_price != null && s.next_billing_date)
-      .filter((s) => {
-        const next = new Date(s.next_billing_date! + "T00:00:00");
-        return next >= now && next <= windowEnd;
-      })
-      .reduce((sum, s) => sum + (s.converted_price ?? 0), 0);
-
-    setProjection(total);
-  }, [subscriptions]);
-
-  if (projection == null) return null;
-
-  return (
-    <Card className="transition-shadow hover:shadow-ambient-low">
-      <CardHeader>
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {t("dashboard.nextMonthProjection")}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <HeroNumber value={projection} fmt={fmt} className="text-3xl" />
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("dashboard.nextMonthProjectionSubtitle")}
-        </p>
-      </CardContent>
-    </Card>
   );
 }

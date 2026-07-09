@@ -15,9 +15,13 @@ from app.models.subscription import CycleUnit, ReminderMode, Subscription, Subsc
 from app.models.user import User
 from app.services import logo_search, ssrf
 from app.services.exchange_rate import get_rate
+from app.services.forecast import build_forecast
 from app.schemas.subscription import (
     CacheLogoRequest,
+    ForecastChargeItem,
+    MonthlyForecast,
     SubscriptionCreate,
+    SubscriptionForecast,
     SubscriptionResponse,
     SubscriptionStats,
     SubscriptionUpdate,
@@ -305,6 +309,57 @@ def get_stats(
         most_expensive=most_expensive,
         cheapest=cheapest,
         top3_percentage=top3_percentage,
+    )
+
+
+@router.get("/forecast", response_model=SubscriptionForecast)
+def get_forecast(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Project actual billing cashflow for the next 12 calendar months.
+
+    Must be declared before /{subscription_id} so "forecast" is not captured as an id.
+    """
+    base = current_user.base_currency
+    subscriptions = (
+        db.query(Subscription)
+        .filter(
+            Subscription.user_id == current_user.id,
+            Subscription.status == SubscriptionStatus.active,
+            Subscription.next_billing_date.isnot(None),
+        )
+        .all()
+    )
+
+    rate_cache: dict[str, float] = {}
+
+    def _rate_for(currency: str) -> float:
+        if currency not in rate_cache:
+            rate_cache[currency] = get_rate(db, currency, base)
+        return rate_cache[currency]
+
+    monthly, next_30 = build_forecast(subscriptions, _rate_for)
+
+    return SubscriptionForecast(
+        base_currency=base,
+        months=[
+            MonthlyForecast(
+                year_month=bucket.year_month,
+                total=bucket.total,
+                items=[
+                    ForecastChargeItem(
+                        subscription_id=item.subscription_id,
+                        name=item.name,
+                        billing_date=item.billing_date,
+                        amount=item.amount,
+                    )
+                    for item in bucket.items
+                ],
+            )
+            for bucket in monthly
+        ],
+        next_30_days_total=next_30,
     )
 
 

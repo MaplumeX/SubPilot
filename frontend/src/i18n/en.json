@@ -37,8 +37,8 @@
     "dueToday": "due today",
     "acknowledgedTitle": "Marked as renewed",
     "acknowledgedMessage": "Got it. We won't remind you again this cycle.",
-    "nextMonthProjection": "Next month projection",
-    "nextMonthProjectionSubtitle": "Based on your active subscriptions' next billing dates",
+    "nextMonthProjection": "Next 30 days projection",
+    "nextMonthProjectionSubtitle": "Actual charges expected in the next 30 days (not monthly averages)",
     "subtitleDue": "{{count}} subscription(s) due soon — review before they renew.",
     "subtitleClear": "Nothing due in the next {{days}} days. You're covered.",
     "activeSubscriptionsHint": "Currently being tracked"
@@ -263,6 +263,11 @@
     "loading": "Loading statistics...",
     "addFirst": "Add your first subscription to see statistics",
     "category": "Category",
-    "subtitle": "Insights into where your money goes."
+    "subtitle": "Insights into where your money goes.",
+    "monthlyForecast": "Upcoming monthly expenses",
+    "monthlyForecastSubtitle": "Projected actual charges over the next 12 calendar months",
+    "forecastEmptyMonth": "No charges projected this month",
+    "forecastDetailTitle": "Charges in {{month}}",
+    "forecastClickHint": "Click a bar to see that month's charges"
   }
 }

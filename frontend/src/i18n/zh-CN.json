@@ -37,8 +37,8 @@
     "dueToday": "今天到期",
     "acknowledgedTitle": "已确认续费",
     "acknowledgedMessage": "好的，已记下，本周期不再提醒。",
-    "nextMonthProjection": "下月预计支出",
-    "nextMonthProjectionSubtitle": "根据活跃订阅的下次扣费日期估算",
+    "nextMonthProjection": "未来 30 天预计支出",
+    "nextMonthProjectionSubtitle": "未来 30 天内预计实际扣款合计（非月均摊销）",
     "subtitleDue": "有 {{count}} 笔订阅即将到期，请在续费前确认。",
     "subtitleClear": "未来 {{days}} 天内无到期订阅，无需担忧。",
     "activeSubscriptionsHint": "当前在跟踪中"
@@ -263,6 +263,11 @@
     "loading": "加载统计中...",
     "addFirst": "添加第一个订阅以查看统计",
     "category": "分类",
-    "subtitle": "了解你的钱都花在了哪里。"
+    "subtitle": "了解你的钱都花在了哪里。",
+    "monthlyForecast": "未来每月开销",
+    "monthlyForecastSubtitle": "未来 12 个自然月的预计实际扣款",
+    "forecastEmptyMonth": "该月暂无预计扣款",
+    "forecastDetailTitle": "{{month}} 扣款明细",
+    "forecastClickHint": "点击柱状图查看该月明细"
   }
 }
