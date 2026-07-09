@@ -100,6 +100,22 @@ When a date filter or window (e.g., "subscriptions due within N days") is needed
 
 > Note: `Stats.due_soon` in `routers/subscriptions.py` still hardcodes `timedelta(days=3)` for the dashboard "due soon" list, while the **reminder scanner** (`services/notifications/scanner.py`) uses the user's `reminder_days`. These are intentionally two different windows (dashboard preview vs. reminder send), but if you change one, confirm the other still makes sense — see the checklist above.
 
+### Checklist: Cashflow forecast vs monthly-normalized stats
+
+Two different "cost" semantics coexist:
+
+| API | Semantics | Use for |
+|-----|-----------|---------|
+| `GET /subscriptions/stats` | Cycle-normalized monthly amount (`converted_price` / `total_monthly`) | Averages, category pie, Top N by monthly cost |
+| `GET /subscriptions/forecast` | Actual charge events (`price × FX` on each billing date) | 12-month bars, month detail, Dashboard next-30-days |
+
+- [ ] Never feed `converted_price` into a cashflow total (weekly/daily subs undercount or overcount).
+- [ ] Projection must reuse `advance_next_billing_date` (`services/renewal.py`); do not reimplement cycle math in the router or frontend.
+- [ ] Separate catch-up budget from in-window iteration budget when rolling day/week cycles that may lag behind `today`.
+- [ ] `auto_renew=false` → at most one future charge; `active` only.
+
+Reference: `services/forecast.py`, `StatisticsPage`, `DashboardPage` next-30-days card.
+
 ---
 
 ## Notification Settings: Two-Layer Credential Contract

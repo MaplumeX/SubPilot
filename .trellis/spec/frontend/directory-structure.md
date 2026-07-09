@@ -18,7 +18,7 @@ frontend/
 │   ├── api/
 │   │   ├── client.ts          # Axios instance with auth request + 401 response interceptors
 │   │   ├── auth.ts            # Auth + user-profile API functions
-│   │   ├── subscriptions.ts   # Subscription + stats + categories + payment-methods + logo API
+│   │   ├── subscriptions.ts   # Subscription + stats + forecast + categories + payment-methods + logo API
 │   │   ├── notifications.ts   # Notification settings + test-channel API
 │   │   └── types.ts          # Shared TypeScript types (API boundary)
 │   ├── components/
@@ -31,9 +31,9 @@ frontend/
 │   ├── pages/
 │   │   ├── LoginPage.tsx
 │   │   ├── RegisterPage.tsx
-│   │   ├── DashboardPage.tsx     # Stats cards + due-soon list + Recharts trend
+│   │   ├── DashboardPage.tsx     # Stats cards + due-soon list + next-30-days cashflow (from /forecast)
 │   │   ├── SubscriptionsPage.tsx # Table + card view, filters, sorting
-│   │   ├── StatisticsPage.tsx
+│   │   ├── StatisticsPage.tsx    # Category pie + top subs + 12-month cashflow bar chart
 │   │   └── SettingsPage.tsx      # Language, base currency, notification settings
 │   ├── i18n/
 │   │   ├── index.ts            # i18next config (init + LanguageDetector)

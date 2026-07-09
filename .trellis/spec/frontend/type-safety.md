@@ -32,7 +32,7 @@
 ## Common Patterns
 
 - Enum types shared as string union types: `CycleUnit = "day" | "week" | "month" | "year"`, `SubscriptionStatus = "active" | "cancelled" | "trial"`.
-- API response types in `src/api/types.ts`: `UserResponse` (includes `base_currency`, `locale`), `Subscription` (the response shape, includes `converted_price`, `acknowledged_billing_date`, `payment_method`, `logo_url`), `TokenResponse`, `SubscriptionStats`, `NotificationSettings` (includes `reminder_time` `HH:MM`, `timezone` IANA, plus channel fields — not `last_reminder_local_date`, which is server-internal).
+- API response types in `src/api/types.ts`: `UserResponse` (includes `base_currency`, `locale`), `Subscription` (the response shape, includes `converted_price`, `acknowledged_billing_date`, `payment_method`, `logo_url`), `TokenResponse`, `SubscriptionStats` (monthly-normalized aggregates), `SubscriptionForecast` / `MonthlyForecast` / `ForecastChargeItem` (actual cashflow charges from `GET /subscriptions/forecast` — **not** monthly-normalized; `converted_price` must not be used for forecast UI), `NotificationSettings` (includes `reminder_time` `HH:MM`, `timezone` IANA, plus channel fields — not `last_reminder_local_date`, which is server-internal).
 - `NotificationSettingsUpdate = Partial<NotificationSettings>` — the PUT payload mirrors the full settings object (backend route is PUT with `exclude_unset`).
 - Error type narrowing: `(err as { response?: { data?: { detail?: string } } })?.response?.data?.detail`, falling back to a generic message.
 - `Intl.Locale.weekInfo` is not in TS lib types — narrow with an intersection cast when you need the first-day-of-week:

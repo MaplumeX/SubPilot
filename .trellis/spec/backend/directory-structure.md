@@ -33,6 +33,7 @@ backend/
 │   ├── services/
 │   │   ├── __init__.py       # Re-exports renewal functions only
 │   │   ├── renewal.py        # Auto-renewal background service
+│   │   ├── forecast.py       # Billing cashflow projection (actual charges, not monthly-normalized)
 │   │   ├── exchange_rate.py  # Exchange rate fetch + lookup service
 │   │   └── notifications/    # Reminder scanning subpackage (NOT re-exported by services/__init__)
 │   │       ├── __init__.py   # Re-exports process_reminders
@@ -58,7 +59,7 @@ backend/
 
 - **models/** — SQLAlchemy ORM models, one file per entity. `models/__init__.py` re-exports every model **and** its enums (e.g. `CycleUnit`, `SubscriptionStatus`) via `__all__` so callers do `from app.models import Subscription, CycleUnit`.
 - **schemas/** — Pydantic request/response schemas, one file per domain. `schemas/__init__.py` is **empty**; import directly from the schema module (e.g. `from app.schemas.notification import ...`).
-- **services/** — Background services and business logic that spans models or runs outside request context. `services/__init__.py` re-exports the `renewal` functions; the `notifications/` subpackage is self-contained and imported by path (`from app.services.notifications import process_reminders`).
+- **services/** — Background services and business logic that spans models or runs outside request context. `services/__init__.py` re-exports the `renewal` functions; import other modules by path (e.g. `from app.services.forecast import build_forecast`, `from app.services.notifications import process_reminders`). `forecast.py` is request-path pure projection (no DB writes); do not re-export it from `__init__.py` unless a second caller needs a stable package surface.
 - **routers/** — FastAPI routers, one file per API domain. All routes under `/api/v1/<domain>`. Notification settings endpoints live under the `auth` router (`/me/notifications*`), not a separate router.
 - **deps.py** — Shared FastAPI dependencies (DB session, current user extraction).
 
