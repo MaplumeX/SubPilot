@@ -1,0 +1,6 @@
+{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Scheduled job exception swallowing and quality bar"}
+{"file": ".trellis/spec/backend/logging-guidelines.md", "reason": "No credential logging; job exception discipline"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Notification settings checklist at review"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Frontend NotificationSettings type completeness"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "422 validation for invalid settings"}
