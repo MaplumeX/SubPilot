@@ -782,3 +782,37 @@ Fixed table view so due-soon rows show a secondary '已确认' badge after ackno
 ### Next Steps
 
 - None - task complete
+
+
+## Session 23: Configurable daily notification time
+
+**Date**: 2026-07-09
+**Task**: Configurable daily notification time
+**Branch**: `main`
+
+### Summary
+
+Added user-local reminder_time + timezone settings, 1-minute scanner with once-per-local-day idempotency and startup catch-up, Settings UI + i18n, and documented the pattern in specs.
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `204655f` | (see git log) |
+| `4172bc5` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
