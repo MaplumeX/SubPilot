@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend guideline map for quality review"}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Verify renewals still only advance next_billing_date and never misuse ack marker"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Code quality / forbidden patterns for check sub-agent"}
+{"file": ".trellis/spec/backend/logging-guidelines.md", "reason": "Validate job logging remains appropriate"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Ensure scheduled job error handling stays isolated and non-fatal to app lifespan"}

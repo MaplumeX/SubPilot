@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend layer overview and guideline index for FastAPI + APScheduler services"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Where services and lifespan/scheduler wiring should live"}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Ack-marker vs next_billing_date double-advance rule must be preserved"}
+{"file": ".trellis/spec/backend/logging-guidelines.md", "reason": "How to log renewal counts / job failures"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Backend quality constraints while editing renewal service"}
