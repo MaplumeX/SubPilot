@@ -1,0 +1,148 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build, publish, release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Parse version from tag
+        id: meta
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          case "$TAG" in
+            v*) VERSION="${TAG#v}" ;;
+            *) echo "Tag must start with v (got: $TAG)" >&2; exit 1 ;;
+          esac
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid semver in tag: $TAG" >&2
+            exit 1
+          fi
+
+          OWNER_LC="$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')"
+          REGISTRY="ghcr.io"
+          BACKEND_IMAGE="${REGISTRY}/${OWNER_LC}/subpilot-backend"
+          FRONTEND_IMAGE="${REGISTRY}/${OWNER_LC}/subpilot-frontend"
+
+          {
+            echo "version=${VERSION}"
+            echo "tag=${TAG}"
+            echo "backend_image=${BACKEND_IMAGE}"
+            echo "frontend_image=${FRONTEND_IMAGE}"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Releasing ${TAG} (${VERSION})"
+          echo "Backend:  ${BACKEND_IMAGE}"
+          echo "Frontend: ${FRONTEND_IMAGE}"
+
+      - name: Verify VERSION file matches tag
+        run: |
+          FILE_VERSION="$(tr -d '[:space:]' < VERSION)"
+          if [[ "$FILE_VERSION" != "${{ steps.meta.outputs.version }}" ]]; then
+            echo "VERSION file ($FILE_VERSION) does not match tag version (${{ steps.meta.outputs.version }})" >&2
+            echo "Bump VERSION and package versions in the same commit before tagging." >&2
+            exit 1
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata (backend)
+        id: backend_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.meta.outputs.backend_image }}
+          tags: |
+            type=semver,pattern={{version}},value=v${{ steps.meta.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=v${{ steps.meta.outputs.version }}
+            type=raw,value=latest
+
+      - name: Extract Docker metadata (frontend)
+        id: frontend_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.meta.outputs.frontend_image }}
+          tags: |
+            type=semver,pattern={{version}},value=v${{ steps.meta.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=v${{ steps.meta.outputs.version }}
+            type=raw,value=latest
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ steps.backend_meta.outputs.tags }}
+          labels: ${{ steps.backend_meta.outputs.labels }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+          build-args: |
+            VERSION=${{ steps.meta.outputs.version }}
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ steps.frontend_meta.outputs.tags }}
+          labels: ${{ steps.frontend_meta.outputs.labels }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+          build-args: |
+            VERSION=${{ steps.meta.outputs.version }}
+
+      - name: Extract changelog section
+        id: notes
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          import re
+          import sys
+
+          version = "${{ steps.meta.outputs.version }}"
+          text = pathlib.Path("CHANGELOG.md").read_text(encoding="utf-8")
+          pattern = re.compile(
+              rf"## \[{re.escape(version)}\][^\n]*\n(?P<body>.*?)(?=\n## \[|\Z)",
+              re.S,
+          )
+          match = pattern.search(text)
+          body = match.group("body").strip() if match else ""
+          if not body:
+              body = f"Release v{version}"
+          pathlib.Path("release-notes.md").write_text(body + "\n", encoding="utf-8")
+          print(body)
+          PY
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.tag }}
+          body_path: release-notes.md
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(steps.meta.outputs.version, '-') }}

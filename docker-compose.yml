@@ -1,5 +1,8 @@
+# Local: docker compose up --build
+# Published image: SUBPILOT_VERSION=1.0.0 docker compose up -d
 services:
   backend:
+    image: ghcr.io/maplumex/subpilot-backend:${SUBPILOT_VERSION:-latest}
     build: ./backend
     ports:
       - "8000:8000"
@@ -12,13 +15,16 @@ services:
       - DATABASE_URL=sqlite:///./data/subpilot.db
       - SECRET_KEY=${SECRET_KEY:-dev-secret-change-in-production}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost}
+    restart: unless-stopped
 
   frontend:
+    image: ghcr.io/maplumex/subpilot-frontend:${SUBPILOT_VERSION:-latest}
     build: ./frontend
     ports:
       - "80:80"
     depends_on:
       - backend
+    restart: unless-stopped
 
 volumes:
   subpilot-data:

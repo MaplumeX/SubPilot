@@ -1,4 +1,4 @@
-.PHONY: dev backend frontend install-backend install-frontend
+.PHONY: dev backend frontend install-backend install-frontend install
 
 dev:
 	@make -j2 backend frontend
