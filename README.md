@@ -63,5 +63,4 @@ Workflows: https://github.com/MaplumeX/SubPilot/actions
 
 ## CI
 
-- Push/PR to `main`: Docker build smoke test (no push)
-- Tag `v*`: full release to GHCR + GitHub Release
+Tag `v*` runs the release workflow: build/push GHCR images and create a GitHub Release.
