@@ -27,14 +27,13 @@ from app.schemas.subscription import (
     SubscriptionUpdate,
 )
 
-ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/svg+xml", "image/gif"}
+ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/gif"}
 MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
 LOGOS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "logos")
 
 EXT_MAP = {
     "image/jpeg": "jpg",
     "image/png": "png",
-    "image/svg+xml": "svg",
     "image/gif": "gif",
 }
 
@@ -371,7 +370,7 @@ def upload_logo(
     if not file.content_type or file.content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid file type. Allowed: JPG, PNG, SVG, GIF",
+            detail="Invalid file type. Allowed: JPG, PNG, GIF",
         )
     contents = file.file.read()
     if len(contents) > MAX_FILE_SIZE:
@@ -423,7 +422,7 @@ def cache_logo(
     if content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid file type. Allowed: JPG, PNG, SVG, GIF",
+            detail="Invalid file type. Allowed: JPG, PNG, GIF",
         )
     if len(resp.content) > MAX_FILE_SIZE:
         raise HTTPException(

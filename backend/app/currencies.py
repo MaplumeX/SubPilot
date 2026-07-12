@@ -1,0 +1,1 @@
+SUPPORTED_CURRENCIES = {"CNY", "USD", "EUR", "GBP", "JPY"}

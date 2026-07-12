@@ -1,7 +1,8 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel, Field, HttpUrl, model_validator
+from pydantic import BaseModel, Field, HttpUrl, field_validator, model_validator
 
+from app.currencies import SUPPORTED_CURRENCIES
 from app.models.subscription import CycleUnit, ReminderMode, SubscriptionStatus
 from app.schemas.category import CategoryBrief
 from app.schemas.payment_method import PaymentMethodBrief
@@ -23,6 +24,13 @@ class SubscriptionCreate(BaseModel):
     reminder_enabled: bool = True
     reminder_mode: ReminderMode = ReminderMode.default
     reminder_days: int | None = Field(default=None, ge=1, le=90)
+
+    @field_validator("currency")
+    @classmethod
+    def _valid_currency(cls, value: str) -> str:
+        if value not in SUPPORTED_CURRENCIES:
+            raise ValueError("Unsupported currency")
+        return value
 
     @model_validator(mode="after")
     def _validate_reminder_mode(self) -> "SubscriptionCreate":
@@ -52,8 +60,17 @@ class SubscriptionUpdate(BaseModel):
     reminder_mode: ReminderMode | None = None
     reminder_days: int | None = Field(default=None, ge=1, le=90)
 
+    @field_validator("currency")
+    @classmethod
+    def _valid_currency(cls, value: str | None) -> str | None:
+        if value is not None and value not in SUPPORTED_CURRENCIES:
+            raise ValueError("Unsupported currency")
+        return value
+
     @model_validator(mode="after")
     def _validate_reminder_mode(self) -> "SubscriptionUpdate":
+        if "payment_method_id" in self.model_fields_set and self.payment_method_id is None:
+            raise ValueError("payment_method_id must not be null")
         if self.reminder_mode == ReminderMode.custom:
             if self.reminder_days is None:
                 raise ValueError("reminder_days is required when reminder_mode is 'custom'")

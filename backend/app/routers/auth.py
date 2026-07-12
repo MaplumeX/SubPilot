@@ -6,6 +6,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from app.config import settings
+from app.currencies import SUPPORTED_CURRENCIES
 from app.deps import get_current_user, get_db
 from app.models.user import User
 from app.schemas.auth import (
@@ -128,9 +129,8 @@ def update_locale(locale: str = Query(...), current_user: User = Depends(get_cur
 
 @router.patch("/me/base-currency", response_model=UserResponse)
 def update_base_currency(currency: str = Query(...), current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    valid = {"CNY", "USD", "EUR", "GBP", "JPY"}
-    if currency not in valid:
-        raise HTTPException(status_code=400, detail=f"Unsupported currency. Valid: {', '.join(sorted(valid))}")
+    if currency not in SUPPORTED_CURRENCIES:
+        raise HTTPException(status_code=400, detail=f"Unsupported currency. Valid: {', '.join(sorted(SUPPORTED_CURRENCIES))}")
     current_user.base_currency = currency
     db.commit()
     db.refresh(current_user)

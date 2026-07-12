@@ -4,9 +4,9 @@ from datetime import date
 import httpx
 from sqlalchemy.orm import Session
 
+from app.currencies import SUPPORTED_CURRENCIES
 from app.models.exchange_rate import ExchangeRate
 
-SUPPORTED_CURRENCIES = {"CNY", "USD", "EUR", "GBP", "JPY"}
 FRANKFURTER_URL = "https://api.frankfurter.dev/v1/latest"
 
 logger = logging.getLogger(__name__)
