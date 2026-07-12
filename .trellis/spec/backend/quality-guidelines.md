@@ -47,8 +47,62 @@
 
 ## Testing Requirements
 
-- Backend: manual API verification via curl during check phase (no automated test suite yet).
+- Backend: manual API verification via curl during check phase; run `python -m unittest discover -s tests` for contract regressions.
 - Frontend: `tsc --noEmit` + `eslint` + `npm run build` must pass (run from `frontend/`).
+
+## Scenario: Startup secrets and subscription input contracts
+
+### 1. Scope / Trigger
+
+- Security configuration, local static uploads, and subscription currency/payment-method updates cross the environment, API, model, and frontend boundaries.
+
+### 2. Signatures
+
+- `Settings.SECRET_KEY: str` is required.
+- `SubscriptionCreate.currency` and `SubscriptionUpdate.currency` accept only `app.currencies.SUPPORTED_CURRENCIES`.
+- `SubscriptionUpdate.payment_method_id` may be omitted but must not be explicitly `null`.
+- `POST /subscriptions/upload-logo` and `POST /subscriptions/cache-logo` accept only JPEG, PNG, and GIF content types.
+
+### 3. Contracts
+
+- Compose must require `SECRET_KEY`; never provide a known fallback. `SECRET_KEY=dev-secret-change-in-production` is rejected at settings validation.
+- Uploaded logo bytes are same-origin static content, so active SVG must not be stored there.
+- Unsupported currency and explicit null payment method are API validation errors (422); never fall through to `get_rate(...)=1.0` or a database `IntegrityError`.
+
+### 4. Validation & Error Matrix
+
+| Input | Result |
+| --- | --- |
+| Missing/default `SECRET_KEY` | startup validation failure |
+| SVG upload/cache response | 400 invalid file type |
+| `currency="ZZZ"` | 422 validation error |
+| `payment_method_id: null` in update | 422 validation error |
+
+### 5. Good/Base/Bad Cases
+
+- Good: an explicit random secret, supported currency, and a non-null payment method persist successfully.
+- Base: omitted `payment_method_id` leaves the existing method unchanged.
+- Bad: accepting a public signing key, SVG, or arbitrary currency silently creates an account-takeover or incorrect-total path.
+
+### 6. Tests Required
+
+- Unit-test rejection of the development secret, SVG content type, unsupported currency, and explicit-null payment method.
+- Assert that omitting payment method remains valid for a partial update.
+
+### 7. Wrong vs Correct
+
+#### Wrong
+
+```python
+SECRET_KEY: str = "dev-secret-change-in-production"
+```
+
+#### Correct
+
+```python
+SECRET_KEY: str
+# reject known development defaults in a settings validator
+```
 
 ---
 

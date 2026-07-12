@@ -41,7 +41,7 @@ Everything else stays in component state. No premature abstraction.
 ## Server State
 
 - Fetch on mount or user action via `src/api/*` functions (no caching layer — refetch when needed).
-- Auth token injected via Axios request interceptor in `api/client.ts`; 401 responses clear tokens and redirect to `/login` via the response interceptor.
+- Auth token injected via Axios request interceptor in `api/client.ts`. For a protected-request 401, the response interceptor makes one shared refresh request, stores its rotated token pair, and retries the original request once. Login/register requests and a failed retry clear tokens and redirect to `/login`; the refresh call uses plain `axios` so it cannot recurse through the interceptor.
 - Subscription list mutation handlers call `reload()` (re-fetch list + categories) — see `SubscriptionsPage`. `acknowledge` is the exception: it patches local state from the response instead of refetching.
 
 ---
