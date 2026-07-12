@@ -1,25 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-
-type Toast = {
-  id: number;
-  title: string;
-  message?: string;
-  variant?: "default" | "destructive";
-};
-
-let listeners: Array<(t: Toast) => void> = [];
-let counter = 0;
-
-/**
- * Show a transient confirmation toast (aria-live announced).
- * Use for acknowledge/undo feedback — calm, no urgency.
- * Pass `variant: "destructive"` for error feedback.
- */
-export function toast(t: { title: string; message?: string; variant?: "default" | "destructive" }) {
-  const item: Toast = { id: ++counter, ...t };
-  listeners.forEach((fn) => fn(item));
-}
+import { subscribe, type Toast } from "./toast-store";
 
 export function Toaster() {
   const [items, setItems] = useState<Toast[]>([]);
@@ -33,10 +14,7 @@ export function Toaster() {
       setItems((prev) => [...prev, t]);
       window.setTimeout(() => remove(t.id), 4000);
     };
-    listeners.push(fn);
-    return () => {
-      listeners = listeners.filter((l) => l !== fn);
-    };
+    return subscribe(fn);
   }, [remove]);
 
   return (

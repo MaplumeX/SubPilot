@@ -31,7 +31,7 @@ import {
   AvatarFallback,
 } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/toaster";
+import { toast } from "@/components/ui/toast-store";
 import { isNonAuthError } from "@/lib/utils";
 
 interface SubscriptionFormProps {
@@ -52,7 +52,7 @@ const ERROR_KEY_MAP: Record<string, string> = {
   "Invalid credentials": "errors.invalidCredentials",
   "Email already registered": "errors.emailRegistered",
   "Subscription not found": "errors.subscriptionNotFound",
-  "Invalid file type. Allowed: JPG, PNG, SVG, GIF": "subscriptionForm.invalidFileType",
+  "Invalid file type. Allowed: JPG, PNG, GIF": "subscriptionForm.invalidFileType",
   "File size exceeds 2MB limit": "subscriptionForm.fileTooLarge",
   "Query must not be empty": "subscriptionForm.logoSearchFailed",
   "Image URL host is not allowed": "subscriptionForm.cacheLogoFailed",
@@ -177,7 +177,7 @@ export default function SubscriptionForm({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/svg+xml", "image/gif"];
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
       setError(t("subscriptionForm.invalidFileType"));
       return;
@@ -380,7 +380,7 @@ export default function SubscriptionForm({
                 <TabsContent value="upload" className="mt-2">
                   <Input
                     type="file"
-                    accept=".jpg,.jpeg,.png,.svg,.gif"
+                    accept=".jpg,.jpeg,.png,.gif"
                     onChange={handleUploadLogo}
                     disabled={uploading}
                   />

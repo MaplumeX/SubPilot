@@ -137,7 +137,7 @@
     "noLogos": "No logos found",
     "logoSearchFailed": "Logo search failed",
     "cacheLogoFailed": "Failed to cache logo",
-    "invalidFileType": "Invalid file type. Allowed: JPG, PNG, SVG, GIF",
+    "invalidFileType": "Invalid file type. Allowed: JPG, PNG, GIF",
     "fileTooLarge": "File size exceeds 2MB limit",
     "uploadFailed": "Failed to upload logo",
     "currencies": {

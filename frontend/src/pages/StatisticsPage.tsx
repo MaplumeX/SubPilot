@@ -8,7 +8,7 @@ import type {
   SubscriptionForecast,
   MonthlyForecast,
 } from "@/api/types";
-import { toast } from "@/components/ui/toaster";
+import { toast } from "@/components/ui/toast-store";
 import { isNonAuthError } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {

@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import { toast } from "@/components/ui/toaster";
+import { toast } from "@/components/ui/toast-store";
 import type { Category, PaymentMethod } from "@/api/types";
 
 export type Entity = Category | PaymentMethod;

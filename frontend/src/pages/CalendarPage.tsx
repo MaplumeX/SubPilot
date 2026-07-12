@@ -13,7 +13,7 @@ import {
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { formatDueLabel } from "@/lib/due";
 import { cn, isNonAuthError } from "@/lib/utils";
-import { toast } from "@/components/ui/toaster";
+import { toast } from "@/components/ui/toast-store";
 
 const MAX_VISIBLE_EVENTS = 2;
 const WEEK_DAYS = 7;

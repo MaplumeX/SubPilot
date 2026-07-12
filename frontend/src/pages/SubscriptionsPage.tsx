@@ -34,7 +34,7 @@ import {
 import SubscriptionForm from "@/components/SubscriptionForm";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import { toast } from "@/components/ui/toaster";
+import { toast } from "@/components/ui/toast-store";
 import { formatDueLabel, isDueWithin, effectiveDaysFor } from "@/lib/due";
 import { isNonAuthError } from "@/lib/utils";
 

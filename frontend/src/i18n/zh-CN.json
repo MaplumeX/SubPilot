@@ -137,7 +137,7 @@
     "noLogos": "未找到图标",
     "logoSearchFailed": "图标搜索失败",
     "cacheLogoFailed": "图标缓存失败",
-    "invalidFileType": "无效的文件类型。允许：JPG、PNG、SVG、GIF",
+    "invalidFileType": "无效的文件类型。允许：JPG、PNG、GIF",
     "fileTooLarge": "文件大小超过 2MB 限制",
     "uploadFailed": "上传 Logo 失败",
     "currencies": {
