@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-13
+
 ### Changed
 
 - **Breaking (deploy):** Single Docker image `ghcr.io/<owner>/subpilot` replaces dual `subpilot-backend` + `subpilot-frontend` images. Compose exposes host port **7743** (maps to Nginx on container port 80); uvicorn listens on loopback only. Old dual-image publish is discontinued — see README migration notes.
