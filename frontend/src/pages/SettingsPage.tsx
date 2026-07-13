@@ -34,6 +34,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/toast-store";
+import { SUPPORTED_CURRENCIES, currencyLabel } from "@/lib/currencies";
 import { isNonAuthError } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -97,13 +98,7 @@ export default function SettingsPage() {
     }
   };
 
-  const CURRENCIES = [
-    { value: "CNY", label: t("subscriptionForm.currencies.CNY") },
-    { value: "USD", label: t("subscriptionForm.currencies.USD") },
-    { value: "EUR", label: t("subscriptionForm.currencies.EUR") },
-    { value: "GBP", label: t("subscriptionForm.currencies.GBP") },
-    { value: "JPY", label: t("subscriptionForm.currencies.JPY") },
-  ];
+  const baseCurrency = user?.base_currency ?? "CNY";
 
   return (
     <div className="space-y-6">
@@ -143,16 +138,16 @@ export default function SettingsPage() {
           <div className="flex flex-col gap-2">
             <Label>{t("settings.baseCurrency")}</Label>
             <Select
-              value={user?.base_currency ?? "CNY"}
+              value={baseCurrency}
               onValueChange={handleBaseCurrencyChange}
             >
               <SelectTrigger className="w-[200px]">
-                <SelectValue label={CURRENCIES.find(c => c.value === (user?.base_currency ?? "CNY"))?.label ?? "CNY"} />
+                <SelectValue label={currencyLabel(baseCurrency, i18n.language)} />
               </SelectTrigger>
               <SelectContent>
-                {CURRENCIES.map((c) => (
-                  <SelectItem key={c.value} value={c.value}>
-                    {c.label}
+                {SUPPORTED_CURRENCIES.map((code) => (
+                  <SelectItem key={code} value={code}>
+                    {currencyLabel(code, i18n.language)}
                   </SelectItem>
                 ))}
               </SelectContent>

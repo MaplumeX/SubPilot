@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast-store";
+import { SUPPORTED_CURRENCIES, currencyLabel } from "@/lib/currencies";
 import { isNonAuthError } from "@/lib/utils";
 
 interface SubscriptionFormProps {
@@ -41,8 +42,6 @@ interface SubscriptionFormProps {
   subscription?: Subscription | null;
   onSubmit: (data: SubscriptionCreate) => Promise<void>;
 }
-
-const CURRENCIES = ["CNY", "USD", "EUR", "GBP", "JPY"] as const;
 
 const CYCLE_UNITS: CycleUnit[] = ["day", "week", "month", "year"];
 
@@ -78,7 +77,7 @@ export default function SubscriptionForm({
   subscription,
   onSubmit,
 }: SubscriptionFormProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isEdit = !!subscription;
 
   const [name, setName] = useState(subscription?.name ?? "");
@@ -428,12 +427,12 @@ export default function SubscriptionForm({
               <Label>{t("subscriptionForm.currency")}</Label>
               <Select value={currency} onValueChange={(v) => setCurrency(v ?? "CNY")}>
                 <SelectTrigger>
-                  <SelectValue label={t(`subscriptionForm.currencies.${currency}`)} />
+                  <SelectValue label={currencyLabel(currency, i18n.language)} />
                 </SelectTrigger>
                 <SelectContent>
-                  {CURRENCIES.map((c) => (
+                  {SUPPORTED_CURRENCIES.map((c) => (
                     <SelectItem key={c} value={c}>
-                      {t(`subscriptionForm.currencies.${c}`)}
+                      {currencyLabel(c, i18n.language)}
                     </SelectItem>
                   ))}
                 </SelectContent>

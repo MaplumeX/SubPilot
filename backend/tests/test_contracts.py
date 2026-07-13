@@ -31,6 +31,26 @@ class SecurityAndSubscriptionContractTests(unittest.TestCase):
                 start_date="2026-01-01",
             )
 
+    def test_create_accepts_extended_currency(self) -> None:
+        payload = SubscriptionCreate(
+            name="Example",
+            price=1,
+            currency="HKD",
+            cycle_count=1,
+            cycle_unit=CycleUnit.month,
+            payment_method_id=1,
+            start_date="2026-01-01",
+        )
+        self.assertEqual(payload.currency, "HKD")
+
+    def test_update_accepts_extended_currency(self) -> None:
+        payload = SubscriptionUpdate(currency="SGD")
+        self.assertEqual(payload.currency, "SGD")
+
+    def test_update_rejects_unsupported_currency(self) -> None:
+        with self.assertRaises(ValidationError):
+            SubscriptionUpdate(currency="ZZZ")
+
     def test_update_rejects_null_payment_method(self) -> None:
         with self.assertRaises(ValidationError):
             SubscriptionUpdate(payment_method_id=None)

@@ -140,13 +140,6 @@
     "invalidFileType": "Invalid file type. Allowed: JPG, PNG, GIF",
     "fileTooLarge": "File size exceeds 2MB limit",
     "uploadFailed": "Failed to upload logo",
-    "currencies": {
-      "CNY": "CNY (¥)",
-      "USD": "USD ($)",
-      "EUR": "EUR (€)",
-      "GBP": "GBP (£)",
-      "JPY": "JPY (¥)"
-    },
     "update": "Update",
     "create": "Create",
     "saveFailed": "Failed to save subscription",
