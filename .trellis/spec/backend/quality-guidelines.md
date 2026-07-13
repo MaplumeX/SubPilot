@@ -66,7 +66,7 @@
 
 ### 3. Contracts
 
-- Compose must require `SECRET_KEY`; never provide a known fallback. `SECRET_KEY=dev-secret-change-in-production` is rejected at settings validation.
+- Compose must require `SECRET_KEY`; never provide a known fallback. `SECRET_KEY=dev-secret-change-in-production` is rejected at settings validation. Production packaging is a **single** image (`subpilot`); see [Deploy Runtime](./deploy-runtime.md) for ports (`7743:80`), loopback uvicorn, and nginx proxy contracts.
 - Uploaded logo bytes are same-origin static content, so active SVG must not be stored there.
 - Unsupported currency and explicit null payment method are API validation errors (422); never fall through to `get_rate(...)=1.0` or a database `IntegrityError`.
 - `SUPPORTED_CURRENCIES` is the Frankfurter-aligned static set (authority for validation + exchange-rate `to=`). Frontend mirrors it in `frontend/src/lib/currencies.ts` — change both in the same PR; do not invent a currencies list API for this set.

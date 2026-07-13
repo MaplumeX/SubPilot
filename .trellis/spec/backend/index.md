@@ -19,6 +19,7 @@ The backend is a FastAPI + SQLAlchemy (sync) + Alembic + APScheduler app. Code i
 | [Error Handling](./error-handling.md) | Error types, handling strategies | Filled |
 | [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | Filled |
 | [Logging Guidelines](./logging-guidelines.md) | Structured logging, log levels, what not to log | Filled |
+| [Deploy Runtime](./deploy-runtime.md) | Single Docker image (Nginx + uvicorn), compose ports, SECRET_KEY, GHCR | Filled |
 
 ---
 
