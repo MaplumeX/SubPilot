@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/07-13-single-docker-image/design.md", "reason": "Authoritative single-image architecture, ports, supervisord/nginx layout, compose and release contracts"}
+{"file": ".trellis/tasks/07-13-single-docker-image/implement.md", "reason": "Ordered checklist, validation commands, risky files"}
+{"file": ".trellis/tasks/07-13-single-docker-image/research/single-image-runtime.md", "reason": "Runtime research notes for Nginx+uvicorn, CORS default, multi-stage build"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Backend layout, static logos mount paths, avoid breaking app tree when copying into image"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Settings/CORS conventions if env defaults are adjusted"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Frontend build output and vite proxy conventions for SPA packaging"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend quality bar if any packaging-side frontend touch is needed"}

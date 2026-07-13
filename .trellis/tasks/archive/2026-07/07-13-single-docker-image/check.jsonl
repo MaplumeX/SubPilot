@@ -1,0 +1,6 @@
+{"file": ".trellis/tasks/07-13-single-docker-image/prd.md", "reason": "Acceptance criteria AC1–AC6 for deploy shape, port 7743, single GHCR image, dual-image removal"}
+{"file": ".trellis/tasks/07-13-single-docker-image/design.md", "reason": "Expected architecture and file boundaries for review"}
+{"file": ".trellis/tasks/07-13-single-docker-image/implement.md", "reason": "Validation commands and rollback points for check pass"}
+{"file": ".trellis/tasks/07-13-single-docker-image/research/single-image-runtime.md", "reason": "Runtime expectations for nginx listen/proxy and compose defaults"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Config/CORS conventions when verifying env defaults"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend quality bar if SPA packaging touched frontend files"}
