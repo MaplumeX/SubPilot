@@ -850,3 +850,38 @@ Added GET /subscriptions/forecast projecting actual billing charges (price×FX, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 25: Finish code defect audit wrap-up
+
+**Date**: 2026-07-13
+**Task**: Finish code defect audit wrap-up
+**Branch**: `main`
+
+### Summary
+
+Wrapped up the code defect audit task: confirmed six security/auth/input fixes already landed (SECRET_KEY hardening, SVG upload block, currency/payment validation, token refresh, toast lint split) with matching Trellis specs. Archived 07-12-code-defect-audit. Left unrelated lockfile version bumps (uv.lock, package-lock.json) uncommitted.
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `801ac9a` | (see git log) |
+| `49b443f` | (see git log) |
+| `d2350d8` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
