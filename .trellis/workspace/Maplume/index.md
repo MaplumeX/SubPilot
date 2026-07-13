@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 26
+- **Total Sessions**: 27
 - **Last Active**: 2026-07-13
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~921 | Active |
+| `journal-1.md` | ~955 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 27 | 2026-07-13 | Single Docker image deploy | `7d0fc5d`, `931be51` | `main` |
 | 26 | 2026-07-13 | Full currency support from exchange-rate source | `4a4f5c0`, `82c7a15` | `main` |
 | 25 | 2026-07-13 | Finish code defect audit wrap-up | `801ac9a`, `49b443f`, `d2350d8` | `main` |
 | 24 | 2026-07-09 | Future monthly cashflow forecast on Statistics + Dashboard | `47b16b6`, `8c0942d` | `main` |

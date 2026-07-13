@@ -919,3 +919,37 @@ Expanded SUPPORTED_CURRENCIES to Frankfurter's 30 codes; frontend static mirror 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 27: Single Docker image deploy
+
+**Date**: 2026-07-13
+**Task**: Single Docker image deploy
+**Branch**: `main`
+
+### Summary
+
+Merged dual subpilot-backend/frontend images into one subpilot image (Nginx+uvicorn, host 7743→80). Updated compose, release workflow, README migration notes, and deploy-runtime specs. Stopped dual GHCR publish.
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7d0fc5d` | (see git log) |
+| `931be51` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
