@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Currency/payment validation acceptance and anti-patterns"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Unsupported currency error status codes"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Select label and i18n display conventions"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Frontend check bar"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "base_currency and converted_price contracts"}
