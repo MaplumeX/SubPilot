@@ -6,9 +6,11 @@ Calm subscription tracker — know what you pay, when it renews, and what is due
 
 - **Backend**: FastAPI + SQLAlchemy + SQLite
 - **Frontend**: React + Vite + shadcn/ui
-- **Deploy**: Docker Compose (local build or GHCR images)
+- **Deploy**: Single Docker image (Nginx + uvicorn) via Compose or GHCR
 
 ## Development
+
+Local development stays split (API + Vite), independent of the production image:
 
 ```bash
 # install
@@ -18,23 +20,49 @@ make install
 make dev
 ```
 
-Docker from source:
+## Deploy with Docker Compose
+
+One service serves the UI and API on host port **7743**:
 
 ```bash
-docker compose up --build
+cp .env.example .env
+# set SECRET_KEY to a long random string (required)
+docker compose up --build -d
 ```
 
-## Deploy with published images
+Open http://localhost:7743
+
+With a published image:
 
 ```bash
-cp .env.example .env   # set SECRET_KEY, CORS_ORIGINS
+cp .env.example .env   # set SECRET_KEY, optional CORS_ORIGINS
 export SUBPILOT_VERSION=1.0.0
 docker compose up -d
 ```
 
 Omit `SUBPILOT_VERSION` to use `:latest`.
 
+Image: `ghcr.io/maplumex/subpilot:{version, major.minor, latest}`
+
 > Public GHCR packages can be pulled anonymously once package visibility is set to public. Otherwise: `docker login ghcr.io`.
+
+### Migrating from two images
+
+Earlier releases published `subpilot-backend` and `subpilot-frontend` as separate images. That dual-image compose layout is no longer published.
+
+| Before | After |
+|--------|--------|
+| Two services (`backend` + `frontend`) | One service (`app`) |
+| Host ports 8000 + 80 | Host port **7743** → container 80 |
+| Two GHCR images | `ghcr.io/maplumex/subpilot` only |
+
+1. Stop the old stack (`docker compose down --remove-orphans`).
+2. Replace `docker-compose.yml` / pull this repo’s compose file.
+3. Set `SECRET_KEY` and `CORS_ORIGINS=http://localhost:7743` (or your public origin) in `.env`.
+4. `docker compose up -d` (or pin `SUBPILOT_VERSION`). If Compose warns about orphan `backend`/`frontend` containers, re-run with `--remove-orphans`.
+5. SQLite data still lives under the `/app/data` volume — existing named volumes that mounted `/app/data` on the backend remain usable if you keep the same volume name (`subpilot-data`).
+
+Old `subpilot-backend` / `subpilot-frontend` tags may still exist in GHCR history but are no longer built.
 
 ## Versioning & release
 
@@ -54,13 +82,11 @@ git push origin v1.0.0
 
 GitHub Actions then:
 
-- Builds and pushes:
-  - `ghcr.io/maplumex/subpilot-backend:{version, major.minor, latest}`
-  - `ghcr.io/maplumex/subpilot-frontend:{version, major.minor, latest}`
+- Builds and pushes `ghcr.io/maplumex/subpilot:{version, major.minor, latest}`
 - Creates a GitHub Release from the changelog section
 
 Workflows: https://github.com/MaplumeX/SubPilot/actions
 
 ## CI
 
-Tag `v*` runs the release workflow: build/push GHCR images and create a GitHub Release.
+Tag `v*` runs the release workflow: build/push the GHCR image and create a GitHub Release.

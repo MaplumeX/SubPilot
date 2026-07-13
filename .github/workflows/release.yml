@@ -38,19 +38,16 @@ jobs:
 
           OWNER_LC="$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')"
           REGISTRY="ghcr.io"
-          BACKEND_IMAGE="${REGISTRY}/${OWNER_LC}/subpilot-backend"
-          FRONTEND_IMAGE="${REGISTRY}/${OWNER_LC}/subpilot-frontend"
+          IMAGE="${REGISTRY}/${OWNER_LC}/subpilot"
 
           {
             echo "version=${VERSION}"
             echo "tag=${TAG}"
-            echo "backend_image=${BACKEND_IMAGE}"
-            echo "frontend_image=${FRONTEND_IMAGE}"
+            echo "image=${IMAGE}"
           } >> "$GITHUB_OUTPUT"
 
           echo "Releasing ${TAG} (${VERSION})"
-          echo "Backend:  ${BACKEND_IMAGE}"
-          echo "Frontend: ${FRONTEND_IMAGE}"
+          echo "Image: ${IMAGE}"
 
       - name: Verify VERSION file matches tag
         run: |
@@ -71,49 +68,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Docker metadata (backend)
-        id: backend_meta
+      - name: Extract Docker metadata
+        id: image_meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ steps.meta.outputs.backend_image }}
+          images: ${{ steps.meta.outputs.image }}
           tags: |
             type=semver,pattern={{version}},value=v${{ steps.meta.outputs.version }}
             type=semver,pattern={{major}}.{{minor}},value=v${{ steps.meta.outputs.version }}
             type=raw,value=latest
 
-      - name: Extract Docker metadata (frontend)
-        id: frontend_meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ steps.meta.outputs.frontend_image }}
-          tags: |
-            type=semver,pattern={{version}},value=v${{ steps.meta.outputs.version }}
-            type=semver,pattern={{major}}.{{minor}},value=v${{ steps.meta.outputs.version }}
-            type=raw,value=latest
-
-      - name: Build and push backend
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./backend
+          context: .
           push: true
-          tags: ${{ steps.backend_meta.outputs.tags }}
-          labels: ${{ steps.backend_meta.outputs.labels }}
-          cache-from: type=gha,scope=backend
-          cache-to: type=gha,mode=max,scope=backend
-          build-args: |
-            VERSION=${{ steps.meta.outputs.version }}
-
-      - name: Build and push frontend
-        uses: docker/build-push-action@v6
-        with:
-          context: ./frontend
-          push: true
-          tags: ${{ steps.frontend_meta.outputs.tags }}
-          labels: ${{ steps.frontend_meta.outputs.labels }}
-          cache-from: type=gha,scope=frontend
-          cache-to: type=gha,mode=max,scope=frontend
-          build-args: |
-            VERSION=${{ steps.meta.outputs.version }}
+          tags: ${{ steps.image_meta.outputs.tags }}
+          labels: ${{ steps.image_meta.outputs.labels }}
+          cache-from: type=gha,scope=subpilot
+          cache-to: type=gha,mode=max,scope=subpilot
 
       - name: Extract changelog section
         id: notes
