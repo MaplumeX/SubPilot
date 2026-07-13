@@ -3,11 +3,13 @@ import type { TokenResponse, UserResponse } from "./types";
 
 export async function register(
   email: string,
-  password: string
+  password: string,
+  locale?: string
 ): Promise<TokenResponse> {
   const { data } = await api.post<TokenResponse>("/auth/register", {
     email,
     password,
+    locale,
   });
   return data;
 }

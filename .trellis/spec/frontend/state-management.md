@@ -57,7 +57,11 @@ Everything else stays in component state. No premature abstraction.
 ## Locale State Flow
 
 ```
-Browser (navigator.language) → i18next detection → localStorage fallback
+Browser (navigator.language) → normalizeLocale (zh*→zh-CN, else en)
+                                         ↓
+i18next detection (localStorage → navigator) → runtime language
+                                         ↓
+Register → POST /auth/register { locale: normalizeLocale(i18n.language) } → user.locale
                                          ↓
 Login/refresh → GET /me → user.locale → i18n.changeLanguage(locale)
                                          ↓
@@ -67,4 +71,6 @@ Settings page → changeLanguage(newLocale) → PATCH /me/locale → backend per
 - i18next owns the runtime locale state (not React Context)
 - `i18n.language` is the source of truth for the current locale
 - Backend `user.locale` is the persistent source; loaded on auth init
-- `i18next-browser-languagedetector` handles initial detection (localStorage → navigator)
+- Register must seed `user.locale` from the pre-auth UI language — otherwise new users snap to the DB default `"en"` after `setTokens` → `getMe`
+- `i18next-browser-languagedetector` handles initial detection (localStorage → navigator), with `convertDetectedLanguage` folding regional codes onto shipped locales via `normalizeLocale`
+- Supported locales: `"en"`, `"zh-CN"` (same allowlist as `PATCH /me/locale`)

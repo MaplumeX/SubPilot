@@ -6,6 +6,8 @@ from pydantic import BaseModel, EmailStr, Field
 class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8)
+    # Optional; when omitted the DB default ("en") is used.
+    locale: str | None = None
 
 
 class LoginRequest(BaseModel):

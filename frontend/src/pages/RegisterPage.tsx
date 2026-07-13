@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
 import { register } from "@/api/auth";
+import { normalizeLocale } from "@/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,7 +18,7 @@ const ERROR_KEY_MAP: Record<string, string> = {
 };
 
 export default function RegisterPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -39,7 +40,9 @@ export default function RegisterPage() {
     }
 
     try {
-      const tokens = await register(email, password);
+      // Seed user.locale from the language already shown on this page so the
+      // post-register getMe() → changeLanguage() path does not flip to English.
+      const tokens = await register(email, password, normalizeLocale(i18n.language));
       setTokens(tokens.access_token, tokens.refresh_token);
       navigate("/");
     } catch (err: unknown) {

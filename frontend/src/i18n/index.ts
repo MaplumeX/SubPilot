@@ -4,6 +4,13 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import en from "./en.json";
 import zhCN from "./zh-CN.json";
 
+/** Map browser / free-form codes onto the locales we actually ship. */
+export function normalizeLocale(lng: string): "en" | "zh-CN" {
+  const base = lng.toLowerCase().replaceAll("_", "-");
+  if (base === "zh-cn" || base.startsWith("zh")) return "zh-CN";
+  return "en";
+}
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -12,6 +19,7 @@ i18n
       en: { translation: en },
       "zh-CN": { translation: zhCN },
     },
+    supportedLngs: ["en", "zh-CN"],
     fallbackLng: "en",
     interpolation: {
       escapeValue: false,
@@ -19,6 +27,8 @@ i18n
     detection: {
       order: ["localStorage", "navigator"],
       lookupLocalStorage: "i18nextLng",
+      // navigator may report zh / zh-Hans / en-US — fold them onto shipped codes.
+      convertDetectedLanguage: (lng) => normalizeLocale(lng),
     },
   });
 
