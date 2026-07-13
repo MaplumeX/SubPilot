@@ -885,3 +885,37 @@ Wrapped up the code defect audit task: confirmed six security/auth/input fixes a
 ### Next Steps
 
 - None - task complete
+
+
+## Session 26: Full currency support from exchange-rate source
+
+**Date**: 2026-07-13
+**Task**: Full currency support from exchange-rate source
+**Branch**: `main`
+
+### Summary
+
+Expanded SUPPORTED_CURRENCIES to Frankfurter's 30 codes; frontend static mirror with Intl.DisplayNames labels in SubscriptionForm and Settings; contract tests for HKD/SGD accept and ZZZ reject; Trellis specs updated for currency Select pattern and dual-list sync.
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4a4f5c0` | (see git log) |
+| `82c7a15` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
