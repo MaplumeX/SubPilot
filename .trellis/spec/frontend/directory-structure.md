@@ -47,7 +47,8 @@ frontend/
 │   ├── main.tsx               # Entry point (imports i18n + index.css before App)
 │   ├── index.css              # Tailwind CSS v4 + oklch theme + @fontsource Geist
 │   └── lib/
-│       └── utils.ts           # cn() utility
+│       ├── utils.ts           # cn() utility
+│       └── currencies.ts      # Frankfurter-aligned SUPPORTED_CURRENCIES + currencyLabel (mirrors backend)
 ├── components.json           # shadcn config: style "base-nova", base-ui registry
 ├── public/                   # Static assets (favicon.svg)
 ├── vite.config.ts             # Tailwind + path alias + /api + /static proxy
@@ -61,6 +62,7 @@ frontend/
 
 - **api/** — one file per domain (auth, subscriptions, notifications), shared types in `types.ts`
 - **i18n/** — i18next config + JSON translation files (one per locale). Top-level namespaces: `auth, dashboard, subscriptions, subscriptionForm, layout, settings, notifications, errors, statistics`
+- **lib/** — shared pure helpers (`utils.ts`, `currencies.ts`). Currency option codes live in `currencies.ts` (static mirror of `backend/app/currencies.py`); labels use `Intl.DisplayNames`, not i18n JSON keys.
 - **components/ui/** — shadcn/ui primitives only, no business logic. Built on `@base-ui/react` (NOT Radix); `components.json` style is `base-nova`.
 - **components/** — feature-level reusable components (incl. `theme-provider.tsx`, `theme-toggle.tsx` at this level, not under `ui/`)
 - **pages/** — route-level page components

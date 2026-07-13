@@ -60,6 +60,7 @@
 
 - `Settings.SECRET_KEY: str` is required.
 - `SubscriptionCreate.currency` and `SubscriptionUpdate.currency` accept only `app.currencies.SUPPORTED_CURRENCIES`.
+- `PATCH /auth/me/base-currency` accepts the same set; unsupported codes → 400 (not 422).
 - `SubscriptionUpdate.payment_method_id` may be omitted but must not be explicitly `null`.
 - `POST /subscriptions/upload-logo` and `POST /subscriptions/cache-logo` accept only JPEG, PNG, and GIF content types.
 
@@ -68,6 +69,7 @@
 - Compose must require `SECRET_KEY`; never provide a known fallback. `SECRET_KEY=dev-secret-change-in-production` is rejected at settings validation.
 - Uploaded logo bytes are same-origin static content, so active SVG must not be stored there.
 - Unsupported currency and explicit null payment method are API validation errors (422); never fall through to `get_rate(...)=1.0` or a database `IntegrityError`.
+- `SUPPORTED_CURRENCIES` is the Frankfurter-aligned static set (authority for validation + exchange-rate `to=`). Frontend mirrors it in `frontend/src/lib/currencies.ts` — change both in the same PR; do not invent a currencies list API for this set.
 
 ### 4. Validation & Error Matrix
 
@@ -76,7 +78,9 @@
 | Missing/default `SECRET_KEY` | startup validation failure |
 | SVG upload/cache response | 400 invalid file type |
 | `currency="ZZZ"` | 422 validation error |
+| `currency="HKD"` (in Frankfurter set) | accepted |
 | `payment_method_id: null` in update | 422 validation error |
+| base-currency `ZZZ` | 400 unsupported currency |
 
 ### 5. Good/Base/Bad Cases
 
@@ -87,6 +91,7 @@
 ### 6. Tests Required
 
 - Unit-test rejection of the development secret, SVG content type, unsupported currency, and explicit-null payment method.
+- Unit-test that an extended supported code (e.g. `HKD`/`SGD`) is accepted on create/update.
 - Assert that omitting payment method remains valid for a partial update.
 
 ### 7. Wrong vs Correct

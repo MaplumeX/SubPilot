@@ -83,20 +83,24 @@ if (theme === 'dark' || ((theme === 'system' || !theme) && window.matchMedia('(p
 
 > **Warning**: `SelectContent` renders inside a Portal — `SelectItem` nodes are **not in the DOM** on initial render.
 >
-> This affects ALL Select triggers, not just sentinel values. When the component mounts with a `value` already set (e.g. default state, edit form), `SelectPrimitive.Value` cannot find the matching `ItemText` in the Portal and falls back to displaying the **raw value string** (e.g., `"USD"` instead of `"美元 ($)"`, `"monthly"` instead of `"每月"`).
+> This affects ALL Select triggers, not just sentinel values. When the component mounts with a `value` already set (e.g. default state, edit form), `SelectPrimitive.Value` cannot find the matching `ItemText` in the Portal and falls back to displaying the **raw value string** (e.g., `"USD"` instead of `"US Dollar (USD)"`, `"monthly"` instead of `"每月"`).
 
 **Fix**: Always pass the `label` prop to `SelectValue` so the trigger text is explicitly provided and never depends on Portal-mounted DOM lookup.
 
 ```tsx
-// Always provide label — derive from the same i18n key used in SelectItem
+// Always provide label — use the same label source as SelectItem
+// Currency options: Frankfurter-aligned static set in `@/lib/currencies`
+// (mirrors backend `app.currencies.SUPPORTED_CURRENCIES`) + Intl.DisplayNames.
+import { SUPPORTED_CURRENCIES, currencyLabel } from "@/lib/currencies";
+
 <Select value={currency} onValueChange={...}>
   <SelectTrigger>
-    <SelectValue label={t(`subscriptionForm.currencies.${currency}`)} />
+    <SelectValue label={currencyLabel(currency, i18n.language)} />
   </SelectTrigger>
   <SelectContent>
-    {CURRENCIES.map((c) => (
+    {SUPPORTED_CURRENCIES.map((c) => (
       <SelectItem key={c} value={c}>
-        {t(`subscriptionForm.currencies.${c}`)}
+        {currencyLabel(c, i18n.language)}
       </SelectItem>
     ))}
   </SelectContent>
