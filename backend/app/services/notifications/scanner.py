@@ -95,6 +95,7 @@ def process_reminders(db: Session) -> int:
         channels = build_channels(user)
         if channels and subs:
             locale = user.locale or "en"
+            due_items: list[tuple[Subscription, int]] = []
             for sub in subs:
                 if not sub.reminder_enabled:
                     continue
@@ -110,17 +111,21 @@ def process_reminders(db: Session) -> int:
                 if sub.next_billing_date > window_end:
                     continue
                 days = (sub.next_billing_date - local_today).days  # type: ignore[operator]
-                subject, body = render(locale, sub, days)
+                due_items.append((sub, days))
+
+            if due_items:
+                due_items.sort(key=lambda x: x[1])
+                subject, body = render(locale, due_items)
                 for channel in channels:
                     try:
                         channel.send(subject=subject, body=body)
                         sent_count += 1
                     except Exception:
                         logger.exception(
-                            "Failed sending %s reminder for subscription %s to user %s",
+                            "Failed sending %s reminder for user %s (%d subscriptions)",
                             channel.name,
-                            sub.id,
                             user.id,
+                            len(due_items),
                         )
 
         # Mark day even if 0 sends / no channels, so we do not re-scan every minute.

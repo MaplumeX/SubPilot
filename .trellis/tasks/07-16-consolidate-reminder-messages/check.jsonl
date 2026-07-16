@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/backend/logging-guidelines.md", "reason": "验证发送失败日志格式是否符合规范（channel.name, user.id, sub_count）"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Notification Settings Two-Layer Credential Contract 清单——检查改动是否破坏渠道凭据/发送契约"}

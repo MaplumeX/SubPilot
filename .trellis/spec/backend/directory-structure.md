@@ -37,9 +37,9 @@ backend/
 │   │   ├── exchange_rate.py  # Exchange rate fetch + lookup service
 │   │   └── notifications/    # Reminder scanning subpackage (NOT re-exported by services/__init__)
 │   │       ├── __init__.py   # Re-exports process_reminders
-│   │       ├── scanner.py    # process_reminders: scan due subs + dispatch per channel
+│   │       ├── scanner.py    # process_reminders: scan due subs, aggregate, dispatch one summary per channel
 │   │       ├── channels.py    # EmailChannel / TelegramChannel + build_channels
-│   │       └── templates.py   # Locale (en/zh-CN) reminder subject/body rendering
+│   │       └── templates.py   # Locale (en/zh-CN) summary reminder rendering (single + multi-sub)
 │   └── routers/
 │       ├── __init__.py
 │       ├── auth.py           # /api/v1/auth/* (incl. /me/notifications* — no separate notifications router)
