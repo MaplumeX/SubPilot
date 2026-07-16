@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Cross-layer type match (Pydantic ↔ TS), test requirements (unittest/curl), route ordering — applies to new monthly_prices field and converted_price change"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "API types centralized in types.ts mirroring snake_case; tsc/eslint/build must pass; react-refresh key prop rules"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "No any types; SubscriptionStats new field must be typed precisely"}

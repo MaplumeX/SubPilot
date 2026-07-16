@@ -14,6 +14,7 @@ from app.routers.subscriptions import (
     ALLOWED_CONTENT_TYPES,
     _align_to_future,
     _compute_next_billing_date,
+    _converted_price,
     _normalize_to_monthly,
 )
 from app.schemas.subscription import SubscriptionCreate, SubscriptionUpdate
@@ -148,6 +149,17 @@ class NormalizeToMonthlyTests(unittest.TestCase):
 
     def test_every_2_days_correct(self) -> None:
         self.assertAlmostEqual(_normalize_to_monthly(100, 2, CycleUnit.day), 100 / 2 * 365 / 12)
+
+
+class ConvertedPriceTests(unittest.TestCase):
+    """Tests for _converted_price — single-cycle, not monthly-normalized."""
+
+    def test_yearly_120_usd_to_cny_is_864(self) -> None:
+        # Annual $120 at rate 7.2 → 864.0 (not 72.0 which would be monthly)
+        self.assertEqual(_converted_price(120, 7.2), 864.0)
+
+    def test_monthly_10_usd_to_cny_is_72(self) -> None:
+        self.assertEqual(_converted_price(10, 7.2), 72.0)
 
 
 if __name__ == "__main__":

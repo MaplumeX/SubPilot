@@ -124,6 +124,7 @@ class SubscriptionStats(BaseModel):
     most_expensive: SubscriptionBrief | None = None
     cheapest: SubscriptionBrief | None = None
     top3_percentage: float = 0.0
+    monthly_prices: list[SubscriptionBrief] = []
 
 
 class CacheLogoRequest(BaseModel):

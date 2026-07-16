@@ -118,6 +118,7 @@ SECRET_KEY: str
 - [ ] Ownership checks on all subscription mutation endpoints
 - [ ] No hardcoded secrets
 - [ ] Cross-layer types match (backend Pydantic ↔ frontend TypeScript in `api/types.ts`)
+- [ ] Computed response fields semantics: `Subscription.converted_price` is **single-cycle** (`price * rate`); `SubscriptionStats.monthly_prices` is **monthly-normalized** (`_normalize_to_monthly(price) * rate`) — do not mix the two when ranking or displaying
 - [ ] Alembic env imports all models
 - [ ] Static sub-path routes declared before dynamic `/{id}` routes in every router
 - [ ] Scheduled jobs swallow exceptions (`logger.exception`, no re-raise)

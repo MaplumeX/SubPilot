@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Code review checklist: cross-layer types match, no hardcoded secrets, ownership checks intact; test requirements for backend"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Code review checklist: TS types match Pydantic snake_case, no any, tsc/eslint/build pass"}

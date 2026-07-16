@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
-import { getStats, getForecast, listSubscriptions } from "@/api/subscriptions";
+import { getStats, getForecast } from "@/api/subscriptions";
 import type {
   SubscriptionStats,
-  Subscription,
   SubscriptionForecast,
   MonthlyForecast,
 } from "@/api/types";
@@ -64,7 +63,6 @@ export default function StatisticsPage() {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [stats, setStats] = useState<SubscriptionStats | null>(null);
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [forecast, setForecast] = useState<SubscriptionForecast | null>(null);
   const [selectedYearMonth, setSelectedYearMonth] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,13 +73,11 @@ export default function StatisticsPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const [statsData, subsData, forecastData] = await Promise.all([
+      const [statsData, forecastData] = await Promise.all([
         getStats(),
-        listSubscriptions(),
         getForecast(),
       ]);
       setStats(statsData);
-      setSubscriptions(subsData);
       setForecast(forecastData);
     } catch (err) {
       // 401 handled by interceptor; surface all other failures.
@@ -97,7 +93,7 @@ export default function StatisticsPage() {
     fetchData();
   }, [fetchData]);
 
-  const hasData = subscriptions.length > 0;
+  const hasData = stats != null && stats.count > 0;
 
   // Category distribution data — answers "where does my money go"
   const categoryData: CategoryData[] = stats
@@ -108,11 +104,9 @@ export default function StatisticsPage() {
     : [];
 
   // Top 5 subscriptions — answers "which ones cost the most"
-  const topSubs: TopSubData[] = subscriptions
-    .filter((s) => s.converted_price != null && s.status === "active")
-    .sort((a, b) => (b.converted_price ?? 0) - (a.converted_price ?? 0))
+  const topSubs: TopSubData[] = (stats?.monthly_prices ?? [])
     .slice(0, 5)
-    .map((s) => ({ name: s.name, cost: s.converted_price ?? 0 }));
+    .map((s) => ({ name: s.name, cost: s.amount }));
 
   const chartMonths: ChartMonth[] =
     forecast?.months.map((m) => ({

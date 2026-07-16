@@ -55,6 +55,11 @@ _CYCLE_MULTIPLIER = case(
 router = APIRouter(prefix="/api/v1/subscriptions", tags=["subscriptions"])
 
 
+def _converted_price(price: float, rate: float) -> float:
+    """Single-cycle converted price: ``price * rate`` (no monthly normalization)."""
+    return round(price * rate, 2)
+
+
 def _normalize_to_monthly(price: float, cycle_count: int, cycle_unit: CycleUnit) -> float:
     if cycle_unit == CycleUnit.day:
         return price / cycle_count * 365 / 12
@@ -163,9 +168,8 @@ def create_subscription(
     db.commit()
     db.refresh(subscription)
     base = current_user.base_currency
-    monthly = _normalize_to_monthly(subscription.price, subscription.cycle_count, subscription.cycle_unit)
     rate = get_rate(db, subscription.currency, base)
-    subscription.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
+    subscription.converted_price = _converted_price(subscription.price, rate)  # type: ignore[attr-defined]
     return subscription
 
 
@@ -247,9 +251,8 @@ def list_subscriptions(
     subs = query.all()
     base = current_user.base_currency
     for sub in subs:
-        monthly = _normalize_to_monthly(sub.price, sub.cycle_count, sub.cycle_unit)
         rate = get_rate(db, sub.currency, base)
-        sub.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
+        sub.converted_price = _converted_price(sub.price, rate)  # type: ignore[attr-defined]
     return subs
 
 
@@ -332,6 +335,9 @@ def get_stats(
         most_expensive=most_expensive,
         cheapest=cheapest,
         top3_percentage=top3_percentage,
+        monthly_prices=[
+            SubscriptionBrief(name=n, amount=round(p, 2)) for n, p in sorted_prices
+        ],
     )
 
 
@@ -484,9 +490,8 @@ def acknowledge_subscription(
     db.commit()
     db.refresh(subscription)
     base = current_user.base_currency
-    monthly = _normalize_to_monthly(subscription.price, subscription.cycle_count, subscription.cycle_unit)
     rate = get_rate(db, subscription.currency, base)
-    subscription.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
+    subscription.converted_price = _converted_price(subscription.price, rate)  # type: ignore[attr-defined]
     return subscription
 
 
@@ -504,9 +509,8 @@ def get_subscription(
     )
     _check_ownership(subscription, current_user.id)
     base = current_user.base_currency
-    monthly = _normalize_to_monthly(subscription.price, subscription.cycle_count, subscription.cycle_unit)
     rate = get_rate(db, subscription.currency, base)
-    subscription.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
+    subscription.converted_price = _converted_price(subscription.price, rate)  # type: ignore[attr-defined]
     return subscription
 
 
@@ -550,9 +554,8 @@ def update_subscription(
     db.commit()
     db.refresh(subscription)
     base = current_user.base_currency
-    monthly = _normalize_to_monthly(subscription.price, subscription.cycle_count, subscription.cycle_unit)
     rate = get_rate(db, subscription.currency, base)
-    subscription.converted_price = round(monthly * rate, 2)  # type: ignore[attr-defined]
+    subscription.converted_price = _converted_price(subscription.price, rate)  # type: ignore[attr-defined]
     return subscription
 
 

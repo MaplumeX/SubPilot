@@ -121,6 +121,7 @@ export interface SubscriptionStats {
   most_expensive: SubscriptionBrief | null;
   cheapest: SubscriptionBrief | null;
   top3_percentage: number;
+  monthly_prices: SubscriptionBrief[];
 }
 
 export interface ForecastChargeItem {
