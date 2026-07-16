@@ -166,6 +166,25 @@ if cycle_changed or start_changed:
 
 ---
 
+## cycle_count Is a Span, Not a Frequency Multiplier (Amount Normalization)
+
+`cycle_count` + `cycle_unit` describe the **span between charges**: "every N units, charge `price` once." Any amount-normalization to a monthly figure must therefore **divide** by `cycle_count`, never multiply.
+
+**Correct formulas** (`_normalize_to_monthly` / `_CYCLE_MULTIPLIER` in `routers/subscriptions.py`):
+
+```
+day:   price / cycle_count * 365 / 12
+week:  price / cycle_count * 52  / 12
+month: price / cycle_count
+year:  price / cycle_count / 12
+```
+
+**Why the bug happened**: the original 06-08-customizable-billing-cycle PRD wrote the formula as `price * count` (multiplication), treating `cycle_count` as "charges per unit." That is the inverse of the real semantics. `cycle_count == 1` (weekly/monthly/yearly presets) made the two interpretations coincide, so the error only surfaced for custom cycles (`count > 1`, e.g. quarterly = `{3, month}` was computed as 3× too high).
+
+**Scope**: this rule applies to `_normalize_to_monthly` and the SQL `_CYCLE_MULTIPLIER` case expression only. `advance_next_billing_date` and `_compute_next_billing_date` use `cycle_count` for **date arithmetic** (`start + N units`), where multiplication-by-count is correct — do not "fix" those. `forecast.py` uses raw `price * rate` (actual per-charge amount), so it is unaffected.
+
+---
+
 ## Per-User External Credentials: Enable Requires Validation
 
 When storing per-user third-party credentials (SMTP, Telegram bot token, etc.) as nullable columns on `User` alongside an `<channel>_enabled` boolean, enabling the channel is a two-field contract: the switch AND its credentials. Enabling without complete credentials is a 422, not a silent runtime skip:

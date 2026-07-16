@@ -14,6 +14,7 @@ from app.routers.subscriptions import (
     ALLOWED_CONTENT_TYPES,
     _align_to_future,
     _compute_next_billing_date,
+    _normalize_to_monthly,
 )
 from app.schemas.subscription import SubscriptionCreate, SubscriptionUpdate
 from app.services.renewal import advance_next_billing_date
@@ -124,6 +125,29 @@ class NextBillingDateAlignmentTests(unittest.TestCase):
         while manual <= today:
             manual = advance_next_billing_date(manual, 1, CycleUnit.month)
         self.assertEqual(aligned, manual)
+
+
+class NormalizeToMonthlyTests(unittest.TestCase):
+    """Tests for _normalize_to_monthly — cycle_count is a span, not a frequency."""
+
+    def test_quarterly_preset_correct(self) -> None:
+        # price=100, every 3 months → monthly = 100/3
+        self.assertAlmostEqual(_normalize_to_monthly(100, 3, CycleUnit.month), 100 / 3)
+
+    def test_monthly_preset_regression(self) -> None:
+        self.assertAlmostEqual(_normalize_to_monthly(100, 1, CycleUnit.month), 100.0)
+
+    def test_yearly_preset_regression(self) -> None:
+        self.assertAlmostEqual(_normalize_to_monthly(1200, 1, CycleUnit.year), 100.0)
+
+    def test_every_2_weeks_correct(self) -> None:
+        self.assertAlmostEqual(_normalize_to_monthly(100, 2, CycleUnit.week), 100 / 2 * 52 / 12)
+
+    def test_every_6_months_correct(self) -> None:
+        self.assertAlmostEqual(_normalize_to_monthly(100, 6, CycleUnit.month), 100 / 6)
+
+    def test_every_2_days_correct(self) -> None:
+        self.assertAlmostEqual(_normalize_to_monthly(100, 2, CycleUnit.day), 100 / 2 * 365 / 12)
 
 
 if __name__ == "__main__":

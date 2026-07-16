@@ -44,10 +44,10 @@ SORTABLE_FIELDS = {"name", "converted_price", "next_billing_date"}
 _MAX_CATCH_UP = 2000
 
 _CYCLE_MULTIPLIER = case(
-    (Subscription.cycle_unit == CycleUnit.day, Subscription.price * Subscription.cycle_count * 365.0 / 12),
-    (Subscription.cycle_unit == CycleUnit.week, Subscription.price * Subscription.cycle_count * 52.0 / 12),
-    (Subscription.cycle_unit == CycleUnit.month, Subscription.price * Subscription.cycle_count),
-    (Subscription.cycle_unit == CycleUnit.year, Subscription.price * Subscription.cycle_count / 12.0),
+    (Subscription.cycle_unit == CycleUnit.day, Subscription.price / Subscription.cycle_count * 365.0 / 12),
+    (Subscription.cycle_unit == CycleUnit.week, Subscription.price / Subscription.cycle_count * 52.0 / 12),
+    (Subscription.cycle_unit == CycleUnit.month, Subscription.price / Subscription.cycle_count),
+    (Subscription.cycle_unit == CycleUnit.year, Subscription.price / Subscription.cycle_count / 12.0),
     else_=Subscription.price,
 )
 
@@ -57,13 +57,13 @@ router = APIRouter(prefix="/api/v1/subscriptions", tags=["subscriptions"])
 
 def _normalize_to_monthly(price: float, cycle_count: int, cycle_unit: CycleUnit) -> float:
     if cycle_unit == CycleUnit.day:
-        return price * cycle_count * 365 / 12
+        return price / cycle_count * 365 / 12
     if cycle_unit == CycleUnit.week:
-        return price * cycle_count * 52 / 12
+        return price / cycle_count * 52 / 12
     if cycle_unit == CycleUnit.month:
-        return price * cycle_count
+        return price / cycle_count
     if cycle_unit == CycleUnit.year:
-        return price * cycle_count / 12
+        return price / cycle_count / 12
     return price
 
 

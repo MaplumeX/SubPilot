@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Backend lint/test gate (ruff + pytest) the check phase must run before reporting completion."}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Verify the fix introduces no new error paths; division by cycle_count is safe because schema enforces ge=1."}
