@@ -278,7 +278,7 @@ def get_stats(
         rate = get_rate(db, sub.currency, base)
         converted = monthly * rate
         total_monthly += converted
-        cat = sub.category.name if sub.category else None
+        cat = sub.category.name if sub.category else "Uncategorized"
         by_category[cat] = by_category.get(cat, 0.0) + converted
         converted_prices.append((sub.name, converted))
 
