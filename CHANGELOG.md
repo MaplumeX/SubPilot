@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-07-16
+
 ### Fixed
 
 - **deploy:** Persist `/app/static/logos` via a named Docker volume so user-uploaded / cached subscription logos survive image updates and container recreation.
+- **subscriptions:** Prevent long subscription names from squeezing out the status badge in card view.
+- **subscriptions:** Import missing `SubscriptionBrief` in stats router, fixing a runtime error in the stats endpoint.
 
 ## [1.1.1] - 2026-07-16
 
