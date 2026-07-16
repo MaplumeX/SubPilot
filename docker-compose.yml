@@ -9,6 +9,7 @@ services:
       - "7743:80"
     volumes:
       - subpilot-data:/app/data
+      - subpilot-logos:/app/static/logos
     env_file:
       - path: .env
         required: false
@@ -20,3 +21,4 @@ services:
 
 volumes:
   subpilot-data:
+  subpilot-logos:

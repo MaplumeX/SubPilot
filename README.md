@@ -136,6 +136,7 @@ v1.1.0 replaced the separate `subpilot-backend` and `subpilot-frontend` images w
 2. Update `docker-compose.yml` to the single-service form shown above (host port `7743` → container `80`).
 3. Move any backend env vars onto the single service.
 4. The SQLite volume path inside the container is `/app/data/subpilot.db` — keep the same volume to preserve data.
+5. A new `subpilot-logos` volume is mounted at `/app/static/logos` so user-uploaded / cached subscription logos survive image updates. Deployments upgrading from a version without this volume will lose previously uploaded logos once (the DB still references `/static/logos/{name}` but the files are gone); re-upload or re-cache them from the edit form.
 
 ### Release pipeline
 

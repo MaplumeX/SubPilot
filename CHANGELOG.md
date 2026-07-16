@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **deploy:** Persist `/app/static/logos` via a named Docker volume so user-uploaded / cached subscription logos survive image updates and container recreation.
+
 ## [1.1.1] - 2026-07-16
 
 ### Added

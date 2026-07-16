@@ -136,6 +136,7 @@ v1.1.0 用单个 `subpilot` 镜像取代了原先的 `subpilot-backend` 与 `sub
 2. 将 `docker-compose.yml` 更新为上方所示的单服务形态（主机端口 `7743` → 容器 `80`）。
 3. 把原本写在 backend 服务上的环境变量移到这个唯一服务上。
 4. 容器内 SQLite 路径为 `/app/data/subpilot.db` —— 保留同一个 volume 即可延续数据。
+5. 新增 `subpilot-logos` volume 挂载到 `/app/static/logos`，用户上传/缓存的订阅 logo 在镜像更新后不再丢失。从没有该 volume 的版本升级上来时，之前上传的 logo 会丢失一次（数据库仍指向 `/static/logos/{name}` 但文件已不存在），可在编辑表单里重新上传或重新缓存。
 
 ### 发布流水线
 

@@ -27,6 +27,7 @@ Local dual-process development (`make dev`: API `:8000` + Vite `:5173`) is out o
 | Nginx | Container `listen 80`; serves SPA from `/usr/share/nginx/html` |
 | uvicorn | `127.0.0.1:8000` only (not published) |
 | Data volume | Named volume → `/app/data` (SQLite `DATABASE_URL=sqlite:///./data/subpilot.db`) |
+| Logos volume | Named volume → `/app/static/logos` (user-uploaded / cached subscription logos; must persist across image updates) |
 | Process manager | supervisord as PID 1 (`deploy/supervisord.conf`) |
 | Release context | Repo root `.` (not `backend/` or `frontend/` alone) |
 
@@ -89,7 +90,7 @@ Frontend production client uses same-origin `baseURL: "/api/v1"` — do not hard
 
 ## 5. Good / Base / Bad Cases
 
-- **Good**: `.env` with long random `SECRET_KEY`, `docker compose up --build -d`, open `http://localhost:7743`, register/login works, volume persists DB.
+- **Good**: `.env` with long random `SECRET_KEY`, `docker compose up --build -d`, open `http://localhost:7743`, register/login works, volumes persist DB and logos.
 - **Base**: Published image `SUBPILOT_VERSION=x.y.z docker compose up -d` with same env contract.
 - **Bad**: Re-adding compose fallback `SECRET_KEY=dev-secret-change-in-production`; proxying to Docker DNS name `backend:8000` inside a single container; listening Nginx on host-specific 7743 inside the image; publishing dual GHCR images again.
 
@@ -171,3 +172,4 @@ docker-compose.yml         # single app service
 - [ ] nginx proxies `/api/` and `/static/` to loopback
 - [ ] wait-for-uvicorn before nginx; healthcheck uses a real script file
 - [ ] README migration notes for dual-image users
+- [ ] Compose mounts a named volume at `/app/static/logos` so logos survive image updates
