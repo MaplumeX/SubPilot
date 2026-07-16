@@ -62,7 +62,7 @@
 - `SubscriptionCreate.currency` and `SubscriptionUpdate.currency` accept only `app.currencies.SUPPORTED_CURRENCIES`.
 - `PATCH /auth/me/base-currency` accepts the same set; unsupported codes → 400 (not 422).
 - `SubscriptionUpdate.payment_method_id` may be omitted but must not be explicitly `null`.
-- `POST /subscriptions/upload-logo` and `POST /subscriptions/cache-logo` accept only JPEG, PNG, and GIF content types.
+- `POST /subscriptions/upload-logo` and `POST /subscriptions/cache-logo` accept only JPEG, PNG, GIF, and WebP content types.
 
 ### 3. Contracts
 

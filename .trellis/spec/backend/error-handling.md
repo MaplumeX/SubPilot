@@ -100,7 +100,7 @@ const ERROR_KEY_MAP: Record<string, string> = {
   "Invalid credentials": "errors.invalidCredentials",
   "Email already registered": "errors.emailRegistered",
   "Subscription not found": "errors.subscriptionNotFound",
-  "Invalid file type. Allowed: JPG, PNG, SVG, GIF": "subscriptionForm.invalidFileType",
+  "Invalid file type. Allowed: JPG, PNG, GIF, WebP": "subscriptionForm.invalidFileType",
   "File size exceeds 2MB limit": "subscriptionForm.fileTooLarge",
 };
 ```

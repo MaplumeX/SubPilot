@@ -29,7 +29,7 @@ from app.schemas.subscription import (
     SubscriptionUpdate,
 )
 
-ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/gif"}
+ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
 MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
 LOGOS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "logos")
 
@@ -37,6 +37,7 @@ EXT_MAP = {
     "image/jpeg": "jpg",
     "image/png": "png",
     "image/gif": "gif",
+    "image/webp": "webp",
 }
 
 SORTABLE_FIELDS = {"name", "converted_price", "next_billing_date"}
@@ -401,7 +402,7 @@ def upload_logo(
     if not file.content_type or file.content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid file type. Allowed: JPG, PNG, GIF",
+            detail="Invalid file type. Allowed: JPG, PNG, GIF, WebP",
         )
     contents = file.file.read()
     if len(contents) > MAX_FILE_SIZE:
@@ -453,7 +454,7 @@ def cache_logo(
     if content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid file type. Allowed: JPG, PNG, GIF",
+            detail="Invalid file type. Allowed: JPG, PNG, GIF, WebP",
         )
     if len(resp.content) > MAX_FILE_SIZE:
         raise HTTPException(

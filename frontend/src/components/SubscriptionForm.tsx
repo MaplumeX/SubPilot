@@ -51,7 +51,7 @@ const ERROR_KEY_MAP: Record<string, string> = {
   "Invalid credentials": "errors.invalidCredentials",
   "Email already registered": "errors.emailRegistered",
   "Subscription not found": "errors.subscriptionNotFound",
-  "Invalid file type. Allowed: JPG, PNG, GIF": "subscriptionForm.invalidFileType",
+  "Invalid file type. Allowed: JPG, PNG, GIF, WebP": "subscriptionForm.invalidFileType",
   "File size exceeds 2MB limit": "subscriptionForm.fileTooLarge",
   "Query must not be empty": "subscriptionForm.logoSearchFailed",
   "Image URL host is not allowed": "subscriptionForm.cacheLogoFailed",
@@ -211,7 +211,7 @@ export default function SubscriptionForm({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       setError(t("subscriptionForm.invalidFileType"));
       return;
@@ -414,7 +414,7 @@ export default function SubscriptionForm({
                 <TabsContent value="upload" className="mt-2">
                   <Input
                     type="file"
-                    accept=".jpg,.jpeg,.png,.gif"
+                    accept=".jpg,.jpeg,.png,.gif,.webp"
                     onChange={handleUploadLogo}
                     disabled={uploading}
                   />
