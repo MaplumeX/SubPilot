@@ -46,7 +46,7 @@ export default function SubscriptionCard({
               <AvatarImage src={sub.logo_url ?? undefined} alt={sub.name} className="rounded-md object-contain" />
               <AvatarFallback>{sub.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
-            <CardTitle className="truncate text-sm">{sub.name}</CardTitle>
+            <CardTitle className="min-w-0 truncate text-sm">{sub.name}</CardTitle>
           </div>
           <div className="flex shrink-0 gap-1">
             {dueSoon && (
