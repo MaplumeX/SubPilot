@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 27
-- **Last Active**: 2026-07-13
+- **Total Sessions**: 28
+- **Last Active**: 2026-07-16
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~955 | Active |
+| `journal-1.md` | ~988 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 28 | 2026-07-16 | Add WebP support to logo upload and cache | `2f38097` | `main` |
 | 27 | 2026-07-13 | Single Docker image deploy | `7d0fc5d`, `931be51` | `main` |
 | 26 | 2026-07-13 | Full currency support from exchange-rate source | `4a4f5c0`, `82c7a15` | `main` |
 | 25 | 2026-07-13 | Finish code defect audit wrap-up | `801ac9a`, `49b443f`, `d2350d8` | `main` |

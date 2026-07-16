@@ -953,3 +953,36 @@ Merged dual subpilot-backend/frontend images into one subpilot image (Nginx+uvic
 ### Next Steps
 
 - None - task complete
+
+
+## Session 28: Add WebP support to logo upload and cache
+
+**Date**: 2026-07-16
+**Task**: Add WebP support to logo upload and cache
+**Branch**: `main`
+
+### Summary
+
+Added image/webp to the backend ALLOWED_CONTENT_TYPES whitelist and EXT_MAP, the frontend upload allowedTypes array, the file input accept attribute, and the ERROR_KEY_MAP key. Updated invalidFileType error messages in EN/ZH i18n to include WebP. Updated spec notes in quality-guidelines.md and error-handling.md to reflect the new allowed list (and corrected an erroneous SVG reference in error-handling.md). Tests, lint, and build all pass.
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2f38097` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
