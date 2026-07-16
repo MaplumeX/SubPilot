@@ -34,6 +34,14 @@ export const SUPPORTED_CURRENCIES = [
 
 export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 
+export function formatCurrency(amount: number, currency: string, locale: string): string {
+  try {
+    return new Intl.NumberFormat(locale, { style: "currency", currency }).format(amount);
+  } catch {
+    return `${currency} ${amount.toFixed(2)}`;
+  }
+}
+
 export function currencyLabel(code: string, locale: string): string {
   try {
     const name = new Intl.DisplayNames([locale], { type: "currency" }).of(code);

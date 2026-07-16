@@ -36,6 +36,7 @@ import SubscriptionCard from "@/components/SubscriptionCard";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { toast } from "@/components/ui/toast-store";
 import { formatDueLabel, isDueWithin, effectiveDaysFor } from "@/lib/due";
+import { formatCurrency } from "@/lib/currencies";
 import { isNonAuthError } from "@/lib/utils";
 
 type ViewMode = "table" | "card";
@@ -364,7 +365,7 @@ export default function SubscriptionsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {sub.currency} {sub.price.toFixed(2)}
+                      {formatCurrency(sub.price, sub.currency, i18n.language)}
                       {sub.converted_price != null && sub.currency !== baseCurrency && (
                         <span className="ml-1 text-xs text-muted-foreground">
                           (~{new Intl.NumberFormat(i18n.language, { style: "currency", currency: baseCurrency }).format(sub.converted_price)})

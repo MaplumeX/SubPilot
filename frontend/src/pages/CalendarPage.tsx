@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/popover";
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { formatDueLabel } from "@/lib/due";
+import { formatCurrency } from "@/lib/currencies";
 import { cn, isNonAuthError } from "@/lib/utils";
 import { toast } from "@/components/ui/toast-store";
 
@@ -464,7 +465,7 @@ function DayPopover({
             <div className="flex items-center justify-between gap-2">
               <span className="truncate font-medium">{sub.name}</span>
               <span className="shrink-0 font-variant-numeric tabular-nums font-semibold">
-                {sub.currency} {sub.price.toFixed(2)}
+                {formatCurrency(sub.price, sub.currency, locale)}
               </span>
             </div>
             <div className="flex items-center gap-2">

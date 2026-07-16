@@ -6,6 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDueLabel } from "@/lib/due";
+import { formatCurrency } from "@/lib/currencies";
 
 interface SubscriptionCardProps {
   subscription: Subscription;
@@ -70,7 +71,7 @@ export default function SubscriptionCard({
 
       <CardContent className="space-y-1.5">
         <div className="text-lg font-semibold font-variant-numeric tabular-nums">
-          {sub.currency} {sub.price.toFixed(2)}
+          {formatCurrency(sub.price, sub.currency, locale)}
           {sub.converted_price != null && sub.currency !== baseCurrency && (
             <span className="ml-1 text-xs font-normal text-muted-foreground">
               (~{new Intl.NumberFormat(locale, { style: "currency", currency: baseCurrency }).format(sub.converted_price)})

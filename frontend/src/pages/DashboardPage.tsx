@@ -9,6 +9,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ShieldCheck, BellRing, CheckCircle2 } from "lucide-react";
 import { toast } from "@/components/ui/toast-store";
 import { formatDueLabel } from "@/lib/due";
+import { formatCurrency } from "@/lib/currencies";
 import { cn, isNonAuthError } from "@/lib/utils";
 
 interface DashboardPageProps {
@@ -196,7 +197,7 @@ export default function DashboardPage({
                       </div>
                       <div className="flex shrink-0 items-center gap-2">
                         <span className="font-variant-numeric tabular-nums font-semibold">
-                          {sub.currency} {sub.price.toFixed(2)}
+                          {formatCurrency(sub.price, sub.currency, locale)}
                         </span>
                         <Badge variant="pending">
                           {formatDueLabel(sub.next_billing_date, t)}
