@@ -1,92 +1,155 @@
 # SubPilot
 
-Calm subscription tracker — know what you pay, when it renews, and what is due soon.
+**A calm, reliable subscription tracker — the steady assistant for your recurring spend.**
 
-## Stack
+[中文](./README.zh-CN.md)
 
-- **Backend**: FastAPI + SQLAlchemy + SQLite
-- **Frontend**: React + Vite + shadcn/ui
-- **Deploy**: Single Docker image (Nginx + uvicorn) via Compose or GHCR
+SubPilot gathers every subscription you have into one place and answers three questions: what am I paying for, how much does it cost per month / per year, and what is about to renew. It exists to remove the anxiety of a forgotten renewal — renewal reminders are a first-class citizen, not a setting buried three menus deep.
 
-## Development
+Success looks like this: you open SubPilot, confirm in a few seconds that "this month is safe / one charge is coming up," and close it with peace of mind.
 
-Local development stays split (API + Vite), independent of the production image:
+---
+
+## Features
+
+- **Subscription management** — CRUD for subscriptions with cycle (day / week / month / year), currency, category, payment method, notes, and logo.
+- **Renewal-first dashboard** — due-soon items are the primary visual focus, ahead of totals and trends.
+- **Automatic renewals** — a daily scheduler advances `next_billing_date` for active auto-renew subscriptions.
+- **Reminders** — per-subscription reminder windows (default or custom days ahead). Due reminders are consolidated into a single summary message per scan.
+- **Statistics** — monthly / yearly spend, monthly trend, and next-30-day projection.
+- **Multi-currency** — on-demand exchange-rate fetching with conversion to a single display currency.
+- **Cashflow forecast** — upcoming charges laid out on a calendar.
+- **Auth** — JWT access + refresh tokens, bcrypt password hashing.
+- **i18n** — English (default) and Simplified Chinese, auto-detected from the browser.
+- **Dark mode** — a first-class theme, not an afterthought.
+
+## Tech Stack
+
+| Layer    | Stack                                                                                  |
+| -------- | -------------------------------------------------------------------------------------- |
+| Backend  | FastAPI, SQLAlchemy, Alembic, APScheduler, python-jose, passlib[bcrypt], Python 3.12+ |
+| Frontend | React 19, Vite, TypeScript, Tailwind CSS 4, shadcn, Recharts, i18next                  |
+| Runtime  | Single Docker image — Nginx (SPA + static) + uvicorn via supervisord                   |
+| Data     | SQLite (file-based, persisted via volume)                                              |
+
+## Quick Start (Docker)
+
+The published image is `ghcr.io/maplumex/subpilot`. Compose exposes host port **7743**.
 
 ```bash
-# install
+cp .env.example .env          # then edit .env and set SECRET_KEY
+docker compose up -d          # pulls latest, or build locally with --build
+```
+
+Open `http://localhost:7743` and register an account.
+
+### Required environment
+
+| Variable        | Example                              | Notes                                                                    |
+| --------------- | ------------------------------------ | ------------------------------------------------------------------------ |
+| `SECRET_KEY`    | a long random string                 | Required. The development default is rejected at startup.                |
+| `DATABASE_URL`  | `sqlite:///./data/subpilot.db`       | Set automatically by Compose; override for external databases.           |
+| `CORS_ORIGINS`  | `http://localhost:7743`              | Comma-separated list of allowed origins. Defaults to the compose origin. |
+
+To pin a specific version:
+
+```bash
+SUBPILOT_VERSION=1.1.0 docker compose up -d
+```
+
+## Local Development
+
+Prerequisites: Python 3.12+ with [`uv`](https://docs.astral.sh/uv/), Node.js 22+.
+
+```bash
+# install both backend and frontend deps
 make install
 
-# run API :8000 + web :5173
+# run backend (uvicorn :8000) and frontend (vite :5173) in parallel
 make dev
 ```
 
-## Deploy with Docker Compose
+The frontend dev server proxies `/api` to the backend. Open `http://localhost:5173`.
 
-One service serves the UI and API on host port **7743**:
-
-```bash
-cp .env.example .env
-# set SECRET_KEY to a long random string (required)
-docker compose up --build -d
-```
-
-Open http://localhost:7743
-
-With a published image:
+Backend-only:
 
 ```bash
-cp .env.example .env   # set SECRET_KEY, optional CORS_ORIGINS
-export SUBPILOT_VERSION=1.0.0
-docker compose up -d
+cd backend && uv sync
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Omit `SUBPILOT_VERSION` to use `:latest`.
-
-Image: `ghcr.io/maplumex/subpilot:{version, major.minor, latest}`
-
-> Public GHCR packages can be pulled anonymously once package visibility is set to public. Otherwise: `docker login ghcr.io`.
-
-### Migrating from two images
-
-Earlier releases published `subpilot-backend` and `subpilot-frontend` as separate images. That dual-image compose layout is no longer published.
-
-| Before | After |
-|--------|--------|
-| Two services (`backend` + `frontend`) | One service (`app`) |
-| Host ports 8000 + 80 | Host port **7743** → container 80 |
-| Two GHCR images | `ghcr.io/maplumex/subpilot` only |
-
-1. Stop the old stack (`docker compose down --remove-orphans`).
-2. Replace `docker-compose.yml` / pull this repo’s compose file.
-3. Set `SECRET_KEY` and `CORS_ORIGINS=http://localhost:7743` (or your public origin) in `.env`.
-4. `docker compose up -d` (or pin `SUBPILOT_VERSION`). If Compose warns about orphan `backend`/`frontend` containers, re-run with `--remove-orphans`.
-5. SQLite data still lives under the `/app/data` volume — existing named volumes that mounted `/app/data` on the backend remain usable if you keep the same volume name (`subpilot-data`).
-
-Old `subpilot-backend` / `subpilot-frontend` tags may still exist in GHCR history but are no longer built.
-
-## Versioning & release
-
-SemVer. Root `VERSION` is the source of truth and must match backend / frontend package versions.
-
-To publish:
-
-1. Update `VERSION`, `backend/pyproject.toml`, `frontend/package.json` to the same semver.
-2. Move notes from `CHANGELOG.md` `[Unreleased]` into a new `## [x.y.z] - YYYY-MM-DD` section.
-3. Commit on `main` and push.
-4. Create and push an annotated tag:
+Frontend-only:
 
 ```bash
-git tag -a v1.0.0 -m "Release v1.0.0"
-git push origin v1.0.0
+cd frontend && npm install
+npm run dev
 ```
 
-GitHub Actions then:
+## Project Structure
 
-- Builds and pushes `ghcr.io/maplumex/subpilot:{version, major.minor, latest}`
-- Creates a GitHub Release from the changelog section
+```
+SubPilot/
+├── backend/
+│   ├── app/
+│   │   ├── main.py            # FastAPI app + lifespan schedulers
+│   │   ├── config.py          # pydantic-settings
+│   │   ├── routers/           # auth, subscriptions, categories, payment_methods
+│   │   ├── models/            # SQLAlchemy models
+│   │   ├── schemas/           # Pydantic schemas
+│   │   └── services/          # renewals, reminders, exchange rates, forecast
+│   ├── alembic/               # migrations
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── api/               # axios clients
+│   │   ├── components/        # shadcn-based UI
+│   │   ├── pages/             # Dashboard, Subscriptions, Calendar, Statistics, Settings
+│   │   ├── i18n/              # en.json, zh-CN.json
+│   │   └── routes.tsx
+│   └── package.json
+├── deploy/                    # nginx.conf, supervisord.conf, healthcheck
+├── Dockerfile                 # multi-stage: frontend build → single runtime
+├── docker-compose.yml
+└── .github/workflows/release.yml
+```
 
-Workflows: https://github.com/MaplumeX/SubPilot/actions
+## Deployment
 
-## CI
+### Single Docker image (v1.1.0+)
 
-Tag `v*` runs the release workflow: build/push the GHCR image and create a GitHub Release.
+One image serves the SPA and API on container port 80 — Nginx fronts uvicorn over the loopback. The healthcheck treats a 401/403 from `/auth/me` as "API is up" (auth is required).
+
+### Migrating from the dual-image setup (pre-1.1.0)
+
+v1.1.0 replaced the separate `subpilot-backend` and `subpilot-frontend` images with a single `subpilot` image.
+
+1. Pull `ghcr.io/maplumex/subpilot:1.1.0` (or `latest`).
+2. Update `docker-compose.yml` to the single-service form shown above (host port `7743` → container `80`).
+3. Move any backend env vars onto the single service.
+4. The SQLite volume path inside the container is `/app/data/subpilot.db` — keep the same volume to preserve data.
+
+### Release pipeline
+
+Tags matching `v*` trigger `.github/workflows/release.yml`, which:
+
+1. Verifies the `VERSION` file matches the tag.
+2. Builds and pushes the image to GHCR with `major.minor`, `major.minor.patch`, and `latest` tags.
+3. Creates a GitHub Release with notes extracted from `CHANGELOG.md`.
+
+To cut a release: bump `VERSION`, `backend/pyproject.toml`, and `frontend/package.json` in one commit, then tag `vX.Y.Z`.
+
+## Background Jobs
+
+On startup the app initializes a scheduler with three jobs:
+
+| Job              | Interval | Purpose                                                          |
+| ---------------- | -------- | ---------------------------------------------------------------- |
+| Auto-renewal     | 1 day    | Advances `next_billing_date` for active auto-renew subscriptions.|
+| Exchange rates   | 1 day    | Fetches fresh rates for multi-currency conversion.               |
+| Reminders        | 1 minute | Scans for due reminders and consolidates them per user.          |
+
+All three also run once on boot as catch-up after a restart (safe via per-user time + idempotency gates).
+
+## License
+
+All rights reserved. This project is not currently released under an open-source license.
