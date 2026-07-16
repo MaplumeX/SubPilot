@@ -43,9 +43,8 @@ SubPilot 把分散在各处的订阅集中到一个地方，回答三个问题�
 curl -LO https://raw.githubusercontent.com/MaplumeX/SubPilot/main/docker-compose.yml
 curl -o .env https://raw.githubusercontent.com/MaplumeX/SubPilot/main/.env.example
 
-# 2. 将 SECRET_KEY 改为一段长随机字符串
-#    （例如编辑后追加：openssl rand -hex 32）
-$EDITOR .env
+# 2. 编辑 .env，将 SECRET_KEY 改为一段长随机字符串
+#    （可用 openssl rand -hex 32 生成）
 
 # 3. 启动
 docker compose up -d

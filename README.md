@@ -43,9 +43,8 @@ No need to clone the repo — pull the two files you need and go:
 curl -LO https://raw.githubusercontent.com/MaplumeX/SubPilot/main/docker-compose.yml
 curl -o .env https://raw.githubusercontent.com/MaplumeX/SubPilot/main/.env.example
 
-# 2. Set SECRET_KEY to a long random string
-#    (e.g.  openssl rand -hex 32  >> .env  after editing the placeholder)
-$EDITOR .env
+# 2. Edit .env and set SECRET_KEY to a long random string
+#    (e.g.  openssl rand -hex 32)
 
 # 3. Launch
 docker compose up -d
