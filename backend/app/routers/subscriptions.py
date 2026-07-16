@@ -21,6 +21,7 @@ from app.schemas.subscription import (
     CacheLogoRequest,
     ForecastChargeItem,
     MonthlyForecast,
+    SubscriptionBrief,
     SubscriptionCreate,
     SubscriptionForecast,
     SubscriptionResponse,
