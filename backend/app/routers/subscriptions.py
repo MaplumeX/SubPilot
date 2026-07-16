@@ -16,6 +16,7 @@ from app.models.user import User
 from app.services import logo_search, ssrf
 from app.services.exchange_rate import get_rate
 from app.services.forecast import build_forecast
+from app.services.renewal import advance_next_billing_date
 from app.schemas.subscription import (
     CacheLogoRequest,
     ForecastChargeItem,
@@ -38,6 +39,9 @@ EXT_MAP = {
 }
 
 SORTABLE_FIELDS = {"name", "converted_price", "next_billing_date"}
+
+# Catch-up budget mirroring forecast.py's _MAX_CATCH_UP guard.
+_MAX_CATCH_UP = 2000
 
 _CYCLE_MULTIPLIER = case(
     (Subscription.cycle_unit == CycleUnit.day, Subscription.price * Subscription.cycle_count * 365.0 / 12),
@@ -73,6 +77,25 @@ def _compute_next_billing_date(start_date: date, cycle_count: int, cycle_unit: C
     if cycle_unit == CycleUnit.year:
         return start_date + relativedelta(years=cycle_count)
     return start_date
+
+
+def _align_to_future(
+    next_date: date, cycle_count: int, cycle_unit: CycleUnit, today: date | None = None
+) -> date:
+    """Advance *next_date* by full cycles until it is strictly in the future.
+
+    Used on create/update so a historical subscription (start_date far in the
+    past) doesn't keep a stale past next_billing_date. Reuses
+    ``advance_next_billing_date`` so cycle math stays single-sourced. If the
+    catch-up budget is exhausted the date is left as-is (never crashes).
+    """
+    if today is None:
+        today = date.today()
+    guard = 0
+    while next_date <= today and guard < _MAX_CATCH_UP:
+        next_date = advance_next_billing_date(next_date, cycle_count, cycle_unit)
+        guard += 1
+    return next_date
 
 
 def _check_ownership(subscription: Subscription | None, user_id: int) -> None:
@@ -131,9 +154,10 @@ def create_subscription(
     _validate_category_ownership(db, data.category_id, current_user.id)
     _validate_payment_method_ownership(db, data.payment_method_id, current_user.id)
     dump = data.model_dump()
-    dump["next_billing_date"] = _compute_next_billing_date(
+    next_date = _compute_next_billing_date(
         data.start_date, data.cycle_count, data.cycle_unit
     )
+    dump["next_billing_date"] = _align_to_future(next_date, data.cycle_count, data.cycle_unit)
     subscription = Subscription(user_id=current_user.id, **dump)
     db.add(subscription)
     db.commit()
@@ -516,8 +540,11 @@ def update_subscription(
     cycle_changed = "cycle_count" in update_data or "cycle_unit" in update_data
     start_changed = "start_date" in update_data
     if cycle_changed or start_changed:
-        subscription.next_billing_date = _compute_next_billing_date(
+        next_date = _compute_next_billing_date(
             subscription.start_date, subscription.cycle_count, subscription.cycle_unit
+        )
+        subscription.next_billing_date = _align_to_future(
+            next_date, subscription.cycle_count, subscription.cycle_unit
         )
 
     db.commit()

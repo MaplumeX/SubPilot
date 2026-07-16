@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Confirms services/renewal.py owns advance_next_billing_date; routers/subscriptions.py owns create/update logic. Single-source cycle math convention."}
+{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Acknowledgement-marker pattern + catch-up loop invariant (next_billing_date > today). Date-advancing logic must loop until strictly future."}

@@ -132,6 +132,40 @@ or_(
 
 ---
 
+## next_billing_date Must Be Future-Aligned on Write (Create/Update)
+
+`_compute_next_billing_date(start_date, cycle_count, cycle_unit)` only returns `start_date + one cycle` — it does NOT compare against today. When a user adds a historical subscription (start_date far in the past, already renewed many times), the raw result sits stale in the past. The scheduled `process_renewals` job only advances `auto_renew=True` rows, so `auto_renew=False` historical subscriptions would keep a past `next_billing_date` forever.
+
+**Rule**: on create and on update (when `start_date` / `cycle_count` / `cycle_unit` changes), after computing the initial `next_billing_date`, run it through `_align_to_future` (defined in `routers/subscriptions.py`). This loops `advance_next_billing_date` (from `services/renewal.py` — single-sourced cycle math) until `next_billing_date > today`, guarded by `_MAX_CATCH_UP` (mirror `forecast.py`'s budget). If the budget is exhausted, leave the date as-is (never crash).
+
+```python
+from app.services.renewal import advance_next_billing_date
+
+_MAX_CATCH_UP = 2000  # mirror forecast.py
+
+def _align_to_future(next_date, cycle_count, cycle_unit, today=None):
+    if today is None:
+        today = date.today()
+    guard = 0
+    while next_date <= today and guard < _MAX_CATCH_UP:
+        next_date = advance_next_billing_date(next_date, cycle_count, cycle_unit)
+        guard += 1
+    return next_date
+
+# create
+next_date = _compute_next_billing_date(start_date, cycle_count, cycle_unit)
+dump["next_billing_date"] = _align_to_future(next_date, cycle_count, cycle_unit)
+
+# update (only when cycle/start changed)
+if cycle_changed or start_changed:
+    next_date = _compute_next_billing_date(...)
+    subscription.next_billing_date = _align_to_future(next_date, ...)
+```
+
+**Do NOT** add a second cycle-step implementation — always reuse `advance_next_billing_date`. `process_renewals` and `forecast.py`'s defensive catch-up stay as runtime safety nets and are NOT changed by this rule.
+
+---
+
 ## Per-User External Credentials: Enable Requires Validation
 
 When storing per-user third-party credentials (SMTP, Telegram bot token, etc.) as nullable columns on `User` alongside an `<channel>_enabled` boolean, enabling the channel is a two-field contract: the switch AND its credentials. Enabling without complete credentials is a 422, not a silent runtime skip:
