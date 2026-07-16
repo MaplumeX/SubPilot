@@ -36,9 +36,19 @@ Success looks like this: you open SubPilot, confirm in a few seconds that "this 
 
 The published image is `ghcr.io/maplumex/subpilot`. Compose exposes host port **7743**.
 
+No need to clone the repo — pull the two files you need and go:
+
 ```bash
-cp .env.example .env          # then edit .env and set SECRET_KEY
-docker compose up -d          # pulls latest, or build locally with --build
+# 1. Fetch docker-compose.yml and .env.example from the repo
+curl -LO https://raw.githubusercontent.com/MaplumeX/SubPilot/main/docker-compose.yml
+curl -o .env https://raw.githubusercontent.com/MaplumeX/SubPilot/main/.env.example
+
+# 2. Set SECRET_KEY to a long random string
+#    (e.g.  openssl rand -hex 32  >> .env  after editing the placeholder)
+$EDITOR .env
+
+# 3. Launch
+docker compose up -d
 ```
 
 Open `http://localhost:7743` and register an account.

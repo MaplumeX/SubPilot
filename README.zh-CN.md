@@ -36,9 +36,19 @@ SubPilot 把分散在各处的订阅集中到一个地方，回答三个问题�
 
 已发布镜像为 `ghcr.io/maplumex/subpilot`。Compose 对外暴露主机端口 **7743**。
 
+无需 clone 仓库，拉取所需文件即可一键部署：
+
 ```bash
-cp .env.example .env          # 然后编辑 .env，设置 SECRET_KEY
-docker compose up -d          # 拉取 latest，或用 --build 本地构建
+# 1. 从仓库拉取 docker-compose.yml 和 .env.example
+curl -LO https://raw.githubusercontent.com/MaplumeX/SubPilot/main/docker-compose.yml
+curl -o .env https://raw.githubusercontent.com/MaplumeX/SubPilot/main/.env.example
+
+# 2. 将 SECRET_KEY 改为一段长随机字符串
+#    （例如编辑后追加：openssl rand -hex 32）
+$EDITOR .env
+
+# 3. 启动
+docker compose up -d
 ```
 
 打开 `http://localhost:7743` 注册账号即可使用。
