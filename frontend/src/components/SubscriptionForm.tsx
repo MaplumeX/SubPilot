@@ -120,6 +120,41 @@ export default function SubscriptionForm({
   const [existingCategories, setExistingCategories] = useState<Category[]>([]);
   const [existingPaymentMethods, setExistingPaymentMethods] = useState<PaymentMethod[]>([]);
 
+  // Re-sync all form state when the dialog opens so residual data from a
+  // previous open (create or edit) is cleared.  Without this, the component
+  // instance is reused across opens (fixed key in AppLayout, same "create" key
+  // in SubscriptionsPage) and useState initialisers only run on mount.
+  useEffect(() => {
+    if (!open) return;
+    setName(subscription?.name ?? "");
+    setPrice(subscription?.price?.toString() ?? "");
+    setCurrency(subscription?.currency ?? "CNY");
+    setPreset(subscription ? inferPreset(subscription.cycle_count, subscription.cycle_unit) : "monthly");
+    setCycleCount(subscription?.cycle_count?.toString() ?? "1");
+    setCycleUnit(subscription?.cycle_unit ?? "month");
+    setCategory(subscription?.category?.id ?? null);
+    setPaymentMethod(subscription?.payment_method?.id ?? null);
+    setSubStatus(subscription?.status ?? "active");
+    setStartDate(subscription?.start_date ?? "");
+    setNotes(subscription?.notes ?? "");
+    setLogoUrl(subscription?.logo_url ?? "");
+    setLogoTab("search");
+    setSearchDomain("");
+    setSearchResults([]);
+    setSearching(false);
+    setHasSearched(false);
+    setCachingIndex(null);
+    setSearchError("");
+    setLinkUrl("");
+    setUploading(false);
+    setAutoRenew(subscription?.auto_renew ?? true);
+    setReminderEnabled(subscription?.reminder_enabled ?? true);
+    setReminderMode(subscription?.reminder_mode ?? "default");
+    setReminderDays(subscription?.reminder_days != null ? String(subscription.reminder_days) : "");
+    setError("");
+    setSubmitting(false);
+  }, [open, subscription]);
+
   useEffect(() => {
     listCategories().then(setExistingCategories).catch((err) => {
       if (isNonAuthError(err)) {
