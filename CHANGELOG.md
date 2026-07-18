@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-07-18
+
+### Added
+
+- **subscriptions:** Show next renewal date in the subscription management UI.
+- **subscriptions:** Add WebP support to logo upload and cache.
+
+### Fixed
+
+- **subscriptions:** Use 'Uncategorized' instead of None key in stats `by_category` to avoid Pydantic ValidationError.
+
 ## [1.1.2] - 2026-07-16
 
 ### Fixed
