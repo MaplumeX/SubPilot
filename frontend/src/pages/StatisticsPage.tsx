@@ -23,6 +23,9 @@ import {
   Cell,
 } from "recharts";
 import type { PieSectorShapeProps } from "recharts";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { BarChart3 } from "lucide-react";
 
 const COLORS = [
   "var(--chart-1)",
@@ -135,24 +138,35 @@ export default function StatisticsPage() {
 
   if (loading) {
     return (
-      <p className="text-muted-foreground" role="status" aria-live="polite">
-        {t("statistics.loading")}
-      </p>
+      <div className="space-y-6" role="status" aria-live="polite">
+        <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">
+          {t("statistics.title")}
+        </h2>
+        <div className="h-72 rounded-xl bg-muted/40 animate-pulse" />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="h-64 rounded-xl bg-muted/40 animate-pulse" />
+          <div className="h-64 rounded-xl bg-muted/40 animate-pulse" />
+        </div>
+      </div>
     );
   }
 
   if (!hasData) {
     return (
       <div className="space-y-6">
-        <h2 className="font-heading text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.01em]">
+        <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">
           {t("statistics.title")}
         </h2>
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">{t("statistics.noData")}</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {t("statistics.addFirst")}
-            </p>
+        <Card className="ring-foreground/10">
+          <CardContent className="flex flex-col items-center gap-3 py-16 text-center">
+            <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+              <BarChart3 className="size-6 text-muted-foreground" aria-hidden="true" />
+            </div>
+            <p className="font-medium">{t("statistics.noData")}</p>
+            <p className="text-sm text-muted-foreground">{t("statistics.addFirst")}</p>
+            <Button render={<Link to="/subscriptions" />}>
+              {t("subscriptions.addSubscription")}
+            </Button>
           </CardContent>
         </Card>
       </div>

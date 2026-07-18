@@ -13,9 +13,15 @@ import SubscriptionForm from "@/components/SubscriptionForm";
 import ThemeToggle from "@/components/theme-toggle";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/components/ui/toast-store";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, Menu } from "lucide-react";
 import { createSubscription } from "@/api/subscriptions";
 import type { SubscriptionCreate } from "@/api/types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const NAV_ITEMS = [
   { to: "/", labelKey: "layout.dashboard", match: (p: string) => p === "/" },
@@ -87,7 +93,8 @@ export default function AppLayout() {
             </span>
             {t("layout.appName")}
           </h1>
-          <nav className="flex flex-wrap items-center gap-x-1 gap-y-1" aria-label="Primary">
+          {/* Desktop nav — hidden on mobile, hamburger replaces it */}
+          <nav className="hidden items-center gap-x-1 sm:flex" aria-label="Primary">
             {NAV_ITEMS.map(({ to, labelKey, match }) => {
               const active = match(location.pathname);
               return (
@@ -109,6 +116,30 @@ export default function AppLayout() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
+          {/* Mobile nav — hamburger dropdown replacing the wrapped nav links */}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 sm:hidden"
+              aria-label={t("layout.menu")}
+            >
+              <Menu className="size-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {NAV_ITEMS.map(({ to, labelKey, match }) => {
+                const active = match(location.pathname);
+                return (
+                  <DropdownMenuItem
+                    key={to}
+                    render={<Link to={to} />}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(active && "font-medium")}
+                  >
+                    {t(labelKey)}
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <ThemeToggle />
           <span className="hidden text-sm text-muted-foreground sm:inline">{user?.email}</span>
           <button

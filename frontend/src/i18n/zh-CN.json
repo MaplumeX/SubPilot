@@ -131,6 +131,7 @@
     "domainPlaceholder": "例如 netflix.com",
     "search": "搜索",
     "confirm": "确认",
+    "selectLogo": "选择第 {{index}} 个 logo",
     "removeLogo": "移除",
     "logoSearchPlaceholder": "订阅名或域名",
     "searching": "搜索中...",
@@ -160,7 +161,8 @@
     "statistics": "统计",
     "signOut": "退出登录",
     "settings": "设置",
-    "skipToContent": "跳到主要内容"
+    "skipToContent": "跳到主要内容",
+    "menu": "菜单"
   },
   "calendar": {
     "title": "日历",

@@ -84,6 +84,8 @@ export default function SubscriptionCard({
           <span>{formatCycle(sub.cycle_count, sub.cycle_unit)}</span>
           <span
             title={sub.auto_renew ? t("subscriptions.auto_renew_enabled") : t("subscriptions.auto_renew_disabled")}
+            aria-label={sub.auto_renew ? t("subscriptions.auto_renew_enabled") : t("subscriptions.auto_renew_disabled")}
+            role="img"
             className="inline-flex items-center"
           >
             <RefreshCw className={`size-3 ${sub.auto_renew ? "text-pending" : "text-muted-foreground/80"}`} />

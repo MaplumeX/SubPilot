@@ -398,6 +398,7 @@ export default function SubscriptionForm({
                           type="button"
                           onClick={() => handlePickLogo(candidate, i)}
                           disabled={cachingIndex !== null}
+                          aria-label={t("subscriptionForm.selectLogo", { index: i + 1 })}
                           className="rounded-md border p-1 hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <img

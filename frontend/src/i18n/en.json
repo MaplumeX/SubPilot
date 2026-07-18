@@ -131,6 +131,7 @@
     "domainPlaceholder": "e.g. netflix.com",
     "search": "Search",
     "confirm": "Confirm",
+    "selectLogo": "Select logo option {{index}}",
     "removeLogo": "Remove",
     "logoSearchPlaceholder": "Subscription name or domain",
     "searching": "Searching...",
@@ -160,7 +161,8 @@
     "statistics": "Statistics",
     "signOut": "Sign out",
     "settings": "Settings",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "menu": "Menu"
   },
   "calendar": {
     "title": "Calendar",

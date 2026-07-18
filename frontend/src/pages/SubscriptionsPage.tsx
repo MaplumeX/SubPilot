@@ -69,16 +69,19 @@ function SortableHeader({
   const isActive = activeSort === field;
   return (
     <TableHead
-      className="cursor-pointer select-none"
+      className="select-none p-0"
       aria-sort={isActive ? (order === "asc" ? "ascending" : "descending") : undefined}
-      onClick={() => onSort(field)}
     >
-      <div className="flex items-center gap-1">
+      <button
+        type="button"
+        onClick={() => onSort(field)}
+        className="flex w-full items-center gap-1 px-2 py-2 text-left font-medium text-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm"
+      >
         {label}
         {isActive && (
           order === "asc" ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />
         )}
-      </div>
+      </button>
     </TableHead>
   );
 }
@@ -395,6 +398,8 @@ export default function SubscriptionsPage() {
                     <TableCell>
                       <span
                         title={sub.auto_renew ? t("subscriptions.auto_renew_enabled") : t("subscriptions.auto_renew_disabled")}
+                        aria-label={sub.auto_renew ? t("subscriptions.auto_renew_enabled") : t("subscriptions.auto_renew_disabled")}
+                        role="img"
                         className="inline-flex items-center"
                       >
                         <RefreshCw
@@ -463,9 +468,10 @@ export default function SubscriptionsPage() {
         confirmLabel={t("subscriptions.confirmDeleteConfirm")}
         cancelLabel={t("subscriptions.confirmDeleteCancel")}
         destructive
-        onConfirm={() => {
+        onConfirm={async () => {
           if (deleteTarget) {
-            void handleDelete(deleteTarget.id).then(() => setDeleteTarget(null));
+            await handleDelete(deleteTarget.id);
+            setDeleteTarget(null);
           }
         }}
       />

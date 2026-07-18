@@ -126,12 +126,13 @@ export default function EntityManagerCard({
     } catch (err: unknown) {
       const { detail, count } = extractError(err);
       setError(mapError(detail, count));
+      throw err; // rethrow so ConfirmDialog keeps open
     }
   };
 
   return (
     <>
-      <Card className="max-w-md">
+      <Card className="max-w-lg">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
@@ -240,9 +241,10 @@ export default function EntityManagerCard({
         confirmLabel={t("settings.confirmDeleteConfirm")}
         cancelLabel={t("settings.confirmDeleteCancel")}
         destructive
-        onConfirm={() => {
+        onConfirm={async () => {
           if (deleteTarget) {
-            void handleDelete(deleteTarget.id, deleteTarget.name).then(() => setDeleteTarget(null));
+            await handleDelete(deleteTarget.id, deleteTarget.name);
+            setDeleteTarget(null);
           }
         }}
       />

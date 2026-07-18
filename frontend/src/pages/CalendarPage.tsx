@@ -378,7 +378,7 @@ function DayCell({
   //   future/today  → primary info, full foreground
   const numberClass = cn(
     "text-sm font-medium",
-    !inMonth && "text-muted-foreground/35",
+    !inMonth && "text-muted-foreground/50",
     isPast && inMonth && "text-muted-foreground"
   );
 
@@ -435,7 +435,7 @@ function DayCell({
             />
           ))}
           {hiddenCount > 0 && (
-            <span className="block truncate rounded-md bg-pending/5 px-1 py-0.5 text-[10px] font-medium text-pending">
+            <span className="block truncate rounded-md bg-pending/5 px-1 py-0.5 text-xs font-medium text-pending sm:text-[10px]">
               {t("calendar.more", { count: hiddenCount })}
             </span>
           )}
@@ -461,7 +461,7 @@ function EventMarker({
   return (
     <span
       className={cn(
-        "block truncate rounded-md px-1 py-0.5 text-[10px] font-medium text-pending",
+        "block truncate rounded-md px-1 py-0.5 text-xs font-medium text-pending sm:text-[10px]",
         isDueSoon
           ? "bg-pending/15 ring-1 ring-pending/25"
           : "bg-pending/10"

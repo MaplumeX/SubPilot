@@ -1,4 +1,5 @@
 // no i18n import needed — labels are passed as props
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ interface ConfirmDialogProps {
 /**
  * In-app confirmation dialog — replaces browser `window.confirm`.
  * Keeps the calm, reliable tone of the product (no native OS dialog jarring).
+ * Awaits onConfirm and surfaces failures inline instead of closing silently.
  */
 export default function ConfirmDialog({
   open,
@@ -35,24 +37,50 @@ export default function ConfirmDialog({
   destructive = false,
   onConfirm,
 }: ConfirmDialogProps) {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleConfirm = async () => {
+    setError("");
+    setSubmitting(true);
+    try {
+      await onConfirm();
+    } catch (err: unknown) {
+      const detail =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ??
+        "Failed";
+      setError(detail);
+      setSubmitting(false);
+      return; // keep dialog open so the user can retry or cancel
+    }
+    setSubmitting(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!submitting) onOpenChange(v);
+      }}
+    >
       <DialogContent showCloseButton={false} className="max-w-sm">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{message}</DialogDescription>
         </DialogHeader>
+        {error && (
+          <p className="text-sm text-destructive" role="alert">{error}</p>
+        )}
         <DialogFooter>
-          <DialogClose render={<Button variant="outline" />}>
+          <DialogClose render={<Button variant="outline" disabled={submitting} />}>
             {cancelLabel}
           </DialogClose>
           <Button
             variant={destructive ? "destructive" : "default"}
-            onClick={() => {
-              void onConfirm();
-            }}
+            disabled={submitting}
+            onClick={handleConfirm}
           >
-            {confirmLabel}
+            {submitting ? "…" : confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>
