@@ -174,6 +174,10 @@ _本项目无二级/三级品牌色。_ 中性灰阶承担所有非首要角色�
 ### Brand Accent (Confirmed)
 - **Brand Accent** (`#1447e6` / `oklch(0.488 0.243 264.376)`): 品牌锚点色，现为 Committed 策略主色。用于 `--primary`（主按钮、logo 底、avatar）、Due Soon 徽章（`pending` variant）、focus ring、auto-renew 图标、acknowledge 反馈、sidebar-primary、chart-1 主数据线。暗色模式下提亮为 `oklch(0.55 0.21 264.376)`（较原 0.621 调暗以保证 pending 徽章白字对比度 ≥4.5:1）。**不用于装饰** —— 仅承载“需关注/品牌焦点”语义。
 
+### Ambient Shadow
+- **ambient-low** (`rgba(0,0,0,0.04)` 浅 / `rgba(0,0,0,0.3)` 暗): 卡片 hover 态的轻微提升。定义在 `index.css` `.shadow-ambient-low`。
+- **ambient-md** (`rgba(0,0,0,0.08)` 浅 / `rgba(0,0,0,0.4)` 暗): dialog/popover 浮层。定义在 `index.css` `.shadow-ambient-md`。这两个值是有意的设计系统 token，不是硬编码漂移。
+
 ### Named Rules
 **The Color-as-Signal Rule.** 品牌蓝是主色，红色是危险信号，绿色是成功信号，琥珀是警示信号。中性色向品牌蓝微染以形成整体感。颜色仍需承载语义：不加彩色分类标签、不彩色化进度条、不彩色化装饰图标。`--primary` 用于“主动作/品牌焦点”，`--pending` 用于“需关注”，`--success` 用于“已处理/安全”，`--warning` 用于“警示状态”，`--destructive` 用于“不可逆危险” —— 各司其职。
 
@@ -193,6 +197,8 @@ _本项目无二级/三级品牌色。_ 中性灰阶承担所有非首要角色�
 - **Title** (500, 1rem, 1.5): 卡片内行标题、表单区段标题。语义性强调。
 - **Body** (400, 0.875rem, 1.5): 默认正文。行高 1.5 保证多行可读。最大行宽限制在 65–75ch（当前未强制，建议在 prose 区段加 `max-w-prose`）。
 - **Label** (500, 0.75rem, 1.4): 按钮文字、badge、表格表头、表单标签。不使用 uppercase + tracked 的 eyebrow 套路 —— 保持正常大小写，用字重区分。
+- **Caption** (500, 0.75rem / 12px, 1.4): 小型标签、移动端事件标记（base 尺寸）。桌面端可降至 Micro。
+- **Micro** (500, 0.625rem / 10px, 1.4): 紧凑数据标签、日历事件标记（桌面端）、按钮 sm 变体（0.8rem）。
 
 ### Named Rules
 **The One-Family Rule.** 全系统只用 Geist Variable。不引入 serif display、不引入 mono accent、不引入第二个 sans。层级靠权重和尺寸，不靠字体对比。引入新字体必须经过明确决策，不是“为了好看”。

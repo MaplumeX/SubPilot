@@ -12,6 +12,8 @@ Custom hooks are minimal in this project. The patterns in use: `useAuth()` — a
 
 ## Custom Hook Patterns
 
+Custom hooks in use: `useAuth()` (context wrapper), `useTheme` (re-export from next-themes), `useKeyboardShortcuts()` (global keyboard shortcut layer, `src/lib/use-keyboard-shortcuts.ts`). The shortcut hook returns `{ helpOpen, setHelpOpen, shortcuts, t }` and manages a `g`-prefix navigation state internally.
+
 When extracting stateful logic into a custom hook:
 
 1. Name the file `src/<hook-name>.ts` or `src/<hook-name>.tsx` (flat under `src/`, matching the existing `auth-hook.ts` convention).
@@ -41,7 +43,7 @@ Current pattern: direct Axios calls via `src/api/*` functions, no caching layer.
 - **On mount**: call API in `useCallback`-wrapped `fetchX` inside `useEffect(() => { fetchX(); }, [fetchX])`, store result in `useState`. Set `loading=false` in `.finally`. See `DashboardPage.fetchStats`, `SubscriptionsPage.fetchSubscriptions`.
 - **On mutation**: call API in an event handler, then manually re-fetch or update local state. `SubscriptionsPage.handleAcknowledge` optimistically patches local state from the response instead of refetching.
 - **Unmanageable dependencies**: when a fetch depends on filter/sort state, put those values in the `useCallback` dependency array so the effect re-runs on change (`fetchSubscriptions` depends on `[filterCategory, filterStatus, sortBy, sortOrder]`).
-- **Error handling**: the Axios response interceptor (`api/client.ts`) handles 401 globally (clears tokens, redirects to `/login`). Per-call errors are caught silently with `// 401 handled by interceptor` comments — only show local error UI for user-actionable failures (e.g. form submit, settings save).
+- **Error handling**: the Axios response interceptor (`api/client.ts`) handles 401 globally (clears tokens, redirects to `/login`). Per-call errors use `toastError(err, t)` from `lib/utils.ts` which maps network/403/404/500 to specific i18n messages. `isNonAuthError(err)` guards so 401 is silently ignored.
 - **Stale-effect guard**: for fetch-on-mount with async state, guard with an `active` flag in the effect cleanup so a slow response after unmount doesn't call `setState` on an unmounted component (see `SettingsPage.NotificationsCard` `useEffect`).
 
 When a hook wraps data fetching, follow this shape:
