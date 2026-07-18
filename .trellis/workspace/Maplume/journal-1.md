@@ -986,3 +986,36 @@ Added image/webp to the backend ALLOWED_CONTENT_TYPES whitelist and EXT_MAP, the
 ### Next Steps
 
 - None - task complete
+
+
+## Session 29: Show next renewal date in subscription management UI
+
+**Date**: 2026-07-18
+**Task**: Show next renewal date in subscription management UI
+**Branch**: `main`
+
+### Summary
+
+Added formatNextBillingDate/formatBillingDate helpers in due.ts and applied them in SubscriptionsPage table view and SubscriptionCard, so the next renewal date now shows as '<date> (<relative>)' e.g. '2026-07-21 (3天后)' in both views. Null shows '-'. No backend changes.
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `22673a2` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

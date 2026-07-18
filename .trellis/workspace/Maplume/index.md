@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 28
-- **Last Active**: 2026-07-16
+- **Total Sessions**: 29
+- **Last Active**: 2026-07-18
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~988 | Active |
+| `journal-1.md` | ~1021 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 29 | 2026-07-18 | Show next renewal date in subscription management UI | `22673a2` | `main` |
 | 28 | 2026-07-16 | Add WebP support to logo upload and cache | `2f38097` | `main` |
 | 27 | 2026-07-13 | Single Docker image deploy | `7d0fc5d`, `931be51` | `main` |
 | 26 | 2026-07-13 | Full currency support from exchange-rate source | `4a4f5c0`, `82c7a15` | `main` |
