@@ -35,7 +35,7 @@ import SubscriptionForm from "@/components/SubscriptionForm";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { toast } from "@/components/ui/toast-store";
-import { formatDueLabel, isDueWithin, effectiveDaysFor } from "@/lib/due";
+import { formatDueLabel, formatNextBillingDate, isDueWithin, effectiveDaysFor } from "@/lib/due";
 import { formatCurrency } from "@/lib/currencies";
 import { isNonAuthError } from "@/lib/utils";
 
@@ -402,7 +402,7 @@ export default function SubscriptionsPage() {
                         />
                       </span>
                     </TableCell>
-                    <TableCell>{formatDueLabel(sub.next_billing_date, t)}</TableCell>
+                    <TableCell>{formatNextBillingDate(sub.next_billing_date, i18n.language, t)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button

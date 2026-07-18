@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatDueLabel } from "@/lib/due";
+import { formatDueLabel, formatNextBillingDate } from "@/lib/due";
 import { formatCurrency } from "@/lib/currencies";
 
 interface SubscriptionCardProps {
@@ -90,7 +90,7 @@ export default function SubscriptionCard({
           </span>
         </div>
         <div className="text-xs text-muted-foreground">
-          {formatDueLabel(sub.next_billing_date, t)}
+          {formatNextBillingDate(sub.next_billing_date, locale, t)}
         </div>
       </CardContent>
 

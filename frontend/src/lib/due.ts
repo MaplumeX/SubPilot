@@ -16,6 +16,40 @@ export function effectiveDaysFor(
 }
 
 /**
+ * Format a billing date as a locale-specific short date string.
+ * Returns an empty string when the date is missing.
+ */
+export function formatBillingDate(
+  dateStr: string | null,
+  locale: string
+): string {
+  if (!dateStr) return "";
+  const next = new Date(dateStr + "T00:00:00");
+  if (Number.isNaN(next.getTime())) return dateStr;
+  return new Intl.DateTimeFormat(locale, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(next);
+}
+
+/**
+ * Format a billing date as "<date> (<relative label>)", e.g. "2026-07-21 (3天后)".
+ * Returns "-" when the date is missing.
+ */
+export function formatNextBillingDate(
+  dateStr: string | null,
+  locale: string,
+  t: TFunc,
+  now: Date = new Date()
+): string {
+  if (!dateStr) return "-";
+  const date = formatBillingDate(dateStr, locale);
+  const relative = formatDueLabel(dateStr, t, now);
+  return `${date} (${relative})`;
+}
+
+/**
  * Format a relative "days until" label for a billing date.
  * Returns one of: dueToday | dueInDays (singular/plural per locale).
  * Falls back to the raw date string when the date is missing or past.
