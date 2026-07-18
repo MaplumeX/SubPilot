@@ -50,7 +50,7 @@ export default function SubscriptionCard({
           </div>
           <div className="flex shrink-0 gap-1">
             {dueSoon && (
-              <Badge variant={acknowledged ? "secondary" : "pending"}>
+              <Badge variant={acknowledged ? "success" : "pending"}>
                 {acknowledged ? t("subscriptions.acknowledged") : formatDueLabel(sub.next_billing_date, t)}
               </Badge>
             )}
@@ -59,7 +59,7 @@ export default function SubscriptionCard({
                 sub.status === "active"
                   ? "default"
                   : sub.status === "trial"
-                    ? "secondary"
+                    ? "warning"
                     : "outline"
               }
             >

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { AlertCircle, Check } from "lucide-react";
 import { subscribe, type Toast } from "./toast-store";
 
 export function Toaster() {
@@ -34,7 +34,7 @@ export function Toaster() {
             {destructive ? (
               <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" aria-hidden="true" />
             ) : (
-              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-pending" aria-hidden="true" />
+              <Check className="mt-0.5 size-4 shrink-0 text-success" aria-hidden="true" />
             )}
             <div className="min-w-0">
               <p className="font-medium">{t.title}</p>

@@ -220,8 +220,8 @@ export default function DashboardPage({
             isAllClear && (
               <Card className="ring-foreground/10 transition-shadow hover:shadow-ambient-low">
                 <CardContent className="flex items-center gap-5 py-10">
-                  <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-pending/10">
-                    <ShieldCheck className="size-7 text-pending" aria-hidden="true" />
+                  <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-success/10">
+                    <ShieldCheck className="size-7 text-success" aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
                     <p className="font-heading text-xl font-semibold">

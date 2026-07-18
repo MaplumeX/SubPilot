@@ -356,7 +356,7 @@ export default function SubscriptionsPage() {
                         </Avatar>
                         <span>{sub.name}</span>
                         {dueSoon && (
-                          <Badge variant={acknowledged ? "secondary" : "pending"} className="ml-2">
+                          <Badge variant={acknowledged ? "success" : "pending"} className="ml-2">
                             {acknowledged
                               ? t("subscriptions.acknowledged")
                               : formatDueLabel(sub.next_billing_date, t)}
@@ -385,7 +385,7 @@ export default function SubscriptionsPage() {
                           sub.status === "active"
                             ? "default"
                             : sub.status === "trial"
-                              ? "secondary"
+                              ? "warning"
                               : "outline"
                         }
                       >

@@ -165,13 +165,17 @@ _本项目无二级/三级品牌色。_ 中性灰阶承担所有非首要角色�
 - **Signal Red Dark** (`#ff6467` / `oklch(0.704 0.191 22.216)`): 暗色模式下的 destructive 文字色。
 
 ### Chart
-图表色阶：主数据线为品牌蓝（`--chart-1` = `oklch(0.488 0.243 264.376)`），其余 2-7 为向品牌蓝微染的灰阶（chroma 0.008-0.014）。主数据线用品牌色让“当前关注”一眼可辨，其余去色以服务于“回答问题”而非“看起来专业”。
+图表色阶：主数据线为品牌蓝（`--chart-1` = `oklch(0.488 0.243 264.376)`），用于单系列条形图的“当前关注”。分类饼图（`--chart-2` 到 `--chart-7`）采用 6 个可区分色相（青、品红、琥珀、绿、橙、紫），L/C 相近以保持感知均匀，让“钱花在哪”一眼可辨。不用于装饰标签。
+
+### Semantic Colors (Success / Warning)
+- **Success** (`oklch(0.42 0.13 145)` 浅 / `oklch(0.65 0.15 145)` 暗): 用于“已确认”徽章、All-Clear 卡片图标、成功 toast 图标。承载“已处理/安全”语义，与 `--pending`（待处理）形成清晰对比。对比度 ≥6.5:1 (AA)。
+- **Warning** (`oklch(0.45 0.13 60)` 浅 / `oklch(0.7 0.15 60)` 暗): 用于“试用期”状态徽章。不用用续费提醒（PRODUCT.md: 不做焦虑营销）。对比度 ≥6.5:1 (AA)。
 
 ### Brand Accent (Confirmed)
 - **Brand Accent** (`#1447e6` / `oklch(0.488 0.243 264.376)`): 品牌锚点色，现为 Committed 策略主色。用于 `--primary`（主按钮、logo 底、avatar）、Due Soon 徽章（`pending` variant）、focus ring、auto-renew 图标、acknowledge 反馈、sidebar-primary、chart-1 主数据线。暗色模式下提亮为 `oklch(0.55 0.21 264.376)`（较原 0.621 调暗以保证 pending 徽章白字对比度 ≥4.5:1）。**不用于装饰** —— 仅承载“需关注/品牌焦点”语义。
 
 ### Named Rules
-**The Color-as-Signal Rule.** 品牌蓝是主色，红色是危险信号。中性色向品牌蓝微染以形成整体感。颜色仍需承载语义：不加彩色分类标签、不彩色化进度条、不彩色化装饰图标。`--primary` 用于“主动作/品牌焦点”，`--pending` 用于“需关注”，`--destructive` 用于“不可逆危险” —— 三者各司其职。
+**The Color-as-Signal Rule.** 品牌蓝是主色，红色是危险信号，绿色是成功信号，琥珀是警示信号。中性色向品牌蓝微染以形成整体感。颜色仍需承载语义：不加彩色分类标签、不彩色化进度条、不彩色化装饰图标。`--primary` 用于“主动作/品牌焦点”，`--pending` 用于“需关注”，`--success` 用于“已处理/安全”，`--warning` 用于“警示状态”，`--destructive` 用于“不可逆危险” —— 各司其职。
 
 **The Red-Only-for-Danger Rule.** `destructive` 红色只用于删除和不可逆危险动作。续费提醒、即将到期、超预算等"时间敏感"信息不得使用红色 —— 它们用位置和时间标注传达紧迫，符合 PRODUCT.md 的"平稳的紧迫感"原则。
 
@@ -240,7 +244,10 @@ Elevation 策略允许在以下状态引入极克制的 ambient shadow：hover/f
 ### Badge
 - **Style:** `h-5`（20px），`rounded-4xl`（全圆角 pill），`px-2 py-0.5`，`text-xs font-medium`。
 - **Default:** `bg-primary text-primary-foreground`。
-- **Destructive:** `bg-destructive/10 text-destructive` —— 用于"逾期"等危险状态（非"即将到期"）。
+- **Pending:** `bg-pending/10 text-pending ring-1 ring-pending/20` —— 用于续费提醒（平稳紧迫感）。
+- **Success:** `bg-success/10 text-success ring-1 ring-success/20` —— 用于“已确认”徽章。
+- **Warning:** `bg-warning/10 text-warning ring-1 ring-warning/20` —— 用于“试用期”状态。
+- **Destructive:** `bg-destructive/10 text-destructive` —— 用于“逾期”等危险状态（非“即将到期”）。
 - **Secondary / Outline / Ghost:** 灰阶变体，用于中性分类标签。
 
 ### Navigation

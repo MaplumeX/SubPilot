@@ -26,6 +26,10 @@
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
     --color-destructive: var(--destructive);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
@@ -72,15 +76,22 @@
     --border: oklch(0.922 0.01 264);
     --input: oklch(0.922 0.01 264);
     --ring: oklch(0.488 0.243 264.376);
-    /* Chart-1 = brand blue carries the primary data line; 2-7 stay a
-       tinted-neutral grayscale so charts serve the question, not the palette. */
+    /* Chart-1 = brand blue carries the primary data line (bar chart single
+       series). 2-7 are distinguishable hues at similar L/C for the category
+       pie chart — perceptually uniform, muted enough for a calm tool. */
     --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.708 0.008 264);
-    --chart-3: oklch(0.556 0.008 264);
-    --chart-4: oklch(0.439 0.01 264);
-    --chart-5: oklch(0.371 0.01 264);
-    --chart-6: oklch(0.269 0.01 264);
-    --chart-7: oklch(0.205 0.008 264);
+    --chart-2: oklch(0.55 0.12 200);
+    --chart-3: oklch(0.58 0.12 330);
+    --chart-4: oklch(0.7 0.12 75);
+    --chart-5: oklch(0.52 0.12 145);
+    --chart-6: oklch(0.58 0.13 30);
+    --chart-7: oklch(0.48 0.12 300);
+    /* Semantic colors: success (acknowledged / all-clear) and warning (trial).
+       Red stays destructive-only per the Red-Only-for-Danger rule. */
+    --success: oklch(0.42 0.13 145);
+    --success-foreground: oklch(0.985 0 0);
+    --warning: oklch(0.45 0.13 60);
+    --warning-foreground: oklch(0.985 0 0);
     --pending: oklch(0.488 0.243 264.376);
     --pending-foreground: oklch(0.985 0 0);
     --radius: 0.625rem;
@@ -119,12 +130,16 @@
     --input: oklch(1 0.004 264 / 15%);
     --ring: oklch(0.621 0.193 264.376);
     --chart-1: oklch(0.621 0.193 264.376);
-    --chart-2: oklch(0.708 0.008 264);
-    --chart-3: oklch(0.556 0.008 264);
-    --chart-4: oklch(0.439 0.01 264);
-    --chart-5: oklch(0.371 0.01 264);
-    --chart-6: oklch(0.269 0.014 264);
-    --chart-7: oklch(0.985 0.004 264);
+    --chart-2: oklch(0.68 0.12 200);
+    --chart-3: oklch(0.7 0.12 330);
+    --chart-4: oklch(0.78 0.12 75);
+    --chart-5: oklch(0.65 0.12 145);
+    --chart-6: oklch(0.7 0.13 30);
+    --chart-7: oklch(0.62 0.12 300);
+    --success: oklch(0.65 0.15 145);
+    --success-foreground: oklch(0.145 0 0);
+    --warning: oklch(0.7 0.15 60);
+    --warning-foreground: oklch(0.145 0 0);
     --pending: oklch(0.55 0.21 264.376);
     --pending-foreground: oklch(0.985 0 0);
     --sidebar: oklch(0.185 0.018 264);
