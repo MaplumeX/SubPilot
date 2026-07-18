@@ -132,7 +132,10 @@ export default function AppLayout() {
             }
           />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
-          <Route path="/calendar" element={<CalendarPage />} />
+          <Route
+            path="/calendar"
+            element={<CalendarPage reminderDays={reminderDays} />}
+          />
           <Route path="/statistics" element={<StatisticsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

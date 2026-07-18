@@ -11,7 +11,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
-import { formatDueLabel } from "@/lib/due";
+import { formatDueLabel, isDueWithin } from "@/lib/due";
 import { formatCurrency } from "@/lib/currencies";
 import { cn, isNonAuthError } from "@/lib/utils";
 import { toast } from "@/components/ui/toast-store";
@@ -61,9 +61,11 @@ function firstOfMonth(date: Date): Date {
 interface CalendarPageProps {
   /** Current date injected for testing; defaults to now. */
   now?: Date;
+  /** Reminder window in days — events within this range get visual emphasis. */
+  reminderDays?: number;
 }
 
-export default function CalendarPage({ now }: CalendarPageProps) {
+export default function CalendarPage({ now, reminderDays = 3 }: CalendarPageProps) {
   const { t, i18n } = useTranslation();
   const today = useMemo(() => (now ?? new Date()), [now]);
 
@@ -197,7 +199,11 @@ export default function CalendarPage({ now }: CalendarPageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end justify-between gap-4">
+      {/* Title + month navigation — matches the "title left, actions right"
+          pattern used by Dashboard / Subscriptions / Statistics. The month
+          label sits at the center of the navigation as the current-view focal
+          point, with prev/next flanking it and Today as a standalone action. */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.01em]">
             {t("calendar.title")}
@@ -206,25 +212,24 @@ export default function CalendarPage({ now }: CalendarPageProps) {
             {t("calendar.subtitle")}
           </p>
         </div>
-      </div>
-
-      {/* Month navigation */}
-      <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1">
           <Button variant="outline" size="icon-sm" onClick={goPrev} aria-label={t("calendar.prevMonth")}>
             <ChevronLeft />
           </Button>
-          <Button variant="outline" size="sm" onClick={goToday}>
-            <CalendarDays className="size-3.5" />
-            {t("calendar.today")}
-          </Button>
+          <p
+            className="px-2 font-heading text-base font-semibold tabular-nums"
+            aria-live="polite"
+          >
+            {monthLabel}
+          </p>
           <Button variant="outline" size="icon-sm" onClick={goNext} aria-label={t("calendar.nextMonth")}>
             <ChevronRight />
           </Button>
+          <Button variant="outline" size="sm" onClick={goToday} className="ml-1">
+            <CalendarDays className="size-3.5" />
+            {t("calendar.today")}
+          </Button>
         </div>
-        <p className="font-heading text-base font-semibold" aria-live="polite">
-          {monthLabel}
-        </p>
       </div>
 
       {/* No subscriptions at all */}
@@ -267,13 +272,13 @@ export default function CalendarPage({ now }: CalendarPageProps) {
         </div>
       ) : (
         <div role="grid" aria-label={monthLabel} className="space-y-2">
-          {/* Weekday header row */}
+          {/* Weekday header row — sentence case, no eyebrow kicker */}
           <div role="row" className="grid grid-cols-7 gap-px">
             {weekdayLabels.map((label, i) => (
               <div
                 key={i}
                 role="columnheader"
-                className="flex h-9 items-center justify-center px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                className="flex h-9 items-center justify-center px-2 text-xs font-medium text-muted-foreground"
               >
                 {label}
               </div>
@@ -308,6 +313,8 @@ export default function CalendarPage({ now }: CalendarPageProps) {
                         hasEvents={hasEvents}
                         openDay={openDay}
                         setOpenDay={setOpenDay}
+                        reminderDays={reminderDays}
+                        today={today}
                         t={t}
                         locale={locale}
                       />
@@ -339,6 +346,8 @@ function DayCell({
   hasEvents,
   openDay,
   setOpenDay,
+  reminderDays,
+  today,
   t,
   locale,
 }: {
@@ -350,6 +359,8 @@ function DayCell({
   hasEvents: boolean;
   openDay: Date | null;
   setOpenDay: (d: Date | null) => void;
+  reminderDays: number;
+  today: Date;
   t: (key: string, options?: Record<string, unknown>) => string;
   locale: string;
 }) {
@@ -361,14 +372,19 @@ function DayCell({
 
   const triggerLabel = String(day.getDate());
 
+  // Layered hierarchy via color + weight (DESIGN.md: "层级靠权重和尺寸"):
+  //   out-of-month  → decorative background layer (no AA burden)
+  //   past in-month → secondary info, readable but recessed
+  //   future/today  → primary info, full foreground
   const numberClass = cn(
     "text-sm font-medium",
-    !inMonth && "text-muted-foreground/40",
-    isPast && inMonth && "text-muted-foreground/50"
+    !inMonth && "text-muted-foreground/35",
+    isPast && inMonth && "text-muted-foreground"
   );
 
+  // Today: solid primary fill — the strongest anchor on the grid.
   const numberSpan = isToday ? (
-    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full text-sm font-semibold ring-1 ring-primary text-primary">
+    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
       {triggerLabel}
     </span>
   ) : (
@@ -376,9 +392,7 @@ function DayCell({
   );
 
   const cellBase = cn(
-    "relative min-h-24 p-2 text-left align-top transition-colors bg-background",
-    !inMonth && "text-muted-foreground/40",
-    isPast && inMonth && "text-muted-foreground/50"
+    "relative min-h-20 p-2 text-left align-top transition-colors bg-background sm:min-h-24"
   );
 
   if (!hasEvents) {
@@ -400,8 +414,8 @@ function DayCell({
             type="button"
             className={cn(
               cellBase,
-              "hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
-              isOpen && "bg-muted/40 ring-2 ring-inset ring-ring"
+              "hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+              isOpen && "bg-muted/60 ring-2 ring-inset ring-ring"
             )}
             aria-pressed={!!isOpen}
             aria-label={t("calendar.dayEvents", {
@@ -414,10 +428,14 @@ function DayCell({
         {numberSpan}
         <div className="mt-1 space-y-0.5">
           {visibleEvents.map((sub) => (
-            <EventMarker key={sub.id} sub={sub} />
+            <EventMarker
+              key={sub.id}
+              sub={sub}
+              isDueSoon={isDueWithin(sub.next_billing_date, reminderDays, today)}
+            />
           ))}
           {hiddenCount > 0 && (
-            <span className="block truncate rounded-sm bg-muted/60 px-1 py-0.5 text-[10px] font-medium text-muted-foreground">
+            <span className="block truncate rounded-md bg-pending/5 px-1 py-0.5 text-[10px] font-medium text-pending">
               {t("calendar.more", { count: hiddenCount })}
             </span>
           )}
@@ -430,10 +448,25 @@ function DayCell({
   );
 }
 
-/** Compact event marker inside a day cell. */
-function EventMarker({ sub }: { sub: Subscription }) {
+/** Compact event marker inside a day cell.
+ *  Due-soon events get a stronger fill + ring to carry the "renewal-first"
+ *  principle (PRODUCT.md §1) into the calendar; far-future events stay light. */
+function EventMarker({
+  sub,
+  isDueSoon,
+}: {
+  sub: Subscription;
+  isDueSoon: boolean;
+}) {
   return (
-    <span className="block truncate rounded-sm bg-pending/10 px-1 py-0.5 text-[10px] font-medium text-pending">
+    <span
+      className={cn(
+        "block truncate rounded-md px-1 py-0.5 text-[10px] font-medium text-pending",
+        isDueSoon
+          ? "bg-pending/15 ring-1 ring-pending/25"
+          : "bg-pending/10"
+      )}
+    >
       {sub.name}
     </span>
   );
@@ -458,7 +491,7 @@ function DayPopover({
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-sm font-medium">{dateLabel}</p>
+      <p className="text-xs font-medium text-muted-foreground">{dateLabel}</p>
       <ul className="flex flex-col gap-2" role="list">
         {events.map((sub) => (
           <li key={sub.id} className="flex flex-col gap-1">
