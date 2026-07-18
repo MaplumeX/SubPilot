@@ -37,6 +37,8 @@
     "dueToday": "due today",
     "acknowledgedTitle": "Marked as renewed",
     "acknowledgedMessage": "Got it. We won't remind you again this cycle.",
+    "acknowledgedAction": "Undo",
+    "undoneTitle": "Acknowledge undone",
     "nextMonthProjection": "Next 30 days projection",
     "nextMonthProjectionSubtitle": "Actual charges expected in the next 30 days (not monthly averages)",
     "subtitleDue": "{{count}} subscription(s) due soon — review before they renew.",
@@ -248,7 +250,11 @@
     "subscriptionNotFound": "Subscription not found",
     "entityNameExists": "Name already exists",
     "loadFailed": "Failed to load data. Please retry.",
-    "updateFailed": "Update failed. Please retry."
+    "updateFailed": "Update failed. Please retry.",
+    "networkError": "Network error. Check your connection and try again.",
+    "forbidden": "You don't have permission to do that.",
+    "notFound": "The requested resource was not found.",
+    "serverError": "Server error. Please try again later."
   },
   "statistics": {
     "title": "Statistics",
@@ -264,5 +270,15 @@
     "forecastEmptyMonth": "No charges projected this month",
     "forecastDetailTitle": "Charges in {{month}}",
     "forecastClickHint": "Click a bar to see that month's charges"
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "newSubscription": "New subscription",
+    "goDashboard": "Go to Dashboard",
+    "goSubscriptions": "Go to Subscriptions",
+    "goCalendar": "Go to Calendar",
+    "goStatistics": "Go to Statistics",
+    "goSettings": "Go to Settings",
+    "showHelp": "Show this help"
   }
 }

@@ -37,6 +37,8 @@
     "dueToday": "今天到期",
     "acknowledgedTitle": "已确认续费",
     "acknowledgedMessage": "好的，已记下，本周期不再提醒。",
+    "acknowledgedAction": "撤销",
+    "undoneTitle": "已撤销确认",
     "nextMonthProjection": "未来 30 天预计支出",
     "nextMonthProjectionSubtitle": "未来 30 天内预计实际扣款合计（非月均摊销）",
     "subtitleDue": "有 {{count}} 笔订阅即将到期，请在续费前确认。",
@@ -248,7 +250,11 @@
     "subscriptionNotFound": "订阅未找到",
     "entityNameExists": "名称已存在",
     "loadFailed": "加载数据失败，请重试。",
-    "updateFailed": "更新失败，请重试。"
+    "updateFailed": "更新失败，请重试。",
+    "networkError": "网络连接失败，请检查网络后重试。",
+    "forbidden": "没有权限执行此操作。",
+    "notFound": "未找到请求的资源。",
+    "serverError": "服务器错误，请稍后重试。"
   },
   "statistics": {
     "title": "统计",
@@ -264,5 +270,15 @@
     "forecastEmptyMonth": "该月暂无预计扣款",
     "forecastDetailTitle": "{{month}} 扣款明细",
     "forecastClickHint": "点击柱状图查看该月明细"
+  },
+  "shortcuts": {
+    "title": "键盘快捷键",
+    "newSubscription": "新建订阅",
+    "goDashboard": "前往仪表盘",
+    "goSubscriptions": "前往订阅管理",
+    "goCalendar": "前往日历",
+    "goStatistics": "前往统计",
+    "goSettings": "前往设置",
+    "showHelp": "显示此帮助"
   }
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { getStats, getForecast, acknowledgeSubscription } from "@/api/subscriptions";
+import { getStats, getForecast, acknowledgeSubscription, unacknowledgeSubscription } from "@/api/subscriptions";
 import type { SubscriptionStats, Subscription, SubscriptionForecast } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +10,7 @@ import { ShieldCheck, BellRing, CheckCircle2 } from "lucide-react";
 import { toast } from "@/components/ui/toast-store";
 import { formatDueLabel } from "@/lib/due";
 import { formatCurrency } from "@/lib/currencies";
-import { cn, isNonAuthError } from "@/lib/utils";
+import { cn, isNonAuthError, toastError } from "@/lib/utils";
 
 interface DashboardPageProps {
   onAddSubscription: () => void;
@@ -92,7 +92,7 @@ export default function DashboardPage({
     } catch (err) {
       // 401 handled by interceptor; surface all other failures.
       if (isNonAuthError(err)) {
-        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        toastError(err, t);
       }
     } finally {
       setLoading(false);
@@ -126,11 +126,34 @@ export default function DashboardPage({
       toast({
         title: t("dashboard.acknowledgedTitle"),
         message: t("dashboard.acknowledgedMessage"),
+        action: {
+          label: t("dashboard.acknowledgedAction"),
+          onClick: () => void handleUndoAcknowledge(sub),
+        },
       });
     } catch (err) {
       // 401 handled by interceptor; surface all other failures.
       if (isNonAuthError(err)) {
-        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        toastError(err, t);
+      }
+    }
+  };
+
+  const handleUndoAcknowledge = async (sub: Subscription) => {
+    try {
+      await unacknowledgeSubscription(sub.id);
+      setStats((prev) =>
+        prev
+          ? {
+              ...prev,
+              due_soon: [sub, ...prev.due_soon],
+            }
+          : prev
+      );
+      toast({ title: t("dashboard.undoneTitle") });
+    } catch (err) {
+      if (isNonAuthError(err)) {
+        toastError(err, t);
       }
     }
   };

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/auth-hook";
-import { cn, isNonAuthError } from "@/lib/utils";
+import { cn, isNonAuthError, toastError } from "@/lib/utils";
 import { getNotificationSettings } from "@/api/notifications";
 import DashboardPage from "@/pages/DashboardPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
@@ -12,7 +12,6 @@ import CalendarPage from "@/pages/CalendarPage";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import ThemeToggle from "@/components/theme-toggle";
 import { Toaster } from "@/components/ui/toaster";
-import { toast } from "@/components/ui/toast-store";
 import { ShieldCheck, Menu } from "lucide-react";
 import { createSubscription } from "@/api/subscriptions";
 import type { SubscriptionCreate } from "@/api/types";
@@ -22,6 +21,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useKeyboardShortcuts } from "@/lib/use-keyboard-shortcuts";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const NAV_ITEMS = [
   { to: "/", labelKey: "layout.dashboard", match: (p: string) => p === "/" },
@@ -53,6 +60,7 @@ export default function AppLayout() {
   const location = useLocation();
   const [formOpen, setFormOpen] = useState(false);
   const [reminderDays, setReminderDays] = useState<number>(3);
+  const { helpOpen, setHelpOpen, shortcuts, t: tSc } = useKeyboardShortcuts(() => setFormOpen(true));
 
   useEffect(() => {
     getNotificationSettings()
@@ -60,7 +68,7 @@ export default function AppLayout() {
       .catch((err) => {
         // 401 handled by interceptor; default reminderDays stays at 3.
         if (isNonAuthError(err)) {
-          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+          toastError(err, t);
         }
       });
   }, []);
@@ -180,6 +188,23 @@ export default function AppLayout() {
         onSubmit={handleCreate}
       />
       <Toaster />
+      <Dialog open={helpOpen} onOpenChange={setHelpOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{tSc("shortcuts.title")}</DialogTitle>
+            <DialogDescription>
+              <ul className="mt-2 space-y-1.5">
+                {shortcuts.map((s) => (
+                  <li key={s.keys} className="flex items-center justify-between gap-4">
+                    <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 text-xs font-medium tabular-nums">{s.keys}</kbd>
+                    <span className="text-sm text-muted-foreground">{tSc(s.description)}</span>
+                  </li>
+                ))}
+              </ul>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

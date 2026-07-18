@@ -497,6 +497,33 @@ def acknowledge_subscription(
     return subscription
 
 
+@router.post("/{subscription_id}/unacknowledge", response_model=SubscriptionResponse)
+def unacknowledge_subscription(
+    subscription_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Undo a previous acknowledge for the current billing cycle.
+
+    Clears acknowledged_billing_date so reminders resume for the current
+    billing date.
+    """
+    subscription = (
+        db.query(Subscription)
+        .options(joinedload(Subscription.category), joinedload(Subscription.payment_method))
+        .filter(Subscription.id == subscription_id)
+        .first()
+    )
+    _check_ownership(subscription, current_user.id)
+    subscription.acknowledged_billing_date = None
+    db.commit()
+    db.refresh(subscription)
+    base = current_user.base_currency
+    rate = get_rate(db, subscription.currency, base)
+    subscription.converted_price = _converted_price(subscription.price, rate)  # type: ignore[attr-defined]
+    return subscription
+
+
 @router.get("/{subscription_id}", response_model=SubscriptionResponse)
 def get_subscription(
     subscription_id: int,

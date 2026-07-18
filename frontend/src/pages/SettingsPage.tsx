@@ -33,9 +33,8 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/components/ui/toast-store";
 import { SUPPORTED_CURRENCIES, currencyLabel } from "@/lib/currencies";
-import { isNonAuthError } from "@/lib/utils";
+import { isNonAuthError, toastError } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import {
@@ -79,7 +78,7 @@ export default function SettingsPage() {
       } catch (err) {
         // 401 handled by interceptor; language is already applied locally.
         if (isNonAuthError(err)) {
-          toast({ title: t("errors.updateFailed"), variant: "destructive" });
+          toastError(err, t);
         }
       }
     }
@@ -93,7 +92,7 @@ export default function SettingsPage() {
     } catch (err) {
       // 401 handled by interceptor.
       if (isNonAuthError(err)) {
-        toast({ title: t("errors.updateFailed"), variant: "destructive" });
+        toastError(err, t);
       }
     }
   };
@@ -174,7 +173,7 @@ function CategoryManagerCard() {
       .then(setCategories)
       .catch((err) => {
         if (isNonAuthError(err)) {
-          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+          toastError(err, t);
         }
       })
       .finally(() => setLoading(false));
@@ -223,7 +222,7 @@ function PaymentMethodManagerCard() {
       .then(setPaymentMethods)
       .catch((err) => {
         if (isNonAuthError(err)) {
-          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+          toastError(err, t);
         }
       })
       .finally(() => setLoading(false));
@@ -279,7 +278,7 @@ function NotificationsCard() {
       .catch((err) => {
         // 401 handled by interceptor.
         if (isNonAuthError(err)) {
-          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+          toastError(err, t);
         }
       })
       .finally(() => {

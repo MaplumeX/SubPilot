@@ -42,6 +42,15 @@ export function Toaster() {
                 <p className="mt-0.5 text-muted-foreground">{t.message}</p>
               )}
             </div>
+            {t.action && (
+              <button
+                type="button"
+                onClick={() => { t.action!.onClick(); remove(t.id); }}
+                className="shrink-0 text-sm font-medium text-primary hover:underline underline-offset-4 ml-1"
+              >
+                {t.action.label}
+              </button>
+            )}
           </div>
         );
       })}

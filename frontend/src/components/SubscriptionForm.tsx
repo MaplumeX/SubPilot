@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import type { Subscription, SubscriptionCreate, CycleUnit, SubscriptionStatus, LogoCandidate } from "@/api/types";
 
 type ReminderMode = "default" | "custom";
@@ -31,9 +32,8 @@ import {
   AvatarFallback,
 } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/toast-store";
 import { SUPPORTED_CURRENCIES, currencyLabel } from "@/lib/currencies";
-import { isNonAuthError } from "@/lib/utils";
+import { isNonAuthError, toastError } from "@/lib/utils";
 
 interface SubscriptionFormProps {
   key?: React.Key;
@@ -158,12 +158,12 @@ export default function SubscriptionForm({
   useEffect(() => {
     listCategories().then(setExistingCategories).catch((err) => {
       if (isNonAuthError(err)) {
-        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        toastError(err, t);
       }
     });
     listPaymentMethods().then(setExistingPaymentMethods).catch((err) => {
       if (isNonAuthError(err)) {
-        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        toastError(err, t);
       }
     });
   }, []);
@@ -556,9 +556,9 @@ export default function SubscriptionForm({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>{t("subscriptionForm.paymentMethod")}</Label>
+            <Label>{t("subscriptionForm.paymentMethod")} {existingPaymentMethods.length > 0 && <span className="text-destructive" aria-hidden="true">*</span>}</Label>
             {existingPaymentMethods.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{t("subscriptionForm.emptyPaymentMethodHint")}</p>
+              <p className="text-sm text-muted-foreground">{t("subscriptionForm.emptyPaymentMethodHint")} <Link to="/settings" className="text-primary underline underline-offset-4">{t("layout.settings")}</Link></p>
             ) : (
               <Select value={paymentMethod != null ? String(paymentMethod) : null} onValueChange={(v) => setPaymentMethod(v != null ? Number(v) : null)}>
                 <SelectTrigger>

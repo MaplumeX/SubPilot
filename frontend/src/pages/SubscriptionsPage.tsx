@@ -5,6 +5,7 @@ import {
   listSubscriptions,
   deleteSubscription,
   acknowledgeSubscription,
+  unacknowledgeSubscription,
   createSubscription,
   updateSubscription,
   getStats,
@@ -37,7 +38,7 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import { toast } from "@/components/ui/toast-store";
 import { formatDueLabel, formatNextBillingDate, isDueWithin, effectiveDaysFor } from "@/lib/due";
 import { formatCurrency } from "@/lib/currencies";
-import { isNonAuthError } from "@/lib/utils";
+import { isNonAuthError, toastError } from "@/lib/utils";
 
 type ViewMode = "table" | "card";
 
@@ -117,7 +118,7 @@ export default function SubscriptionsPage() {
       setCategories(data);
     } catch (err) {
       if (isNonAuthError(err)) {
-        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        toastError(err, t);
       }
     }
   }, []);
@@ -129,7 +130,7 @@ export default function SubscriptionsPage() {
       .catch((err) => {
         // 401 handled by interceptor; default reminderDays stays at 3.
         if (isNonAuthError(err)) {
-          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+          toastError(err, t);
         }
       });
   }, [fetchCategories]);
@@ -150,7 +151,7 @@ export default function SubscriptionsPage() {
     } catch (err) {
       // 401 handled by interceptor; surface all other failures.
       if (isNonAuthError(err)) {
-        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        toastError(err, t);
       }
     } finally {
       setLoading(false);
@@ -194,11 +195,33 @@ export default function SubscriptionsPage() {
       toast({
         title: t("dashboard.acknowledgedTitle"),
         message: t("dashboard.acknowledgedMessage"),
+        action: {
+          label: t("dashboard.acknowledgedAction"),
+          onClick: () => void handleUndoAcknowledge(id),
+        },
       });
     } catch (err) {
       // 401 handled by interceptor; surface all other failures.
       if (isNonAuthError(err)) {
-        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        toastError(err, t);
+      }
+    }
+  };
+
+  const handleUndoAcknowledge = async (id: number) => {
+    try {
+      await unacknowledgeSubscription(id);
+      setSubscriptions((prev) =>
+        prev.map((s) =>
+          s.id === id
+            ? { ...s, acknowledged_billing_date: null }
+            : s
+        )
+      );
+      toast({ title: t("dashboard.undoneTitle") });
+    } catch (err) {
+      if (isNonAuthError(err)) {
+        toastError(err, t);
       }
     }
   };

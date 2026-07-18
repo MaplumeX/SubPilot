@@ -3,6 +3,7 @@ export type Toast = {
   title: string;
   message?: string;
   variant?: "default" | "destructive";
+  action?: { label: string; onClick: () => void };
 };
 
 let listeners: Array<(toast: Toast) => void> = [];

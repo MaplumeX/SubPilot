@@ -50,6 +50,11 @@ export async function acknowledgeSubscription(id: number): Promise<Subscription>
   return data;
 }
 
+export async function unacknowledgeSubscription(id: number): Promise<Subscription> {
+  const { data } = await api.post<Subscription>(`/subscriptions/${id}/unacknowledge`);
+  return data;
+}
+
 export async function uploadLogo(file: File): Promise<{ logo_url: string }> {
   const formData = new FormData();
   formData.append("file", file);

@@ -13,8 +13,7 @@ import {
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { formatDueLabel, isDueWithin } from "@/lib/due";
 import { formatCurrency } from "@/lib/currencies";
-import { cn, isNonAuthError } from "@/lib/utils";
-import { toast } from "@/components/ui/toast-store";
+import { cn, isNonAuthError, toastError } from "@/lib/utils";
 
 const MAX_VISIBLE_EVENTS = 2;
 const WEEK_DAYS = 7;
@@ -93,7 +92,7 @@ export default function CalendarPage({ now, reminderDays = 3 }: CalendarPageProp
         });
       } catch (err) {
         if (activeRef.current && isNonAuthError(err)) {
-          toast({ title: t("errors.loadFailed"), variant: "destructive" });
+          toastError(err, t);
         }
       } finally {
         if (activeRef.current) setLoading(false);

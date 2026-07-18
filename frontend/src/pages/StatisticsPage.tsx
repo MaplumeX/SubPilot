@@ -7,8 +7,7 @@ import type {
   SubscriptionForecast,
   MonthlyForecast,
 } from "@/api/types";
-import { toast } from "@/components/ui/toast-store";
-import { isNonAuthError } from "@/lib/utils";
+import { isNonAuthError, toastError } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   PieChart,
@@ -85,7 +84,7 @@ export default function StatisticsPage() {
     } catch (err) {
       // 401 handled by interceptor; surface all other failures.
       if (isNonAuthError(err)) {
-        toast({ title: t("errors.loadFailed"), variant: "destructive" });
+        toastError(err, t);
       }
     } finally {
       setLoading(false);
