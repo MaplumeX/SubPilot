@@ -1019,3 +1019,24 @@ Added formatNextBillingDate/formatBillingDate helpers in due.ts and applied them
 ### Next Steps
 
 - None - task complete
+
+
+## Session 30: Persist subscription sort state
+
+**Date**: 2026-08-02
+**Task**: Persist subscription sort state
+**Branch**: `main`
+
+### Summary
+
+Added localStorage persistence for subscription list sort state (sortBy + sortOrder) in SubscriptionsPage.tsx, following the existing viewMode pattern. Stored field validated against sortable columns whitelist; invalid/stale values fall back to defaults. Updated state-management.md spec to document the new persistence category. Caught and fixed a regression where STATUSES constant was accidentally deleted by the implement sub-agent.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `786e90d` | (see git log) |
+
+### Status
+
+[OK] **Completed**
