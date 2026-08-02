@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.5] - 2026-07-19
+
+### Added
+
+- **brand:** Radar/Pilot logo mark and favicon — replaces the default Vite lightning with a brand-aligned radar/sweep/hub symbol on brand blue, exposed via a reusable `Logo` component in the app header.
+
+### Changed
+
+- **subscriptions:** Persist list sort state (column + direction) to localStorage so the chosen sort survives reloads and navigation.
+
 ## [1.1.4] - 2026-07-18
 
 ### Added
