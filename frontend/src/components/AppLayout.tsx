@@ -12,7 +12,8 @@ import CalendarPage from "@/pages/CalendarPage";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import ThemeToggle from "@/components/theme-toggle";
 import { Toaster } from "@/components/ui/toaster";
-import { ShieldCheck, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { createSubscription } from "@/api/subscriptions";
 import type { SubscriptionCreate } from "@/api/types";
 import {
@@ -96,9 +97,7 @@ export default function AppLayout() {
       <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b bg-background/80 px-4 py-3 backdrop-blur-sm sm:px-6 sticky top-0 z-50">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <h1 className="flex items-center gap-2 text-lg font-semibold">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground" aria-hidden="true">
-              <ShieldCheck className="size-4 text-primary-foreground" />
-            </span>
+            <Logo />
             {t("layout.appName")}
           </h1>
           {/* Desktop nav — hidden on mobile, hamburger replaces it */}
