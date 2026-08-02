@@ -53,6 +53,28 @@ function getInitialViewMode(): ViewMode {
 }
 
 const STATUSES = ["active", "cancelled", "trial"] as const;
+const SORTABLE_FIELDS = ["name", "converted_price", "next_billing_date"] as const;
+const SORT_STORAGE_KEY = "subscription-sort";
+
+function getInitialSortState(): { field: string; order: string } {
+  try {
+    const raw = localStorage.getItem(SORT_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (
+        parsed &&
+        typeof parsed.field === "string" &&
+        SORTABLE_FIELDS.includes(parsed.field as (typeof SORTABLE_FIELDS)[number]) &&
+        (parsed.order === "asc" || parsed.order === "desc")
+      ) {
+        return { field: parsed.field, order: parsed.order };
+      }
+    }
+  } catch {
+    // localStorage unavailable or invalid JSON
+  }
+  return { field: "", order: "asc" };
+}
 
 function SortableHeader({
   field,
@@ -97,8 +119,8 @@ export default function SubscriptionsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [sortBy, setSortBy] = useState<string>("");
-  const [sortOrder, setSortOrder] = useState<string>("asc");
+  const [sortBy, setSortBy] = useState<string>(() => getInitialSortState().field);
+  const [sortOrder, setSortOrder] = useState<string>(() => getInitialSortState().order);
   const [viewMode, setViewMode] = useState<ViewMode>(getInitialViewMode);
   const [reminderDays, setReminderDays] = useState<number>(3);
   const [deleteTarget, setDeleteTarget] = useState<Subscription | null>(null);
@@ -236,11 +258,21 @@ export default function SubscriptionsPage() {
   };
 
   const handleSort = (field: string) => {
+    let newSortBy: string;
+    let newSortOrder: string;
     if (sortBy === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      newSortBy = sortBy;
+      newSortOrder = sortOrder === "asc" ? "desc" : "asc";
     } else {
-      setSortBy(field);
-      setSortOrder("asc");
+      newSortBy = field;
+      newSortOrder = "asc";
+    }
+    setSortBy(newSortBy);
+    setSortOrder(newSortOrder);
+    try {
+      localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify({ field: newSortBy, order: newSortOrder }));
+    } catch {
+      // localStorage unavailable
     }
   };
 

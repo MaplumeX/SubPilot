@@ -24,6 +24,7 @@
 | Page data | Component state | subscription list, stats, notification settings |
 | Form inputs | Component state (one `useState` per field) | email, password, subscription form fields |
 | UI toggles | Component state | dialog open/close, loading flags, view mode (persisted to `sessionStorage`) |
+| Sort preference | Component state + `localStorage` (`subscription-sort`) | subscription list sort field + order (persisted across sessions) |
 
 ---
 
