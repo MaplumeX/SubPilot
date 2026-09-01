@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 30
-- **Last Active**: 2026-08-02
+- **Total Sessions**: 31
+- **Last Active**: 2026-09-01
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1042 | Active |
+| `journal-1.md` | ~1063 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 31 | 2026-09-01 | Allow zero price for free subscriptions | `9c62a9f` | `main` |
 | 30 | 2026-08-02 | Persist subscription sort state | `786e90d` | `main` |
 | 29 | 2026-07-18 | Show next renewal date in subscription management UI | `22673a2` | `main` |
 | 28 | 2026-07-16 | Add WebP support to logo upload and cache | `2f38097` | `main` |

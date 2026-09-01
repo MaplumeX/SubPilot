@@ -1040,3 +1040,24 @@ Added localStorage persistence for subscription list sort state (sortBy + sortOr
 ### Status
 
 [OK] **Completed**
+
+
+## Session 31: Allow zero price for free subscriptions
+
+**Date**: 2026-09-01
+**Task**: Allow zero price for free subscriptions
+**Branch**: `main`
+
+### Summary
+
+允许订阅价格设置为 0 元（免费）：后端 schema gt=0→ge=0（create/update），前端表单校验改为仅拒绝负数，中英文提示文案更新为「价格不能为负」，spec type-safety.md 同步。测试 22 passed，lint/typecheck 通过，check agent 确认无除以 price 的逻辑风险。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9c62a9f` | (see git log) |
+
+### Status
+
+[OK] **Completed**
