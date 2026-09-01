@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.6] - 2026-09-01
+
+### Changed
+
+- **subscriptions:** Allow subscription price to be set to 0 for free subscriptions (negative prices still rejected); validation message updated accordingly.
+
 ## [1.1.5] - 2026-07-19
 
 ### Added
