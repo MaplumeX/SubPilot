@@ -10,7 +10,7 @@ from app.schemas.payment_method import PaymentMethodBrief
 
 class SubscriptionCreate(BaseModel):
     name: str
-    price: float = Field(gt=0)
+    price: float = Field(ge=0)
     currency: str = "CNY"
     cycle_count: int = Field(ge=1)
     cycle_unit: CycleUnit
@@ -45,7 +45,7 @@ class SubscriptionCreate(BaseModel):
 
 class SubscriptionUpdate(BaseModel):
     name: str | None = None
-    price: float | None = Field(default=None, gt=0)
+    price: float | None = Field(default=None, ge=0)
     currency: str | None = None
     cycle_count: int | None = Field(default=None, ge=1)
     cycle_unit: CycleUnit | None = None

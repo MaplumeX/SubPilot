@@ -23,8 +23,8 @@
 
 ## Validation
 
-- Backend: Pydantic schemas with validators (e.g., `min_length=8` for password, `gt=0` / `ge=1` for price/cycle_count, `min_length=1` for required `payment_method`, `ge=1, le=90` for `reminder_days`).
-- Frontend: manual validation in form handlers before submit (e.g., `name.trim()`, `price > 0`, `cycle_count >= 1`, `paymentMethod.trim()` — see `SubscriptionForm.handleSubmit`). Pure-whitespace is rejected by frontend `trim()`; backend `min_length=1` is the backstop.
+- Backend: Pydantic schemas with validators (e.g., `min_length=8` for password, `ge=0` / `ge=1` for price/cycle_count (0 price = free subscription, negatives rejected), `min_length=1` for required `payment_method`, `ge=1, le=90` for `reminder_days`).
+- Frontend: manual validation in form handlers before submit (e.g., `name.trim()`, `price >= 0` (0 allowed for free subscriptions), `cycle_count >= 1`, `paymentMethod.trim()` — see `SubscriptionForm.handleSubmit`). Pure-whitespace is rejected by frontend `trim()`; backend `min_length=1` is the backstop.
 - No Zod/Yup — validate at the API boundary (backend) and in form handlers (frontend).
 
 ---

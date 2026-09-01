@@ -268,7 +268,7 @@ export default function SubscriptionForm({
       return;
     }
     const priceNum = parseFloat(price);
-    if (isNaN(priceNum) || priceNum <= 0) {
+    if (isNaN(priceNum) || priceNum < 0) {
       setError(t("subscriptionForm.pricePositive"));
       return;
     }

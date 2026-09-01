@@ -123,7 +123,7 @@
     "emptyPaymentMethodHint": "暂无支付方式，请先在设置页添加。",
     "emptyCategoryHint": "暂无分类，请先在设置页添加。",
     "nameRequired": "名称为必填项",
-    "pricePositive": "价格必须大于 0",
+    "pricePositive": "价格不能为负",
     "startDateRequired": "开始日期为必填项",
     "saving": "保存中...",
     "logo": "Logo",

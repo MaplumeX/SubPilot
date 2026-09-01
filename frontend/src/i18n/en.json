@@ -123,7 +123,7 @@
     "emptyPaymentMethodHint": "No payment method yet — add one in Settings.",
     "emptyCategoryHint": "No category yet — add one in Settings.",
     "nameRequired": "Name is required",
-    "pricePositive": "Price must be greater than 0",
+    "pricePositive": "Price cannot be negative",
     "startDateRequired": "Start date is required",
     "saving": "Saving...",
     "logo": "Logo",
